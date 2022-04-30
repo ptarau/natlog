@@ -140,6 +140,7 @@ def db_chem():
     print(nd)
     print('DB FACTS')
     print(nd.db)
+    print('SIZE:', nd.db.size(), 'LEN:', len(nd.db.css[0]))
     nd.query("an_el Num Element ?")
     nd.query("gases Num Element ?")
 
@@ -238,7 +239,7 @@ def dtest():
 
 # Db from a .nat file
 def dtestf():
-    fname = 'natprogs/Db.nat'
+    fname = '../natprogs/facts.nat'
     d = Db()
     d.load(fname)
     print(d)
@@ -263,6 +264,15 @@ def dtestj():
     d.ask(query)
 
 
+def bigdb():
+    prog="quest X Y : ~ text_term (give X Y) ?"
+    n=MinLog(text=prog,db_name='../natprogs/facts.nat')
+    print(n)
+    print('SIZE:',n.db.size(),'LEN:',len(n.db.css[0]))
+    #print(n.db.css[0])
+    n.query("quest X Y?")
+    n.repl()
+
 if __name__ == "__main__":
     """
     uncomment any
@@ -277,11 +287,13 @@ if __name__ == "__main__":
     ndb_test()  # tests transitive closure with learner
     
     ndb_chem()  # tests query about chemical elements
-    """
     pass
-    db_test()
+    """
+    #db_test()
     # t7()
     ##t8()
-    go()
-    py_test()
+    #go()
+    #py_test()
     # t3()
+    bigdb()
+    #db_chem()

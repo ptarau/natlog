@@ -101,8 +101,6 @@ def interp(css, goals0, db=None):
         def unfold(g, gs):
             for (h, bs) in css:
                 d = dict()
-                # h = activate(h, d)
-
                 if not lazy_unify(h, g, trail, d):
                     undo()
                     continue  # FAILURE
@@ -128,8 +126,7 @@ def interp(css, goals0, db=None):
                     yield from step(newgoals)
                     undo()
 
-    goals0 = activate(goals0, dict())
-    yield from step(goals0)
+    yield from step(goals0) # assumed actvated
 
 
 class MinLog:
@@ -163,10 +160,12 @@ class MinLog:
          answer generator for given question
         """
         goals, ixs = next(parse(quest, ground=False, rule=False))
-
-        # print('!!!!!',goals, ixs)
-
-        yield from interp(self.css, tuple(goals), self.db)
+        vs=dict()
+        goals = activate(goals, vs)
+        ns = dict(zip(vs, ixs))
+        for answer in interp(self.css, goals, self.db):
+            sols=dict((ns[v], r) for (v, r) in vs.items())
+            yield sols
 
     def count(self, quest):
         """

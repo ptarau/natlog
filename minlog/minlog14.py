@@ -101,8 +101,6 @@ def interp(css, goals0, db=None):
         def unfold(g, gs):
             for (h, bs) in css:
                 d = dict()
-                # h = activate(h, d)
-
                 if not lazy_unify(h, g, trail, d):
                     undo()
                     continue  # FAILURE

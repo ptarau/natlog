@@ -34,7 +34,8 @@ class Db:
     # parses text to list of ground tuples
     def digest(self, text):
         for cs in mparse(text, ground=True):
-            self.add_clause(cs)
+            assert len(cs)==1
+            self.add_clause(cs[0])
 
     # loads from json list of lists
     def load_json(self, fname):
@@ -71,6 +72,9 @@ class Db:
     def save(self, fname):
         with open(fname, "w") as g:
             json.dump(self.css, g)
+
+    def size(self):
+        return len(self.css)
 
     # adds a clause and indexes it for all constants
     # recursively occurring in it, in any subtuple

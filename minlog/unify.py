@@ -169,6 +169,7 @@ def extractTerm(t):
         return tuple(map(extractTerm, t))
 
 
+"""
 def const_of(t):
     def const_of0(t):
         if isinstance(t, Var):
@@ -181,7 +182,6 @@ def const_of(t):
 
     return set(const_of0(t))
 
-
 def vars_of(t):
     def vars_of0(t):
         if isinstance(t, Var):
@@ -193,6 +193,7 @@ def vars_of(t):
             pass
 
     return set(vars_of0(t))
+"""
 
 
 def path_of(t):
