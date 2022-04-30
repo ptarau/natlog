@@ -1,0 +1,17 @@
+mouse	is	rodent
+cat is feline
+feline	is	mammal
+rodent	is	mammal
+snake	is	reptile
+mammal	is	animal
+reptile	is	animal
+bee	is	insect
+ant	is	insect
+insect	is	animal
+snake	can	bite
+ant	can	bite
+bee	can	sting
+snake	can	eat	mouse
+cat	can	eat	mouse
+
+

@@ -1,0 +1,7 @@
+app () Ys Ys. 
+app (X Xs) Ys (X Zs) : app Xs Ys Zs.
+
+nrev () ().
+nrev (X Xs) Zs : nrev Xs Ys, app Ys (X ()) Zs.
+
+goal Xs : nrev (1 (2 (3 ()))) Xs.

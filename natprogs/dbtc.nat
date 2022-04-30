@@ -1,0 +1,9 @@
+cat is_a feline.
+A is_a B : ~ A is B.
+
+
+tc A Rel C : A Rel B, tc1 B Rel C.
+
+tc1 B _Rel B.
+tc1 B Rel C : tc B Rel C.
+

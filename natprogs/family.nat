@@ -1,0 +1,48 @@
+eq X X.
+
+male 'Adam'.
+male 'Bill'.
+male 'Paul'.
+male 'Brandon'.
+male 'Peter'.
+male 'Dylan'.
+
+female 'Brenda'.
+female 'Sandy'.
+female 'Siena'.
+female 'Mary'.
+
+parent of 'Adam' 'Brandon'.
+parent of 'Adam' 'Sandy'.
+parent of 'Dylan' 'Brenda'.
+parent of 'Dylan' 'Paul' .
+parent of 'Siena' 'Brenda'.
+parent of 'Siena' 'Paul'.
+parent of 'Brenda' 'Bill'.
+parent of 'Brenda' 'Mary'.
+parent of 'Sandy' 'Bill'.
+parent of 'Sandy' 'Mary'.
+parent of 'Paul' 'Anna'.
+parent of 'Paul' 'Peter'.
+
+
+sibling of X S: parent of X P, parent of S P, not eq S X.
+
+brother of X B: sibling of X B, male B.
+
+sister of X S: sibling of X S, female S.
+
+mother of X M: parent of X M, female M.
+
+father of X M: parent of X M, male M.
+
+grand parent of X GP: parent of X P, parent of P GP.
+
+cousin of X C:
+  parent of X P,
+  parent of P GP,
+  parent of Q GP,
+  not eq P Q,
+  parent of C Q,
+  not eq X C.
+

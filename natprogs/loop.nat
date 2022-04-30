@@ -1,0 +1,4 @@
+loop.
+loop : loop.
+
+goal(X) : loop.

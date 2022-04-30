@@ -1,0 +1,13 @@
+succ X (s X).
+
+add 0 X X .
+add (s X) Y (s Z) : add X Y Z.
+
+mul 0 _Y 0.
+mul (s X) Y R : mul X Y M, add Y M R.
+
+two (s (s 0)).
+
+three SX : two X, succ X SX.
+
+goal Six : three A, two B, mul A B Six.

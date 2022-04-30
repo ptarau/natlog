@@ -1,0 +1,4 @@
+data Num Sym Neut Prot Elec Period Group Phase Type Isos Shells : ~ Num Sym Neut Prot Elec Period Group Phase Type Isos Shells.
+
+an_el Num El	: data Num El '45' '35' '35' '4' '17' liq 'Halogen' '19' '4'.
+gases Num El : data Num El  _1   _2   _3  _4   _5 gas  _6        _7   _8.

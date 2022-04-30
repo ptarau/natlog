@@ -1,0 +1,22 @@
+place_queen I (I _A) (I _B) (I _C).
+place_queen I (_A Cs)  (_B Us)  (_C Ds) : place_queen I Cs Us Ds.
+
+place_queens ()  _A _B _C.
+place_queens (I Is)  Cs Us (_A Ds) :  
+  place_queens Is Cs (_B Us)  Ds, 
+  place_queen I Cs Us Ds.
+
+gen_places ()  ().
+gen_places (_A Qs)  (_B Ps)  : gen_places Qs Ps.
+
+qs Qs Ps : gen_places Qs Ps , place_queens Qs Ps _A _B.
+
+goal8 Qs : qs (1 (2 (3 (4 (5 (6 (7 (8 ()))))))))  Qs.
+
+goal9 Qs : qs (1 (2 (3 (4 (5 (6 (7 (8 (9 ())))))))))  Qs.
+
+goal10 Qs : qs (1 (2 (3 (4 (5 (6 (7 (8 (9 (10 ()))))))))))  Qs.
+
+goal11 Qs : qs (1 (2 (3 (4 (5 (6 (7 (8 (9 (10 (11 ())))))))))))  Qs.
+
+goal12 Qs : qs (1 (2 (3 (4 (5 (6 (7 (8 (9 (10 (11 (12 ()))))))))))))  Qs.
