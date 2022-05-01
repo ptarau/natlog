@@ -1,4 +1,4 @@
-from mparser import mparse, genList
+from mparser import mparse
 
 from unify import unify, activate, extractTerm
 

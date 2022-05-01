@@ -1,4 +1,4 @@
-from minlog import *
+from minlog14 import *
 from unify import *
 
 my_text = """
@@ -265,12 +265,22 @@ def dtestj():
 
 
 def bigdb():
-    prog="quest X Y : ~ text_term (give X Y) ?"
+    prog="""
+       member X (X _).
+       member X (_ Xs) : member X Xs.
+       
+       quest X Y : ~ text_term (give X Y) ?
+    """
     n=MinLog(text=prog,db_name='../natprogs/facts.nat')
     print(n)
     print('SIZE:',n.db.size(),'LEN:',len(n.db.css[0]))
     #print(n.db.css[0])
     n.query("quest X Y?")
+    n.repl()
+
+def libtest():
+    n=MinLog(file_name='../natprogs/lib.nat')
+    print(n)
     n.repl()
 
 if __name__ == "__main__":
@@ -295,5 +305,7 @@ if __name__ == "__main__":
     #go()
     #py_test()
     # t3()
-    bigdb()
+    #bigdb()
     #db_chem()
+
+    libtest()

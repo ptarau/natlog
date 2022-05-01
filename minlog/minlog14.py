@@ -1,19 +1,17 @@
-from mparser import parse,to_goal
+from math import *
 
+from mparser import parse, to_goal
 from unify import unify, lazy_unify, activate, extractTerm
-
 from db import Db
-
-
-# DERIVED FROM minlog3.py
 
 def to_python(x):
     return x
 
-
 def from_python(x):
     return x
 
+def const(x):
+    return eval(x)
 
 def interp(css, goals0, db=None):
     def step(goals):
@@ -59,10 +57,11 @@ def interp(css, goals0, db=None):
                 else:
                     yield from step(goals)
 
-                # unifies with last arg yield from a generator
-                # and first args, assumed ground, passed to it
-
             def gen_call(g, goals):
+                """
+                  unifies with last arg yield from a generator
+                  and first args, assumed ground, passed to it
+                """
                 gen = eval(g[0])
                 g = g[1:]
                 v = g[-1]
@@ -74,6 +73,9 @@ def interp(css, goals0, db=None):
                     undo()
 
             def neg(g):
+                """
+                negation as failure
+                """
                 no_sol = object()
                 # g = extractTerm(g)
                 a = next(step((g, ())), no_sol)
@@ -126,7 +128,7 @@ def interp(css, goals0, db=None):
                     yield from step(newgoals)
                     undo()
 
-    yield from step(goals0) # assumed actvated
+    yield from step(goals0)  # assumed actvated
 
 
 class MinLog:
@@ -160,11 +162,14 @@ class MinLog:
          answer generator for given question
         """
         goals, ixs = next(parse(quest, ground=False, rule=False))
-        vs=dict()
+        vs = dict()
         goals = activate(goals, vs)
         ns = dict(zip(vs, ixs))
         for answer in interp(self.css, goals, self.db):
-            sols=dict((ns[v], r) for (v, r) in vs.items())
+            if answer and len(answer) == 1:
+                sols = {'_': answer[0]}
+            else:
+                sols = dict((ns[v], r) for (v, r) in vs.items())
             yield sols
 
     def count(self, quest):
@@ -174,7 +179,7 @@ class MinLog:
         c = 0
         for _ in self.solve(quest):
             c += 1
-        return c
+        return floor(c)
 
     def query(self, quest):
         """
@@ -199,8 +204,12 @@ class MinLog:
         xs = [str(cs) + '\n' for cs in self.css]
         return " ".join(xs)
 
-def genList(n):
+# built-ins, callable with ` notation
+
+def numlist(n):
     return to_goal(range(n))
+
+# tests
 
 def test_minlog():
     n = MinLog(file_name="../natprogs/tc.nat")

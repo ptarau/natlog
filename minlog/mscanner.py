@@ -37,6 +37,7 @@ class Scanner:
             (r"[-+]?\d+\.\d+", lambda sc, tok: ("FLOAT", float(tok))),
             (r"[-+]?\d+", lambda sc, tok: ("INT", int(tok))),
             (r"[a-z]+[\w]*", lambda sc, tok: ("ID", tok)),
+            (r"[=]+[\w]*", lambda sc, tok: ("ID", tok)),
             (r"'[\w\s\-\.\/,%=!\+\(\)]+'", lambda sc, tok: ("ID", qtrim(tok))),
             (r"[A-Z_]+[\w]*", lambda sc, tok: ("VAR", self.sym(tok))),
             (r"~|``|`|\^|#", lambda sc, tok: ("OP", tok)),

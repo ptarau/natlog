@@ -196,7 +196,7 @@ def vars_of(t):
 """
 
 
-def path_of(t):
+def path_of_(t):
     def path_of0(t):
         if isinstance(t, Var):
             pass
@@ -210,16 +210,30 @@ def path_of(t):
     return set(path_of0(t))
 
 
+def path_of(t):
+    def path_of0(t):
+        if isinstance(t, Var):
+            pass
+        elif isinstance(t, tuple):
+            for i, x in enumerate(t):
+                for c,ps in path_of0(x):
+                    yield c,(i, ps)
+        else:
+            yield t,()
+
+    return set(path_of0(t))
+
+
 def test_unify():
     a, b, c, d, e, f, g, x, y = "abcdefgxy"
     x, y = VarNum(0), VarNum(1)
     t = (f, a, (g, (b, x, (e, b, c, y)), d))
-    for p in path_of(t): print(p)
+    for p in cpath_of(t): print(p)
 
-    # c = activate_(t, dict())
+    c = activate(t, dict())
 
-    # print('ORIG:', t)
-    # print('COPY:', c)
+    print('ORIG:', t)
+    print('COPY:', c)
 
 
 if __name__ == "__main__":

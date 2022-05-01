@@ -1,0 +1,24 @@
+member X (X _).
+member X (_ Xs) : member X Xs.
+
+append () Xs Xs.
+append (X Xs) Ys (X Zs) : append Xs Ys Zs.
+
+permute () ().
+permute (X Xs) Zs : permute Xs Ys, insert X Ys Zs.
+
+insert X Xs (X Xs).
+insert X (Y Xs) (Y Ys) : insert X Xs Ys.
+
+select X Xs Ys : insert X Ys Xs.
+
+X = X.
+
+true.
+
+
+sum X Y Z : ` sum (X Y) Z.
+max X Y Z : ` max X Y Z.
+min X Y Z : ` min X Y Z.
+between A B X : `` range A B X.
+
