@@ -221,14 +221,26 @@ def path_of(t):
         else:
             yield t,()
 
-    return set(path_of0(t))
+    ps=set(path_of0(t))
+    qs=set((c,list2tuple(x)) for (c,x) in ps)
+    return qs
 
+
+def list2tuple(ls):
+    #print('!!! LS=',ls)
+    def scan(xs):
+      while xs is not () and isinstance(xs,tuple):
+        x,xs=xs
+        yield x
+    if not isinstance(ls,tuple):
+        return ls
+    return tuple(scan(ls))
 
 def test_unify():
     a, b, c, d, e, f, g, x, y = "abcdefgxy"
     x, y = VarNum(0), VarNum(1)
     t = (f, a, (g, (b, x, (e, b, c, y)), d))
-    for p in cpath_of(t): print(p)
+    for p in path_of(t): print('PATH:',p)
 
     c = activate(t, dict())
 
