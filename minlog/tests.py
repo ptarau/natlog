@@ -10,7 +10,7 @@ my_text = """
     nrev (X Xs) Zs : nrev Xs Ys, app Ys (X ()) Zs.
 
     goal N N :
-      `genList N Xs,
+      `numlist 0 N Xs,
       nrev Xs Ys.
     """
 
@@ -24,7 +24,7 @@ def test_generators():
   """
     n = MinLog(text=prog)
     for answer in n.solve("goal R?"):
-        print(answer[1])
+        print(answer)
 
 
 def test_answer_stream():
@@ -37,7 +37,7 @@ def test_answer_stream():
   """
     n = MinLog(text=prog)
     for answer in n.solve("perm (a (b (c ()))) P?"):
-        print(answer[2])
+        print(answer)
 
 
 def yield_test():
@@ -88,7 +88,7 @@ def t5():
 def t6():
     n = MinLog(file_name="../natprogs/family.nat")
     print(n)
-    n.query("grand_parent_of 'Joe' GP ?")
+    n.query("grand parent of 'Adam' GP ?")
 
 
 def t7():
@@ -96,7 +96,7 @@ def t7():
     n.query("cousin of X B?")
 
 
-def t8():
+def fam_repl():
     n = MinLog(file_name="../natprogs/family.nat")
     print('Enter some queries!')
     n.repl()
@@ -118,7 +118,7 @@ def db_test():
     print(nd.db)
     print('QUERY:')
     nd.query("tc Who is_a animal ?")
-    nd.repl()
+    # nd.repl()
 
 
 def ndb_test():
@@ -138,8 +138,7 @@ def db_chem():
     )
     print('RULES')
     print(nd)
-    print('DB FACTS')
-    print(nd.db)
+    # print('DB FACTS');print(nd.db)
     print('SIZE:', nd.db.size(), 'LEN:', len(nd.db.css[0]))
     nd.query("an_el Num Element ?")
     nd.query("gases Num Element ?")
@@ -171,35 +170,27 @@ def py_test1():
     nd.query("goal X?")
 
 
-def go():
-    t1()
-    t2()
-    t3()
-    t4()
-    t5()
-    t6()
-
-
-# tests
-
-c1 = ('a', 1, 'car', 'a')
-c2 = ('a', 2, 'horse', 'aa')
-c3 = ('b', 1, 'horse', 'b')
-c4 = ('b', 2, 'car', 'bb')
-
-g1 = ('a', 0, 1, 2)
-g2 = (0, 1, 'car', 2)
-g3 = (0, 1, 2, 0)
-
-
 def dtest1():
-    print(c1, '<-const:', list(const_of(c1)))
-    print(c3, '<-vars:', list(vars_of(c3)))
+    c1 = ('a', 1, 'car', 'a')
+    c2 = ('a', 2, 'horse', 'aa')
+    c3 = ('b', 1, 'horse', 'b')
+    c4 = ('b', 2, 'car', 'bb')
+
+    g1 = ('a', Var(), Var(), Var())
+    g2 = (Var(), Var(), 'car', Var())
+    g3 = (Var(), Var(), Var(), Var())
+
+    print(c1, '\n<-const:', list(path_of(c1)))
     d = Db()
     for cs in [c1, c2, c3, c4]:
         d.add_clause(cs)
-    print('index', d.index)
-    print('css', d.css)
+    print('\nindex')
+    for xv in d.index.items():
+        print(xv)
+
+    print('\ncss')
+    for cs in d.css:
+        print(cs)
     print('Gmatch', g1, list(d.ground_match_of(g1)))
     print('Vmatch', g1, list(d.match_of(g1)))
     print('Gmatch', g2, list(d.ground_match_of(g2)))
@@ -239,7 +230,7 @@ def dtest():
 
 # Db from a .nat file
 def dtestf():
-    fname = '../natprogs/facts.nat'
+    fname = '../natprogs/db.tsv'
     d = Db()
     d.load(fname)
     print(d)
@@ -249,7 +240,7 @@ def dtestf():
 
 # Db from a json file
 def dtestj():
-    fname = 'natprogs/Db'
+    fname = '../natprogs/db'
     jname = fname + '.json'
     nname = fname + '.nat'
     d = Db()
@@ -265,47 +256,43 @@ def dtestj():
 
 
 def bigdb():
-    prog="""
-       member X (X _).
-       member X (_ Xs) : member X Xs.
-       
-       quest X Y : ~ text_term (give X Y) ?
+    prog = """
+       quest X Y : ~ (text_term (give X Y)) ?
     """
-    n=MinLog(text=prog,db_name='../natprogs/facts.nat')
-    print(n)
-    print('SIZE:',n.db.size(),'LEN:',len(n.db.css[0]))
-    #print(n.db.css[0])
+    n = MinLog(text=prog, db_name='../natprogs/facts.nat')
+    #print(n)
+    print('SIZE:', n.db.size(), 'LEN:', len(n.db.css[0]))
+    # print(n.db.css[0])
     n.query("quest X Y?")
-    n.repl()
+    # n.repl()
+
 
 def libtest():
-    n=MinLog(file_name='../natprogs/lib.nat')
+    n = MinLog(file_name='../natprogs/lib.nat')
     print(n)
     n.repl()
 
-if __name__ == "__main__":
-    """
-    uncomment any
-    db_test()
-    py_test()
-    test_generators()
-    test_answer_stream()
-    yield_test()
-    dtestj()
-    t5()
-    t7()
-    ndb_test()  # tests transitive closure with learner
-    
-    ndb_chem()  # tests query about chemical elements
-    pass
-    """
-    #db_test()
-    # t7()
-    ##t8()
-    #go()
-    #py_test()
-    # t3()
-    #bigdb()
-    #db_chem()
 
-    libtest()
+def go():
+    ts = [dtest1,
+          dtest,
+          dtestf,
+          test_generators,
+          test_answer_stream,
+          t1,
+          t2,
+          t3,
+          t4,
+          t5,
+          t6,
+          t7,
+          db_test, db_chem, py_test, py_test1,
+          bigdb
+          ]
+    for t in ts:
+        print('\n\n', '*' * 20, t.__name__, '*' * 20, '\n')
+        t()
+
+
+if __name__ == "__main__":
+    go()

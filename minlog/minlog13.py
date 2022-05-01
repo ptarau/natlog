@@ -1,4 +1,4 @@
-from mparser import parse,to_goal
+from mparser import *
 
 from unify import unify, lazy_unify, activate, extractTerm
 

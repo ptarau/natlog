@@ -1,19 +1,6 @@
 from mscanner import Scanner
 
-trace = False
-
-
-# turns cons-like tuples into long tuples
-def to_tuple(xy):
-    if xy is None:
-        return ()
-    elif not isinstance(xy, tuple):
-        return xy
-    else:
-        x, y = xy
-        t = to_tuple(x)
-        ts = to_tuple(y)
-        return (t,) + ts
+trace = 0
 
 
 # simple LL(1) recursive descent Parser
@@ -21,19 +8,19 @@ def to_tuple(xy):
 # scanned from whitespace separated tokens
 class Parser:
     def __init__(self, words):
+        words = list(reversed(words))
         self.words = words
 
     def get(self):
         if self.words:
-            w = self.words[0]
-            self.words = self.words[1:]
+            w = self.words.pop()
             return w
         else:
             return None
 
     def peek(self):
         if self.words:
-            w = self.words[0]
+            w = self.words[-1]
             return w
         else:
             return None
@@ -60,7 +47,7 @@ class Parser:
     def run(self):
         ls = sum(1 for x in self.words if x == '(')
         rs = sum(1 for x in self.words if x == ')')
-        assert ls==rs
+        assert ls == rs
 
         t = to_tuple(self.par())
         if trace: print("PARSED", t)
@@ -96,7 +83,7 @@ def parse(text, ground=False, rule=False):
         r = p.run()
         r = to_clause(r)
         if not rule: r = to_goal(r[1])
-        if not rule and ground: r = r[0]  # db fact
+        if not rule and ground: r = (r[0],)  # db fact
         yield r, s.names
 
 
@@ -105,11 +92,28 @@ def mparse(text, ground=False, rule=False):
         yield r
 
 
+# turns cons-like tuples into long tuples
+# do not change, deep recursion needed
+def to_tuple(xy):
+    if xy is None:
+        return ()
+    elif not isinstance(xy, tuple):
+        return xy
+    else:
+        x, y = xy
+        t = to_tuple(x)
+        ts = to_tuple(y)
+        return (t,) + ts
+
 def to_goal(ts):
     gs = ()
     for g in reversed(ts):
         gs = (g, gs)
     return gs
+
+
+def numlist(n, m):
+    return to_goal(range(n, m))
 
 
 # tests
@@ -139,17 +143,17 @@ def ptest1():
 
 def ptest2():
     ws = "( x y ( a ( b ( c 1 2 ) ) d ) ( xx yy ) )".split()
-    # ws = "( x ( x x ) x x )".split()
+    ws = "( 1 ( 2 3 4 ) 5 6 )".split()
 
     p = Parser(ws)
-    print(ws)
+    print('WS:',ws)
     r = p.par()
-    print(r)
-    print(to_tuple(r))
-    print(p.words)
-    print('WS', ws)
-    print(Parser(ws).run())
+    print('R:',r)
+    t=to_tuple(r)
+    print('T:',t)
+    print('WR:',p.words)
+    print('RES:',Parser(ws).run())
 
 
 if __name__ == '__main__':
-    ptest()
+    ptest2()

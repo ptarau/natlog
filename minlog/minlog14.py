@@ -1,6 +1,6 @@
 from math import *
 
-from mparser import parse, to_goal
+from mparser import *
 from unify import unify, lazy_unify, activate, extractTerm
 from db import Db
 
@@ -11,6 +11,7 @@ def from_python(x):
     return x
 
 def const(x):
+    assert len(x)<=2
     return eval(x)
 
 def interp(css, goals0, db=None):
@@ -185,6 +186,7 @@ class MinLog:
         """
         show answers for given query
         """
+        print('QUERY:',quest)
         for answer in self.solve(quest):
             print('ANSWER:', answer)
         print('')
@@ -206,8 +208,8 @@ class MinLog:
 
 # built-ins, callable with ` notation
 
-def numlist(n):
-    return to_goal(range(n))
+def numlist(n,m):
+    return to_goal(range(n,m))
 
 # tests
 

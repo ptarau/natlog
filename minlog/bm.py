@@ -27,7 +27,7 @@ my_text = """
     nrev (X Xs) Zs : nrev Xs Ys, app Ys (X ()) Zs.
 
     goal N Ys :
-      `numlist N Xs,
+      `numlist 0 N Xs,
       nrev Xs Ys.
     """
 

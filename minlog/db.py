@@ -2,7 +2,7 @@ from collections import defaultdict
 import json
 import csv
 
-from unify import unify, path_of
+from unify import unify, activate, path_of
 from mparser import mparse
 
 
@@ -34,7 +34,8 @@ class Db:
     # parses text to list of ground tuples
     def digest(self, text):
         for cs in mparse(text, ground=True):
-            assert len(cs)==1
+            #print('DIGEST:', cs)
+            assert len(cs) == 1
             self.add_clause(cs[0])
 
     # loads from json list of lists
@@ -54,8 +55,8 @@ class Db:
         self.load_csv(fname, delimiter='\t')
 
     def add_db_clause(self, t):
-        print('####', t)
-        self.add_clause(tuplify(t))
+        # print('####', t)
+        if t: self.add_clause(tuplify(t))
 
     # loads ground facts .nat or .json files
     def load(self, fname):
@@ -112,17 +113,29 @@ class Db:
             yield u
 
     # uses unification to match and return ground fact
-    def match_of(self, h):
+    def match_of_(self, h):
+        h = activate(h, dict())
+        for ok in self.unify_with_fact(h, []):
+            if ok: yield h
+
+    def match_of(self, hx):
+        h = activate(hx, dict())
         ms = self.ground_match_of(h)
         for i in ms:
             h0 = self.css[i]
-            u = unify(h, h0, [])
-            if u: yield u
+            trail = []
+            if unify(h, h0, trail):
+                yield h0
+            for v in trail: v.unbind()
 
-    # searches for a matching tuple
     def search(self, query):
+        """
+        searches for a matching tuple
+        """
         qss = mparse(query, ground=False)
         for qs in qss:
+            qs = qs[0]
+            #print('SEARCHING:', qs)
             for rs in self.match_of(qs):
                 yield rs
 
