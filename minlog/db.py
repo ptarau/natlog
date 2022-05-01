@@ -34,7 +34,7 @@ class Db:
     # parses text to list of ground tuples
     def digest(self, text):
         for cs in mparse(text, ground=True):
-            #print('DIGEST:', cs)
+            # print('DIGEST:', cs)
             assert len(cs) == 1
             self.add_clause(cs[0])
 
@@ -89,16 +89,16 @@ class Db:
         a ground term that unifies with it, as the ground term
         has no variables that would match the constant
         """
-        # find all constants in query
-        constants = path_of(query)
-        if not constants:
+        # find all paths in query
+        paths = path_of(query)
+        if not paths:
             # match against all clauses css, no help from indexing
             return set(range(len(self.css)))
         # pick a copy of the first set where c occurs
-        first_constant = next(iter(constants))
-        matches = self.index[first_constant].copy()
-        # shrink it by intersecting with sets  where other constants occur
-        for x in constants:
+        first_path = next(iter(paths))
+        matches = self.index[first_path].copy()
+        # shrink it by intersecting with sets  where other paths occur
+        for x in paths:
             matches &= self.index[x]
         # these are all possible ground matches - return them
         return matches
@@ -135,17 +135,16 @@ class Db:
         qss = mparse(query, ground=False)
         for qs in qss:
             qs = qs[0]
-            #print('SEARCHING:', qs)
+            # print('SEARCHING:', qs)
             for rs in self.match_of(qs):
                 yield rs
 
     # simple search based on content
-    def about(self, query):
-        qss = mparse(query, ground=True)
-        for qs in qss:
-            qs = tuple(qs)
-            for i in self.ground_match_of(qs):
-                yield self.css[i]
+    def about(self, c):
+        for k, v in self.index.items():
+            if k[0] == c:
+                for i in v:
+                    yield self.css[i]
 
     def ask_about(self, query):
         print('QUERY:', query)
@@ -165,3 +164,25 @@ class Db:
     def __repr__(self):
         xs = [str(cs) + '\n' for cs in enumerate(self.css)]
         return "".join(xs)
+
+
+def about_facts():
+    prog = """
+       quest X Y : ~ (text_term (give X Y)) ?
+    """
+    db = Db()
+    db_name = '../natprogs/facts.nat'
+    db.load(db_name)
+
+    print('SIZE:', db.size(), 'LEN:', len(db.css[0]))
+    print(42, ':', db.css[42])
+    db.ask_about("subgraph")
+
+
+def test_db():
+    pass
+    about_facts()
+
+
+if __name__ == "__main__":
+    test_db()

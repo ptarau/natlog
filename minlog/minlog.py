@@ -186,6 +186,7 @@ class MinLog:
         """
         show answers for given query
         """
+        print('QUERY:',quest)
         for answer in self.solve(quest):
             print('ANSWER:', answer)
         print('')
