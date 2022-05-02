@@ -176,3 +176,6 @@ fabric.properties
 .idea/
 
 __pycache__/
+
+minlog/temp.py
+

@@ -1,6 +1,6 @@
 import timeit
 import sys
-from minlog import *
+from temp import *
 
 sys.setrecursionlimit(1 << 28)
 

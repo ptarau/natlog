@@ -1,7 +1,7 @@
 from math import *
 
 from mparser import *
-from unify import unify, lazy_unify, activate, extractTerm
+from unify import * #unify, lazy_unify, activate, extractTerm
 from db import Db
 
 def to_python(x):
