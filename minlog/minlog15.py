@@ -1,18 +1,22 @@
 from math import *
 
 from mparser import *
-from unify import * #unify, lazy_unify, activate, extractTerm
+from unify import *  # unify, lazy_unify, activate, extractTerm
 from db import Db
+
 
 def to_python(x):
     return x
 
+
 def from_python(x):
     return x
 
+
 def const(x):
-    assert len(x)<=2
+    assert len(x) <= 2
     return eval(x)
+
 
 def interp(css, goals0, db=None):
     def step(goals):
@@ -101,21 +105,22 @@ def interp(css, goals0, db=None):
                 yield from step(goals)
             undo()
 
-        def unfold(g, gs):
-            for (h, bs) in css:
-                d = dict()
-                if not lazy_unify(h, g, trail, d):
-                    undo()
-                    continue  # FAILURE
-                else:
-                    # NOT TO BE CHANGED !!!
-                    bsgs = gs
-                    for b in reversed(bs):
-                        b = activate(b, d)
-                        bsgs = (b, bsgs)
-                    yield bsgs  # SUCCESS
+        def unfold1(g, gs, h, bs):
+            d = dict()
+            if not lazy_unify(h, g, trail, d):
+                undo()
+                return None  # FAILURE
+            else:
+                # NOT TO BE CHANGED !!!
+                bsgs = gs
+                for b in reversed(bs):
+                    b = activate(b, d)
+                    bsgs = (b, bsgs)
+                return bsgs  # SUCCESS
 
         trail = []
+        todo=[]
+
         if goals == ():
             yield extractTerm(goals0)
         else:
@@ -125,9 +130,11 @@ def interp(css, goals0, db=None):
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals)
             else:
-                for newgoals in unfold(g, goals):
-                    yield from step(newgoals)
-                    undo()
+                for (h, bs) in css:
+                    bsgs = unfold1(g, goals, h, bs)
+                    if bsgs is not None:
+                       yield from step(bsgs)
+                       undo()
 
     yield from step(goals0)  # assumed actvated
 
@@ -162,11 +169,11 @@ class MinLog:
         """
          answer generator for given question
         """
-        goals, ixs = next(parse(quest, ground=False, rule=False))
+        goals0, ixs = next(parse(quest, ground=False, rule=False))
         vs = dict()
-        goals = activate(goals, vs)
+        goals0 = activate(goals0, vs)
         ns = dict(zip(vs, ixs))
-        for answer in interp(self.css, goals, self.db):
+        for answer in interp(self.css, goals0, self.db):
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
             else:
@@ -186,7 +193,7 @@ class MinLog:
         """
         show answers for given query
         """
-        print('QUERY:',quest)
+        print('QUERY:', quest)
         for answer in self.solve(quest):
             print('ANSWER:', answer)
         print('')
@@ -206,10 +213,12 @@ class MinLog:
         xs = [str(cs) + '\n' for cs in self.css]
         return " ".join(xs)
 
+
 # built-ins, callable with ` notation
 
-def numlist(n,m):
-    return to_goal(range(n,m))
+def numlist(n, m):
+    return to_goal(range(n, m))
+
 
 # tests
 

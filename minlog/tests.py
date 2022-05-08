@@ -1,4 +1,4 @@
-from minlog14 import *
+from minlog import *
 from unify import *
 
 my_text = """

@@ -178,4 +178,6 @@ fabric.properties
 __pycache__/
 
 minlog/temp.py
+bad/
+
 

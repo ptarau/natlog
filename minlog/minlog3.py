@@ -162,6 +162,10 @@ def test_minlog():
     print(n)
     n.query("perm (1 (2 (3 ())))  X ?")
 
+    n = MinLog(file_name="../natprogs/family.nat")
+    print(n)
+    n.query('mother of X M?')
+
 if __name__ == "__main__":
     test_minlog()
 
