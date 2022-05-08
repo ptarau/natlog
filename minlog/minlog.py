@@ -236,7 +236,7 @@ def test_minlog():
     n = MinLog(file_name="../natprogs/py_call.nat")
     # print(n)
     n.query("goal X?")
-    n.repl()
+    #n.repl()
 
     n = MinLog(file_name="../natprogs/family.nat")
     # print(n)
@@ -246,6 +246,10 @@ def test_minlog():
     n = MinLog(file_name="../natprogs/queens.nat")
 
     print(n.count("goal8  X ?"))
+
+    n = MinLog(file_name="../natprogs/lib.nat")
+    print(n)
+    n.repl()
 
 
 if __name__ == "__main__":

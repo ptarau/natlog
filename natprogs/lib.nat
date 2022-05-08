@@ -16,9 +16,9 @@ X = X.
 
 true.
 
-
 sum X Y Z : ` sum (X Y) Z.
 max X Y Z : ` max X Y Z.
 min X Y Z : ` min X Y Z.
+
 between A B X : `` range A B X.
 
