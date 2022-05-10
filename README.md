@@ -68,7 +68,7 @@ The interpreter has also been extended to handle simple function and generator c
 - ``` `f A B .. Z  R```, resulting in Python function ```f(A,B,C)``` being called and R unified with its result
 -  ``` ``f A B .. Z  R```, resulting in Python generator ```f(A,B,C)``` being called and R unified with its multiple yields, one a time
 - ``` ~R A B .. Z ``` for unifying  ``` ~ R A B .. Z ``` with matching facts in the term store
-- ``` f A B .. Z```, resulting in ```f(A,B,C,..,Z)``` being called with no result returned
+- ``` # f A B .. Z```, resulting in ```f(A,B,C,..,Z)``` being called with no result returned
 
 
 ### A nested tuple store for unification-based tuple mining

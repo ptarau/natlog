@@ -109,7 +109,7 @@ def interp(css, goals0, db=None):
                 else:
                     yield from step((no, goals))
 
-            if op == 'call':
+            if op == 'zcall':
                 cg = extractTerm(g)
                 yield from step((cg[0], goals))
             elif op == 'not':
@@ -138,8 +138,11 @@ def interp(css, goals0, db=None):
             undo(trail)
         else:
             g, goals = goals
-            op = g[0] if g else None
+            #print('???', g, goals)
+            assert g
+            op = g[0]
             if op in {"not", "call", "~", "`", "``", "^", "#", "if"}:
+
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals)
             else:
@@ -267,7 +270,4 @@ def test_minlog():
 
 
 if __name__ == "__main__":
-    #test_minlog()
-    n = MinLog(file_name="../natprogs/lib.nat")
-    print(n)
-    n.repl()
+    test_minlog()

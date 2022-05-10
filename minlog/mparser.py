@@ -1,3 +1,6 @@
+
+from operator import *
+
 from mscanner import Scanner
 
 trace = 0
@@ -110,6 +113,14 @@ def to_goal(ts):
     for g in reversed(ts):
         gs = (g, gs)
     return gs
+
+
+def from_goal(xs) :
+    rs=[]
+    while xs:
+        x,xs=xs
+        rs.append(x)
+    return tuple(rs)
 
 
 def numlist(n, m):
