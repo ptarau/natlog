@@ -75,6 +75,37 @@ def interp(css, goals0, db=None):
                 else:
                     yield from step(goals)
 
+            def eng(g):
+                # print('::::', g)
+                x, g, e = extractTerm(g)
+                # print('!!!!',g)
+
+                runner = step((g, ()))
+
+                r = (x, runner)
+                # print('$$$$',r)
+
+                if not unify(e, r, trail):
+                    undo(trail)
+                else:
+                    yield from step(goals)
+
+            def ask(g):
+                # print('ASK>>>',g)
+                engine, answer = extractTerm(g)
+                x, e = engine
+                # print('!!!!',e,x)
+                a = next(e, None)
+
+                if a is None:
+                    a = 'no'
+                else:
+                    a = ('the', x)
+                if not unify(answer, a, trail):
+                    undo(trail)
+                else:
+                    yield from step(goals)
+
             def gen_call(g):
                 """
                   unifies with last arg yield from a generator
@@ -88,7 +119,6 @@ def interp(css, goals0, db=None):
                     r = from_python(r)
                     if unify(v, r, trail):
                         yield from step(goals)
-                        undo(trail)
 
             def neg(g):
                 """
@@ -109,7 +139,12 @@ def interp(css, goals0, db=None):
                 else:
                     yield from step((no, goals))
 
-            if op == 'call':
+            if op == 'eng':
+                print('!!!', eng)
+                yield from eng(g)
+            elif op == 'ask':
+                yield from ask(g)
+            elif op == 'call':
                 cg = extractTerm(g)
                 yield from step((cg[0], goals))
             elif op == 'not':
@@ -139,7 +174,7 @@ def interp(css, goals0, db=None):
         else:
             g, goals = goals
             op = g[0] if g else None
-            if op in {"not", "call", "~", "`", "``", "^", "#", "if"}:
+            if op in {"not", "call", "~", "`", "``", "^", "#", "if", "eng", "ask"}:
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals)
             else:
@@ -257,9 +292,9 @@ def test_minlog():
     n.query("cousin of X C, male C?")
     # n.repl()
 
-    #n = MinLog(file_name="../natprogs/queens.nat")
+    # n = MinLog(file_name="../natprogs/queens.nat")
 
-    #print(n.count("goal8  X ?"))
+    # print(n.count("goal8  X ?"))
 
     n = MinLog(file_name="../natprogs/lib.nat")
     print(n)
@@ -267,7 +302,7 @@ def test_minlog():
 
 
 if __name__ == "__main__":
-    #test_minlog()
+    # test_minlog()
     n = MinLog(file_name="../natprogs/lib.nat")
     print(n)
     n.repl()

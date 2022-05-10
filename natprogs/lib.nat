@@ -62,3 +62,11 @@ t1 : `numlist 1 5 X, #print X, maplist permute (X (X ())) Ys, #print Ys, fail.
 t2 : `numlist 1 5 X, `numlist 11 15 Y, maplist sum X Y Z, #print Z, fail.
 t3 : `numlist 1 5 X, nth 2 X R, #print R ,fail.
 t4 : list (1 2 3) Xs, permute Xs Ys, #print Ys, fail.
+
+t5 : list (1 2 3) Xs, #print Xs, eng X (member X Xs) E, fail, #print E, ask E R, #print R.
+
+p 1.
+p 2.
+
+
+t6 : eng X (p X) E, ask E R, ask E RR, ask E RRR, #print results R RR RRR.
