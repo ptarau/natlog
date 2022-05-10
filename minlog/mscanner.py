@@ -4,21 +4,7 @@ import re
 # wrapper around int to be used in data fields
 # as actual int works as the type of variables
 # for simplicity and efficiency
-"""
-class VarNum:
-    def __init__(self, val):
-        self.val = int(val)
 
-    def __eq__(self, other):
-        if isinstance(other, VarNum):
-            return self.val == other.val
-        return False
-
-    def __hash__(self): return hash(self.val)
-
-    def __repr__(self):
-        return "VarNum(" + str(self.val) + ")"
-"""
 
 class VarNum(int):
     def __repr__(self):

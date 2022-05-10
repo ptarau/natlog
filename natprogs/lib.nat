@@ -17,6 +17,7 @@ X == Y : `eq X Y R, `int R 1.
 
 max X Y Z : ` max X Y Z.
 min X Y Z : ` min X Y Z.
+sum X Y Z : `add X Y Z.
 
 member X (X _).
 member X (_ Xs) : member X Xs.
@@ -53,9 +54,11 @@ maplist F (X Xs) (Y Ys) (Z Zs) : F X Y Z, maplist F Xs Ys Zs.
 nth 0 (X _) X .
 nth N (_ Xs) R : N > 0, M is N - 1, nth M Xs R.
 
+
 tuple Xs T : `from_goal Xs T.
 list T Xs : `to_goal T Xs.
 
 t1 : `numlist 1 5 X, #print X, maplist permute (X (X ())) Ys, #print Ys, fail.
 t2 : `numlist 1 5 X, `numlist 11 15 Y, maplist sum X Y Z, #print Z, fail.
-t3 : `numlist 1 5 X, nth 2 X R
+t3 : `numlist 1 5 X, nth 2 X R, #print R ,fail.
+t4 : list (1 2 3) Xs, permute Xs Ys, #print Ys, fail.
