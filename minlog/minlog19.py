@@ -37,7 +37,6 @@ def interp(css, goals0, db=None):
         return bsgs  # SUCCESS
 
     def step(goals):
-        #print("STEP", goals)
 
         def dispatch_call(op, g, goals):
             """
@@ -76,34 +75,35 @@ def interp(css, goals0, db=None):
                 else:
                     yield from step(goals)
 
-            def eng(xge):
-                x0, eg0, e = xge
+            def eng(eg0):
+
+                x0, eg0, e = extractTerm(eg0)
                 (x, eg) = copy_term((x0, eg0))
-                g = (eg, ())
-                runner=step(g)
-                r = ('$ENG', runner, x, g)
-                if not unify(e,r, trail):
+
+                runner = step((eg, ()))
+
+                #next(runner)
+
+                r = (x, runner)
+
+                if not unify(e, r, trail):
                     undo(trail)
                 else:
-                    v=next(runner, None)
-                    print('NEXT',v,x)
                     yield from step(goals)
 
-            def ask(eng_answer):
-                #print('ASK ENG0:', eng_answer)
-                eng0, answer = eng_answer
-                code, e, x, g = eng0
-                assert code == '$ENG'
-                a = next(e, None)
-                print('HERE', a, x)
-                #assert 0
+            def ask(eg):
 
-                if a is None and isinstance(x,Var):
+                eg = extractTerm(eg)
+
+                engine, answer = eg
+                x, e = engine
+                a = next(e, None)
+
+                if a is None:
                     r = 'no'
                 else:
                     x = copy_term(x)
                     r = ('the', x)
-
                 if not unify(answer, r, trail):
                     undo(trail)
                 else:
@@ -148,8 +148,8 @@ def interp(css, goals0, db=None):
             elif op == 'ask':
                 yield from ask(g)
             elif op == 'call':
-                # cg = extractTerm(g)
-                yield from step((g[0], goals))
+                cg = extractTerm(g)
+                yield from step((cg[0], goals))
             elif op == 'not':
                 if neg(g):
                     yield from step(goals)
@@ -310,4 +310,4 @@ if __name__ == "__main__":
     # print(n)
     n.query('t6?')
     n.query('t5?')
-    n.repl()
+    # n.repl()

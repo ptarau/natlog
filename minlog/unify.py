@@ -97,6 +97,34 @@ def activate(t, d):
     else:
         return tuple(activate(x, d) for x in t)
 
+def extractTerm(t):
+    t=deref(t)
+    if isinstance(t, Var):
+        return t
+    elif not isinstance(t, tuple):
+        return t
+    else:
+        return tuple(map(extractTerm, t))
+
+def copy_term(t0):
+    def ct(t):
+        t=deref(t)
+        if isinstance(t, Var):
+            return d.setdefault(t, Var())
+        elif not isinstance(t, tuple):
+            return t
+        else:
+            return tuple(map(ct, t))
+
+    d = dict()
+    #print('CT <<<',t0)
+    r= ct(t0)
+    #print('CT >>>', r)
+    return r
+
+
+def arg(x,i) :
+    return x[i]
 
 """
 def activate_(t0, d):
@@ -158,15 +186,6 @@ def activate(template, d):
     ws=to_postfix(template)
     return from_postfix(ws,d)
 """
-
-
-def extractTerm(t):
-    if isinstance(t, Var):
-        return deref(t)
-    elif not isinstance(t, tuple):
-        return t
-    else:
-        return tuple(map(extractTerm, t))
 
 
 """

@@ -2,22 +2,7 @@ true.
 
 X = X.
 
-Z is X + Y : `add X Y Z.
-Z is X - Y : `sub X Y Z.
-Z is X * Y : `mul X Y Z.
-Z is X / Y : `truediv X Y Z.
-Z is X // Y: `floordiv X Y Z.
 
-X < Y  : `lt X Y R, `int R 1.
-X > Y  : `gt X Y R, `int R 1.
-X <= Y : `le X Y R, `int R 1.
-X >= Y : `ge X Y R, `int R 1.
-X <> Y : `ne X Y R, `int R 1.
-X == Y : `eq X Y R, `int R 1.
-
-max X Y Z : ` max X Y Z.
-min X Y Z : ` min X Y Z.
-sum X Y Z : `add X Y Z.
 
 member X (X _).
 member X (_ Xs) : member X Xs.
@@ -33,7 +18,6 @@ insert X (Y Xs) (Y Ys) : insert X Xs Ys.
 
 select X Xs Ys : insert X Ys Xs.
 
-between A B X : `` range A B X.
 
 % metacall operations require arguments parenthesized.
 
@@ -52,21 +36,46 @@ maplist _ () () ().
 maplist F (X Xs) (Y Ys) (Z Zs) : F X Y Z, maplist F Xs Ys Zs.
 
 nth 0 (X _) X .
-nth N (_ Xs) R : N > 0, M is N - 1, nth M Xs R.
+nth N (_ Xs) R : @ N > 0, @ M is N - 1, nth M Xs R.
 
+% predicates that call Python in the body should be prefixed with @ .
 
-tuple Xs T : `from_goal Xs T.
-list T Xs : `to_goal T Xs.
+@ Z is X + Y : `add X Y Z.
+@ Z is X - Y : `sub X Y Z.
+@ Z is X * Y : `mul X Y Z.
+@ Z is X / Y : `truediv X Y Z.
+@ Z is X // Y: `floordiv X Y Z.
+
+@ X < Y  : `lt X Y R, `int R 1.
+@ X > Y  : `gt X Y R, `int R 1.
+@ X <= Y : `le X Y R, `int R 1.
+@ X >= Y : `ge X Y R, `int R 1.
+@ X <> Y : `ne X Y R, `int R 1.
+@ X == Y : `eq X Y R, `int R 1.
+
+max X Y Z : `max X Y Z.
+min X Y Z : `min X Y Z.
+sum X Y Z : `add X Y Z.
+
+@ between A B X : `` range A B X.
+
+@ arg I T X : `arg T I X.
+@ tuple Xs T : `from_goal Xs T.
+@ list T Xs : `to_goal T Xs.
 
 t1 : `numlist 1 5 X, #print X, maplist permute (X (X ())) Ys, #print Ys, fail.
 t2 : `numlist 1 5 X, `numlist 11 15 Y, maplist sum X Y Z, #print Z, fail.
 t3 : `numlist 1 5 X, nth 2 X R, #print R ,fail.
-t4 : list (1 2 3) Xs, permute Xs Ys, #print Ys, fail.
+t4 : @list (1 2 3) Xs, permute Xs Ys, #print Ys, fail.
 
-t5 : list (1 2 3) Xs, #print Xs, eng X (member X Xs) E, fail, #print E, ask E R, #print R.
+t5 : @list (1 2 3) Xs, #print Xs, eng X (member X Xs) E,  #print E,
+     ask E R1, ask E R2, ask E R3, ask E R4, #print R1 R2 R3 R4, fail.
 
 p 1.
 p 2.
+p 3.
+p 4.
 
 
-t6 : eng X (p X) E, ask E R, ask E RR, ask E RRR, #print results R RR RRR.
+t6 : eng X (p X) E, #print engine  E,
+     ask E R1, ask E R2, ask E R3, ask E R4, #print results R1 R2 R3 R4, fail.

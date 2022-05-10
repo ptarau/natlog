@@ -37,7 +37,6 @@ def interp(css, goals0, db=None):
         return bsgs  # SUCCESS
 
     def step(goals):
-        #print("STEP", goals)
 
         def dispatch_call(op, g, goals):
             """
@@ -80,25 +79,31 @@ def interp(css, goals0, db=None):
                 x0, eg0, e = xge
                 (x, eg) = copy_term((x0, eg0))
                 g = (eg, ())
-                runner=step(g)
-                r = ('$ENG', runner, x, g)
-                if not unify(e,r, trail):
+                r = ('$ENG', Var(), x, g)
+                if not unify(e, r, trail):
                     undo(trail)
                 else:
-                    v=next(runner, None)
-                    print('NEXT',v,x)
                     yield from step(goals)
 
             def ask(eng_answer):
-                #print('ASK ENG0:', eng_answer)
+                print('ASK ENG0:', eng_answer)
                 eng0, answer = eng_answer
-                code, e, x, g = eng0
+                code, eg, x, g = eng0
                 assert code == '$ENG'
+
+                if isinstance(eg, Var):
+                    e = step(g)
+                    next(e)
+                    eg.bind(e, trail)
+                else:
+                    e = eg
+
                 a = next(e, None)
-                print('HERE', a, x)
+
+                #print('HERE', a)
                 #assert 0
 
-                if a is None and isinstance(x,Var):
+                if a is None:
                     r = 'no'
                 else:
                     x = copy_term(x)
