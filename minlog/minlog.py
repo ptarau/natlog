@@ -86,7 +86,6 @@ def interp(css, goals0, db=None):
                     undo(trail)
                 else:
                     v=next(runner, None)
-                    print('NEXT',v,x)
                     yield from step(goals)
 
             def ask(eng_answer):
@@ -95,8 +94,6 @@ def interp(css, goals0, db=None):
                 code, e, x, g = eng0
                 assert code == '$ENG'
                 a = next(e, None)
-                print('HERE', a, x)
-                #assert 0
 
                 if a is None and isinstance(x,Var):
                     r = 'no'
