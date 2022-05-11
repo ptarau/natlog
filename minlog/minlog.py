@@ -85,7 +85,7 @@ def interp(css, goals0, db=None):
                 if not unify(e,r, trail):
                     undo(trail)
                 else:
-                    v=next(runner, None)
+                    _ = next(runner, None)
                     yield from step(goals)
 
             def ask(eng_answer):
@@ -187,13 +187,20 @@ def interp(css, goals0, db=None):
     yield from step(goals0)  # assumed activated
 
 
+LIB='../natprogs/lib.nat'
+
 class MinLog:
-    def __init__(self, text=None, file_name=None, db_name=None):
+    def __init__(self, text=None, file_name=None, db_name=None, with_lib=None):
         if file_name:
             with open(file_name, 'r') as f:
                 self.text = f.read()
         else:
             self.text = text
+
+        if with_lib:
+            with open(with_lib, 'r') as f:
+                lib = f.read()
+            self.text=self.text + '\n'+ lib
 
         css, ixss = zip(*parse(self.text, ground=False, rule=True))
 
@@ -242,8 +249,12 @@ class MinLog:
         show answers for given query
         """
         print('QUERY:', quest)
+        success=False
         for answer in self.solve(quest):
+            success=True
             print('ANSWER:', answer)
+        if not success:
+            print('No ANSWER!')
         print('')
 
     def repl(self):
@@ -254,7 +265,10 @@ class MinLog:
         while True:
             q = input('?- ')
             if not q: return
-            self.query(q)
+            try:
+              self.query(q)
+            except Exception as e:
+              print('EXCEPTION:',type(e).__name__,e.args)
 
     # shows tuples of Natlog rule base
     def __repr__(self):

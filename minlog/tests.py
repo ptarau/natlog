@@ -97,7 +97,7 @@ def t7():
 
 
 def fam_repl():
-    n = MinLog(file_name="../natprogs/family.nat")
+    n = MinLog(file_name="../natprogs/family.nat", with_lib=LIB)
     print('Enter some queries!')
     n.repl()
 
