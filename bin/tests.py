@@ -1,4 +1,4 @@
-from natlog.tests import *
+from natlog.test.tests import *
 
 if __name__ == "__main__":
     go()

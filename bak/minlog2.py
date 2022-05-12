@@ -185,11 +185,11 @@ def test_unify():
 
 
 def test_minlog():
-    n = MinLog(file_name="../natprogs/tc.nat")
+    n = MinLog(file_name="../natlog/natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
 
-    n = MinLog(file_name="../natprogs/queens.nat")
+    n = MinLog(file_name="../natlog/natprogs/queens.nat")
     n.query("goal8 Queens?")
 
 

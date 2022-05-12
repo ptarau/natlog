@@ -1,7 +1,8 @@
-from .natlog import *
-from .unify import *
+from natlog.natlog import *
+from natlog.unify import *
 
-NATPROGS="natprogs/"
+
+NATPROGS=natprogs()
 
 my_text = """
     app () Ys Ys. 
@@ -121,16 +122,6 @@ def db_test():
     print('QUERY:')
     nd.query("tc Who is_a animal ?")
     # nd.repl()
-
-
-def ndb_test():
-    nd = NeuralMinLog(file_name=NATPROGS+"dbtc.nat", db_name=NATPROGS+"Db.nat")
-    print('RULES')
-    print(nd)
-    print('DB FACTS')
-    print(nd.db)
-    print('QUERY:')
-    nd.query("tc Who is_a animal ?")
 
 
 def db_chem():

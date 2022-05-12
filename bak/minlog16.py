@@ -222,27 +222,27 @@ def numlist(n, m):
 # tests
 
 def test_minlog():
-    n = MinLog(file_name="../natprogs/tc.nat")
+    n = MinLog(file_name="../natlog/natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
 
     # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
-    n = MinLog(file_name="../natprogs/perm.nat")
+    n = MinLog(file_name="../natlog/natprogs/perm.nat")
     # print(n)
     n.query("perm (1 (2 (3 ())))  X ?")
 
-    n = MinLog(file_name="../natprogs/py_call.nat")
+    n = MinLog(file_name="../natlog/natprogs/py_call.nat")
     # print(n)
     n.query("goal X?")
 
-    n = MinLog(file_name="../natprogs/family.nat")
+    n = MinLog(file_name="../natlog/natprogs/family.nat")
     # print(n)
     n.query("cousin of X C, male C?")
     # n.repl()
 
-    n = MinLog(file_name="../natprogs/queens.nat")
+    n = MinLog(file_name="../natlog/natprogs/queens.nat")
 
     print(n.count("goal8  X ?"))
 

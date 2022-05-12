@@ -1,9 +1,15 @@
 from math import *
+from pathlib import Path
 
 from .mparser import *
 from .unify import *  # unify, lazy_unify, activate, extractTerm
 from .db import Db
 
+def my_path():
+    return str(Path(__file__).parent)+"/"
+
+def natprogs():
+    return my_path()+'natprogs/'
 
 def to_python(x):
     return x
@@ -285,23 +291,23 @@ def numlist(n, m):
 # tests
 
 def test_minlog():
-    n = Natlog(file_name="../natprogs/tc.nat")
+    n = Natlog(file_name="natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
 
     # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
-    n = Natlog(file_name="../natprogs/perm.nat")
+    n = Natlog(file_name="natprogs/perm.nat")
     # print(n)
     n.query("perm (1 (2 (3 ())))  X ?")
 
-    n = Natlog(file_name="../natprogs/py_call.nat")
+    n = Natlog(file_name="natprogs/py_call.nat")
     # print(n)
     n.query("goal X?")
     # n.repl()
 
-    n = Natlog(file_name="../natprogs/family.nat")
+    n = Natlog(file_name="natprogs/family.nat")
     # print(n)
     n.query("cousin of X C, male C?")
     # n.repl()
@@ -310,14 +316,14 @@ def test_minlog():
 
     # print(n.count("goal8  X ?"))
 
-    n = Natlog(file_name="../natprogs/lib.nat")
+    n = Natlog(file_name="natprogs/lib.nat")
     print(n)
     n.repl()
 
 
 if __name__ == "__main__":
     # test_minlog()
-    n = Natlog(file_name="../natprogs/lib.nat")
+    n = Natlog(file_name="natprogs/lib.nat")
     # print(n)
     n.query('t6?')
     n.query('t5?')

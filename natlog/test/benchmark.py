@@ -50,7 +50,7 @@ def bm1():
 
 def bm():
     print('N-QUEENS STARTING:')
-    n = Natlog(file_name="natprogs/queens.nat")
+    n = Natlog(file_name=natprogs()+"queens.nat")
     time_of(n.count, "goal8 Queens?", times=9)
     time_of(n.count, "goal9 Queens?")
     time_of(n.count, "goal10 Queens?")
@@ -63,7 +63,7 @@ def prof():
     import cProfile
     p = cProfile.Profile()
 
-    n = Natlog(file_name="natprogs/queens.nat")
+    n = Natlog(file_name=natprogs()+"queens.nat")
 
     def fun():
         n.count('goal10 L?')

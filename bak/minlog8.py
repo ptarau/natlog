@@ -156,20 +156,20 @@ class MinLog:
 
 
 def test_minlog():
-    n = MinLog(file_name="../natprogs/tc.nat")
+    n = MinLog(file_name="../natlog/natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
 
     # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
-    n = MinLog(file_name="../natprogs/perm.nat")
+    n = MinLog(file_name="../natlog/natprogs/perm.nat")
     print(n)
     n.query("perm (1 (2 (3 ())))  X ?")
 
 
 def py_test():
-    nd = MinLog(file_name="../natprogs/py_call1.nat")
+    nd = MinLog(file_name="../natlog/natprogs/py_call1.nat")
     print('RULES')
     print(nd)
     nd.query("goal X?")

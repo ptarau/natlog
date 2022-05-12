@@ -14,7 +14,7 @@ def ppp(*args):
     st.write(*args)
 
 
-upload_dir = '../natprogs/'
+upload_dir = natprogs()
 
 suf = '.nat'
 
