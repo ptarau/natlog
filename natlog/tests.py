@@ -1,5 +1,7 @@
-from minlog import *
-from unify import *
+from .natlog import *
+from .unify import *
+
+NATPROGS="natprogs/"
 
 my_text = """
     app () Ys Ys. 
@@ -22,7 +24,7 @@ def test_generators():
   goal X : ``iter hello X, good X.
   goal X : ``range 1000 1005 X.
   """
-    n = MinLog(text=prog)
+    n = Natlog(text=prog)
     for answer in n.solve("goal R?"):
         print(answer)
 
@@ -35,7 +37,7 @@ def test_answer_stream():
   ins X Xs (X Xs).
   ins X (Y Xs) (Y Ys) : ins X Xs Ys.
   """
-    n = MinLog(text=prog)
+    n = Natlog(text=prog)
     for answer in n.solve("perm (a (b (c ()))) P?"):
         print(answer)
 
@@ -44,7 +46,7 @@ def yield_test():
     prog = """
     worm : ^o, worm.
   """
-    n = MinLog(text=prog)
+    n = Natlog(text=prog)
     for i, answer in enumerate(n.solve("worm ?")):
         print(answer[0], end='')
         if i > 42: break
@@ -53,7 +55,7 @@ def yield_test():
 
 # testing with string text
 def t1():
-    n = MinLog(text=my_text)
+    n = Natlog(text=my_text)
     n.query("nrev  (a (b (c (d ())))) R ?")
     n.query("goal 10 L?")
 
@@ -61,57 +63,57 @@ def t1():
 # testing with some .nat files
 
 def t2():
-    n = MinLog(file_name="../natprogs/tc.nat")
+    n = Natlog(file_name=NATPROGS+"tc.nat")
     print(n)
     n.query("tc Who is animal ?")
     # n.query("tc Who is What ?")
 
 
 def t4():
-    n = MinLog(file_name="../natprogs/perm.nat")
+    n = Natlog(file_name=NATPROGS+"perm.nat")
     n.query("perm (1 (2 (3 ()))) Ps?")
 
 
 def t3():
-    n = MinLog(file_name="../natprogs/arith.nat")
+    n = Natlog(file_name=NATPROGS+"arith.nat")
     print(n)
     n.query("goal R ?")
 
 
 # longer output: 8 queens
 def t5():
-    n = MinLog(file_name="../natprogs/queens.nat")
+    n = Natlog(file_name=NATPROGS+"queens.nat")
     print(n)
     n.query("goal8 Queens?")
 
 
 def t6():
-    n = MinLog(file_name="../natprogs/family.nat")
+    n = Natlog(file_name=NATPROGS+"family.nat")
     print(n)
     n.query("grand parent of 'Adam' GP ?")
 
 
 def t7():
-    n = MinLog(file_name="../natprogs/family.nat")
+    n = Natlog(file_name=NATPROGS+"family.nat")
     n.query("cousin of X B?")
 
 
 def fam_repl():
-    n = MinLog(file_name="../natprogs/family.nat", with_lib=LIB)
+    n = Natlog(file_name=NATPROGS+"family.nat", with_lib=LIB)
     print('Enter some queries!')
     n.repl()
 
 
 def loop():
-    n = MinLog(file_name="../natprogs/loop.nat")
+    n = Natlog(file_name=NATPROGS+"loop.nat")
     print(n)
     n.query("goal X?")
 
 
 def db_test():
-    nd = MinLog(
-        file_name="../natprogs/dbtc.nat",
-        db_name="../natprogs/Db.nat")
+    nd = Natlog(
+        file_name=NATPROGS+"dbtc.nat",
+        db_name=NATPROGS+"Db.nat")
     print('RULES')
     print(nd)
     print('DB FACTS')
@@ -122,7 +124,7 @@ def db_test():
 
 
 def ndb_test():
-    nd = NeuralMinLog(file_name="../natprogs/dbtc.nat", db_name="../natprogs/Db.nat")
+    nd = NeuralMinLog(file_name=NATPROGS+"dbtc.nat", db_name=NATPROGS+"Db.nat")
     print('RULES')
     print(nd)
     print('DB FACTS')
@@ -132,9 +134,9 @@ def ndb_test():
 
 
 def db_chem():
-    nd = MinLog(
-        file_name="../natprogs/elements.nat",
-        db_name="../natprogs/elements.tsv"
+    nd = Natlog(
+        file_name=NATPROGS+"elements.nat",
+        db_name=NATPROGS+"elements.tsv"
     )
     print('RULES')
     print(nd)
@@ -146,8 +148,8 @@ def db_chem():
 
 def ndb_chem():
     nd = NeuralMinLog(
-        file_name="../natprogs/elements.nat",
-        db_name="../natprogs/elements.tsv"
+        file_name=NATPROGS+"elements.nat",
+        db_name=NATPROGS+"elements.tsv"
     )
     print('RULES')
     print(nd)
@@ -157,14 +159,14 @@ def ndb_chem():
 
 
 def py_test():
-    nd = MinLog(file_name="../natprogs/py_call.nat")
+    nd = Natlog(file_name=NATPROGS+"py_call.nat")
     print('RULES')
     # print(nd)
     nd.query("goal X?")
 
 
 def py_test1():
-    nd = MinLog(file_name="../natprogs/py_call1.nat")
+    nd = Natlog(file_name=NATPROGS+"py_call1.nat")
     print('RULES')
     # print(nd)
     nd.query("goal X?")
@@ -230,7 +232,7 @@ def dtest():
 
 # Db from a .nat file
 def dtestf():
-    fname = '../natprogs/db.tsv'
+    fname = NATPROGS+'db.tsv'
     d = Db()
     d.load(fname)
     print(d)
@@ -240,7 +242,7 @@ def dtestf():
 
 # Db from a json file
 def dtestj():
-    fname = '../natprogs/db'
+    fname = NATPROGS+'db'
     jname = fname + '.json'
     nname = fname + '.nat'
     d = Db()
@@ -259,7 +261,7 @@ def bigdb():
     prog = """
        quest X Y : ~ (text_term (give X Y)) ?
     """
-    n = MinLog(text=prog, db_name='../natprogs/facts.nat')
+    n = Natlog(text=prog, db_name=NATPROGS+'facts.nat')
     #print(n)
     print('SIZE:', n.db.size(), 'LEN:', len(n.db.css[0]))
     # print(n.db.css[0])
@@ -268,7 +270,7 @@ def bigdb():
 
 
 def libtest():
-    n = MinLog(file_name='../natprogs/lib.nat')
+    n = Natlog(file_name=NATPROGS+'lib.nat')
     print(n)
     n.repl()
 

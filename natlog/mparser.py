@@ -1,7 +1,7 @@
 
 from operator import *
 
-from mscanner import Scanner
+from .mscanner import Scanner
 
 trace = 0
 

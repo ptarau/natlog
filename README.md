@@ -121,7 +121,7 @@ Who is What?
 
 ```
 
-### Neuro-symbolic tuple database
+### Neuro-symbolic tuple database NOT ADDED YET TO THIS VERSION
 
 As an extension to the nested tuple store the neuro-symbolic tuple database uses a machine learning algorithm instead of its indexer.Thus it offers the same interface as the tuple store that it extends. The learner is trained upon loading the database file (from a .nat,  .csv or .tsv file) and its inference mechanism is triggered when facts from the database are queried. The stream of tuples returned from the query is then filtered via unification (and possibly, more general integrity constraints, expressed via logic programming constructs).
 

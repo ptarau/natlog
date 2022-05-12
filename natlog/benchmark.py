@@ -1,6 +1,6 @@
 import timeit
 import sys
-from temp import *
+from natlog.natlog import *
 
 sys.setrecursionlimit(1 << 28)
 
@@ -33,7 +33,7 @@ my_text = """
 
 
 def bm1():
-    n = MinLog(text=my_text)
+    n = Natlog(text=my_text)
     print('NREV STARTING:')
     n.query("goal 10 L?")
     time_of(n.count, "goal 16 L?", times=512)
@@ -50,7 +50,7 @@ def bm1():
 
 def bm():
     print('N-QUEENS STARTING:')
-    n = MinLog(file_name="../natprogs/queens.nat")
+    n = Natlog(file_name="natprogs/queens.nat")
     time_of(n.count, "goal8 Queens?", times=9)
     time_of(n.count, "goal9 Queens?")
     time_of(n.count, "goal10 Queens?")
@@ -63,7 +63,7 @@ def prof():
     import cProfile
     p = cProfile.Profile()
 
-    n = MinLog(file_name="../natprogs/queens.nat")
+    n = Natlog(file_name="natprogs/queens.nat")
 
     def fun():
         n.count('goal10 L?')
@@ -73,8 +73,12 @@ def prof():
     p.print_stats(sort=1)
 
 
-if __name__ == "__main__":
-    pass
-    prof()
+def run_all():
     bm1()
     bm()
+    prof()
+
+if __name__ == "__main__":
+    run_all()
+
+

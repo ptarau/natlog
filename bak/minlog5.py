@@ -20,7 +20,6 @@ class Var:
         else:
             return repr(v)
 
-
 def deref(v):
     while isinstance(v, Var):
         if v.val is None:
@@ -37,13 +36,42 @@ def new_var(t, d):
     return v
 
 
-def activate(t, d):
-    if isinstance(t, VarNum):
-        return new_var(t, d)
-    elif not isinstance(t, tuple):
-        return t
-    else:
-        return tuple(activate(x, d) for x in t)
+class arity(int):
+    def __repr__(self):
+        return f'$({int(self)})'
+
+def to_postfix(term):
+    args = [term]
+    stack = []
+    while args:
+        t = args.pop()
+        if not isinstance(t, tuple):
+            stack.append(t)
+        else:
+            stack.append(arity(len(t)))
+            for x in reversed(t):
+                args.append(x)
+    return reversed(stack)
+
+def from_postfix(ws,d):
+    stack = []
+    for w in ws:
+        if not isinstance(w, arity):
+            stack.append(w)
+        else:
+            xs = []
+            for _ in range(w):
+                x = stack.pop()
+                if isinstance(x, VarNum):
+                    x= new_var(x, d)
+                xs.append(x)
+            stack.append(tuple(xs))
+    return stack.pop()
+
+
+def relocate(template, d):
+    ws=to_postfix(template)
+    return from_postfix(ws,d)
 
 
 def unify(x, y, trail, d):
@@ -62,18 +90,18 @@ def unify(x, y, trail, d):
         elif isinstance(x1, Var):
             x1.bind(x2, trail)
         elif isinstance(x2, Var):
-            x1 = activate(x1, d)
+            x1 = relocate(x1, d)
             x2.bind(x1, trail)
-        elif isinstance(x2, tuple) and isinstance(x1,tuple):
+        elif not isinstance(x2, tuple):
+            return False
+        else:  # assumed x1 is a tuple
             arity = len(x2)
             if len(x1) != arity:
                 return False
-            x1 = activate(x1, d)
+            x1 = relocate(x1, d)
             for i in range(arity - 1, -1, -1):
                 ustack.append(x2[i])
                 ustack.append(x1[i])
-        else:
-            return False
     return True
 
 
@@ -88,12 +116,12 @@ def interp(css, goal):
         def unfold(g, gs):
             for (h, bs) in css:
                 d = dict()
-                # h = activate(h, d)
+                # h = relocate(h, d)
                 if not unify(h, g, trail, d):
                     undo(trail)
                     continue  # FAILURE
                 else:
-                    bs1 = activate(bs, d)
+                    bs1 = relocate(bs, d)
                     bsgs = gs
                     for b1 in reversed(bs1):
                         bsgs = (b1, bsgs)
@@ -125,7 +153,7 @@ class MinLog:
          answer generator for given question
         """
         goal_cls = next(mparse(quest, ground=False, rule=False))
-        goal = activate(goal_cls, dict())
+        goal = relocate(goal_cls, dict())
         yield from interp(self.css, goal)
 
     def count(self, quest):
@@ -161,12 +189,42 @@ class MinLog:
         return " ".join(xs)
 
 
+def test_unify1():
+    x = Var()
+    print(deref(x))
+
+    v = Var()
+    u = Var()
+    u.bind(42, [])
+    v.bind(u, [])
+    print(x)
+    print(u)
+    print(deref(v))
+
+
+def test_unify():
+    X, Y, Z = Var(), Var(), Var()
+    f, g, a, b, c = tuple("fgabc")
+    t1 = (f, X, (g, a, Y), 10)
+    t2 = (f, b, (g, Z, c), 10)
+    trail = []
+
+    r = unify(t1, t2, trail, dict())
+    print('UNIF:', r)
+    print(t1)
+    print(t2)
+    print(trail)
+    t = (f, 0, (g, a, 1), 0)
+    d = dict()
+    print(relocate(t, d))
+
+
 def test_minlog():
     n = MinLog(file_name="../natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
     n = MinLog(file_name="../natprogs/perm.nat")

@@ -37,6 +37,7 @@ def interp(css, goals0, db=None):
         return bsgs  # SUCCESS
 
     def step(goals):
+        #print("STEP", goals)
 
         def dispatch_call(op, g, goals):
             """
@@ -75,35 +76,31 @@ def interp(css, goals0, db=None):
                 else:
                     yield from step(goals)
 
-            def eng(eg0):
-
-                x0, eg0, e = extractTerm(eg0)
+            def eng(xge):
+                x0, eg0, e = xge
                 (x, eg) = copy_term((x0, eg0))
-
-                runner = step((eg, ()))
-
-                #next(runner)
-
-                r = (x, runner)
-
-                if not unify(e, r, trail):
+                g = (eg, ())
+                runner=step(g)
+                r = ('$ENG', runner, x, g)
+                if not unify(e,r, trail):
                     undo(trail)
                 else:
+                    v=next(runner, None)
                     yield from step(goals)
 
-            def ask(eg):
-
-                eg = extractTerm(eg)
-
-                engine, answer = eg
-                x, e = engine
+            def ask(eng_answer):
+                #print('ASK ENG0:', eng_answer)
+                eng0, answer = eng_answer
+                code, e, x, g = eng0
+                assert code == '$ENG'
                 a = next(e, None)
 
-                if a is None:
+                if a is None and isinstance(x,Var):
                     r = 'no'
                 else:
                     x = copy_term(x)
                     r = ('the', x)
+
                 if not unify(answer, r, trail):
                     undo(trail)
                 else:
@@ -148,8 +145,8 @@ def interp(css, goals0, db=None):
             elif op == 'ask':
                 yield from ask(g)
             elif op == 'call':
-                cg = extractTerm(g)
-                yield from step((cg[0], goals))
+                # cg = extractTerm(g)
+                yield from step((g[0], goals))
             elif op == 'not':
                 if neg(g):
                     yield from step(goals)
@@ -278,7 +275,7 @@ def test_minlog():
     print(n)
     n.query("tc Who is animal ?")
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
     n = MinLog(file_name="../natprogs/perm.nat")
@@ -295,7 +292,7 @@ def test_minlog():
     n.query("cousin of X C, male C?")
     # n.repl()
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
 
     # print(n.count("goal8  X ?"))
 
@@ -310,4 +307,4 @@ if __name__ == "__main__":
     # print(n)
     n.query('t6?')
     n.query('t5?')
-    # n.repl()
+    n.repl()

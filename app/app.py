@@ -1,13 +1,13 @@
 import os
 
 import streamlit as st
-from minlog import *
+from natlog.natlog import *
 
 print('streamlit :-)')
 
 st.set_page_config(layout="wide")
 
-st.title('Streamlit-based MinLog Client')
+st.title('Streamlit-based NatLog Client')
 
 
 def ppp(*args):
@@ -61,7 +61,7 @@ with st.sidebar:
 
 def do_query():
     if fname is not None:
-        nat = MinLog(file_name=fname)
+        nat = Natlog(file_name=fname)
         #print(nat)
     else:
         return

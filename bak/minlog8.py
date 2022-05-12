@@ -160,7 +160,7 @@ def test_minlog():
     print(n)
     n.query("tc Who is animal ?")
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
     n = MinLog(file_name="../natprogs/perm.nat")

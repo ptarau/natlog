@@ -2,8 +2,8 @@ from collections import defaultdict
 import json
 import csv
 
-from unify import unify, activate, path_of
-from mparser import mparse
+from .unify import unify, activate, path_of
+from .mparser import mparse
 
 
 def make_index():
@@ -171,7 +171,7 @@ def about_facts():
        quest X Y : ~ (text_term (give X Y)) ?
     """
     db = Db()
-    db_name = '../natprogs/facts.nat'
+    db_name = 'natprogs/facts.nat'
     db.load(db_name)
 
     print('SIZE:', db.size(), 'LEN:', len(db.css[0]))

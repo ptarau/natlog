@@ -1,0 +1,7 @@
+include ./natprogs/*.nat
+include ./natprogs/*.json
+include ./natprogs/*.pro
+include ./natprogs/*.tsv
+include ./bak/*.py
+include ./tests.py
+include ./bm.py

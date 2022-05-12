@@ -20,6 +20,7 @@ class Var:
         else:
             return repr(v)
 
+
 def deref(v):
     while isinstance(v, Var):
         if v.val is None:
@@ -28,17 +29,29 @@ def deref(v):
     return v
 
 
-def new_var(t, d):
-    v = d.get(t, None)
-    if v is None:
-        v = Var()
-        d[t] = v
-    return v
+def unify(x, y, trail):
+    ustack = []
+    ustack.append(y)
+    ustack.append(x)
+    while ustack:
+        x1 = deref(ustack.pop())
+        x2 = deref(ustack.pop())
+        if x1 == x2: continue
+        if isinstance(x1, Var):
+            x1.bind(x2, trail)
+        elif isinstance(x2, Var):
+            x2.bind(x1, trail)
+        elif not (isinstance(x1, tuple) and isinstance(x2, tuple)):
+            return False
+        else:  # assumed x1,x2 is a tuple
+            arity = len(x1)
+            if len(x2) != arity:
+                return False
+            for i in range(arity - 1, -1, -1):
+                ustack.append(x2[i])
+                ustack.append(x1[i])
+    return True
 
-
-class arity(int):
-    def __repr__(self):
-        return f'$({int(self)})'
 
 def activate(t, d):
     if isinstance(t, VarNum):
@@ -53,37 +66,6 @@ def activate(t, d):
         return tuple(activate(x, d) for x in t)
 
 
-def unify(x, y, trail, d):
-    ustack = []
-    ustack.append(y)
-    ustack.append(x)
-    while ustack:
-        x1 = deref(ustack.pop())
-        x2 = deref(ustack.pop())
-
-        if isinstance(x1, VarNum):
-            x1 = new_var(x1, d)
-            x1.bind(x2, trail)
-        elif x1 == x2:
-            continue
-        elif isinstance(x1, Var):
-            x1.bind(x2, trail)
-        elif isinstance(x2, Var):
-            x1 = activate(x1, d)
-            x2.bind(x1, trail)
-        elif not (isinstance(x2, tuple) and isinstance(x1,tuple)):
-            return False
-        else:  # assumed x1 is a tuple
-            arity = len(x2)
-            if len(x1) != arity:
-                return False
-            x1 = activate(x1, d)
-            for i in range(arity - 1, -1, -1):
-                ustack.append(x2[i])
-                ustack.append(x1[i])
-    return True
-
-
 def interp(css, goal):
     def step(goals):
 
@@ -95,8 +77,8 @@ def interp(css, goal):
         def unfold(g, gs):
             for (h, bs) in css:
                 d = dict()
-                # h = activate(h, d)
-                if not unify(h, g, trail, d):
+                h = activate(h, d)
+                if not unify(h, g, trail):
                     undo(trail)
                     continue  # FAILURE
                 else:
@@ -106,16 +88,16 @@ def interp(css, goal):
                         bsgs = (b1, bsgs)
                     yield bsgs  # SUCCESS
 
+        trail = []
         if goals == ():
             yield goal
         else:
-            trail = []
             g, gs = goals
             for newgoals in unfold(g, gs):
                 yield from step(newgoals)
                 undo(trail)
 
-    yield from step((goal))
+    yield from step(goal)
 
 
 class MinLog:
@@ -168,49 +150,22 @@ class MinLog:
         return " ".join(xs)
 
 
-def test_unify1():
-    x = Var()
-    print(deref(x))
-
-    v = Var()
-    u = Var()
-    u.bind(42, [])
-    v.bind(u, [])
-    print(x)
-    print(u)
-    print(deref(v))
-
-
-def test_unify():
-    X, Y, Z = Var(), Var(), Var()
-    f, g, a, b, c = tuple("fgabc")
-    t1 = (f, X, (g, a, Y), 10)
-    t2 = (f, b, (g, Z, c), 10)
-    trail = []
-
-    r = unify(t1, t2, trail, dict())
-    print('UNIF:', r)
-    print(t1)
-    print(t2)
-    print(trail)
-    t = (f, 0, (g, a, 1), 0)
-    d = dict()
-    print(activate(t, d))
-
-
 def test_minlog():
     n = MinLog(file_name="../natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
     n = MinLog(file_name="../natprogs/perm.nat")
     print(n)
     n.query("perm (1 (2 (3 ())))  X ?")
 
+    n = MinLog(file_name="../natprogs/family.nat")
+    print(n)
+    n.query('mother of X M?')
 
 if __name__ == "__main__":
-    # test_unify()
     test_minlog()
+

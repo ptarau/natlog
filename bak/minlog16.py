@@ -23,19 +23,6 @@ def interp(css, goals0, db=None):
         while trail:
             trail.pop().unbind()
 
-    def unfold1(g, gs, h, bs, trail):
-        d = dict()
-        if not lazy_unify(h, g, trail, d):
-            undo(trail)
-            return None  # FAILURE
-
-        # NOT TO BE CHANGED !!!
-        bsgs = gs
-        for b in reversed(bs):
-            b = activate(b, d)
-            bsgs = (b, bsgs)
-        return bsgs  # SUCCESS
-
     def step(goals):
 
         def dispatch_call(op, g, goals):
@@ -88,7 +75,7 @@ def interp(css, goals0, db=None):
                     r = from_python(r)
                     if unify(v, r, trail):
                         yield from step(goals)
-                        undo(trail)
+                    undo(trail)
 
             def neg(g):
                 """
@@ -118,6 +105,19 @@ def interp(css, goals0, db=None):
                 yield from step(goals)
             undo(trail)
 
+        def unfold1(g, gs, h, bs):
+            d = dict()
+            if not lazy_unify(h, g, trail, d):
+                undo(trail)
+                return None  # FAILURE
+            else:
+                # NOT TO BE CHANGED !!!
+                bsgs = gs
+                for b in reversed(bs):
+                    b = activate(b, d)
+                    bsgs = (b, bsgs)
+                return bsgs  # SUCCESS
+
         trail = []
         if goals == ():
             yield extractTerm(goals0)
@@ -130,7 +130,7 @@ def interp(css, goals0, db=None):
                 yield from dispatch_call(op, g, goals)
             else:
                 for (h, bs) in css:
-                    bsgs = unfold1(g, goals, h, bs, trail)
+                    bsgs = unfold1(g, goals, h, bs)
                     if bsgs is not None:
                         yield from step(bsgs)
                         undo(trail)
@@ -207,7 +207,7 @@ class MinLog:
             if not q: return
             self.query(q)
 
-    # shows tuples of Natlog rule base
+    # shows tuples of Nalog rule base
     def __repr__(self):
         xs = [str(cs) + '\n' for cs in self.css]
         return " ".join(xs)
@@ -226,7 +226,7 @@ def test_minlog():
     print(n)
     n.query("tc Who is animal ?")
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
     n = MinLog(file_name="../natprogs/perm.nat")
@@ -236,7 +236,6 @@ def test_minlog():
     n = MinLog(file_name="../natprogs/py_call.nat")
     # print(n)
     n.query("goal X?")
-    #n.repl()
 
     n = MinLog(file_name="../natprogs/family.nat")
     # print(n)
@@ -246,10 +245,6 @@ def test_minlog():
     n = MinLog(file_name="../natprogs/queens.nat")
 
     print(n.count("goal8  X ?"))
-
-    n = MinLog(file_name="../natprogs/lib.nat")
-    print(n)
-    n.repl()
 
 
 if __name__ == "__main__":

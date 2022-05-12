@@ -19,24 +19,11 @@ def const(x):
 
 
 def interp(css, goals0, db=None):
-    def undo(trail):
-        while trail:
-            trail.pop().unbind()
-
-    def unfold1(g, gs, h, bs, trail):
-        d = dict()
-        if not lazy_unify(h, g, trail, d):
-            undo(trail)
-            return None  # FAILURE
-
-        # NOT TO BE CHANGED !!!
-        bsgs = gs
-        for b in reversed(bs):
-            b = activate(b, d)
-            bsgs = (b, bsgs)
-        return bsgs  # SUCCESS
-
     def step(goals):
+
+        def undo():
+            while trail:
+                trail.pop().unbind()
 
         def dispatch_call(op, g, goals):
             """
@@ -44,13 +31,13 @@ def interp(css, goals0, db=None):
             """
 
             # yields facts matching g in Db
-            def db_call(g):
+            def db_call(g, goals):
                 for ok in db.unify_with_fact(g, trail):
                     if not ok:  # FAILURE
-                        undo(trail)
+                        undo()
                         continue
                     yield from step(goals)  # SUCCESS
-                    undo(trail)
+                    undo()
 
             def python_call(g):
                 """
@@ -60,7 +47,7 @@ def interp(css, goals0, db=None):
                 args = to_python(g[1:])
                 f(*args)
 
-            def python_fun(g):
+            def python_fun(g, goals):
                 """
                 function call to Python, last arg unified with result
                 """
@@ -71,11 +58,11 @@ def interp(css, goals0, db=None):
                 r = f(*args)
                 r = from_python(r)
                 if not unify(v, r, trail):
-                    undo(trail)
+                    undo()
                 else:
                     yield from step(goals)
 
-            def gen_call(g):
+            def gen_call(g, goals):
                 """
                   unifies with last arg yield from a generator
                   and first args, assumed ground, passed to it
@@ -88,7 +75,7 @@ def interp(css, goals0, db=None):
                     r = from_python(r)
                     if unify(v, r, trail):
                         yield from step(goals)
-                        undo(trail)
+                    undo()
 
             def neg(g):
                 """
@@ -101,55 +88,55 @@ def interp(css, goals0, db=None):
                     return True
                 return False
 
-            def if_op(g):
-                cond, yes, no = g
-                cond = extractTerm(cond)
-                if next(step((cond[0], ())), None) is not None:
-                    yield from step((yes, goals))
-                else:
-                    yield from step((no, goals))
-
-            if op == 'call':
-                cg = extractTerm(g)
-                yield from step((cg[0], goals))
-            elif op == 'not':
+            if op == 'not':
                 if neg(g):
                     yield from step(goals)
-            elif op == 'if':
-                yield from if_op(g)
-
             elif op == '~':  # matches against database of facts
-                yield from db_call(g)
+                yield from db_call(g, goals)
             elif op == '^':  # yield g as an answer directly
                 yield g
                 yield from step(goals)
             elif op == '`':  # function call, last arg unified
-                yield from python_fun(g)
+                yield from python_fun(g, goals)
             elif op == "``":  # generator call, last arg unified
-                yield from gen_call(g)
+                yield from gen_call(g, goals)
             else:  # op == '#',  simple call, no return
                 python_call(g)
                 yield from step(goals)
-            undo(trail)
+            undo()
+
+        def unfold1(g, gs, h, bs):
+            d = dict()
+            if not lazy_unify(h, g, trail, d):
+                undo()
+                return None  # FAILURE
+            else:
+                # NOT TO BE CHANGED !!!
+                bsgs = gs
+                for b in reversed(bs):
+                    b = activate(b, d)
+                    bsgs = (b, bsgs)
+                return bsgs  # SUCCESS
 
         trail = []
+        todo=[]
+
         if goals == ():
             yield extractTerm(goals0)
-            undo(trail)
         else:
             g, goals = goals
-            op = g[0] if g else None
-            if op in {"not", "call", "~", "`", "``", "^", "#", "if"}:
+            op = g[0]
+            if op in {"not", "~", "`", "``", "^", "#"}:
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals)
             else:
                 for (h, bs) in css:
-                    bsgs = unfold1(g, goals, h, bs, trail)
+                    bsgs = unfold1(g, goals, h, bs)
                     if bsgs is not None:
-                        yield from step(bsgs)
-                        undo(trail)
+                       yield from step(bsgs)
+                       undo()
 
-    yield from step(goals0)  # assumed activated
+    yield from step(goals0)  # assumed actvated
 
 
 class MinLog:
@@ -221,7 +208,7 @@ class MinLog:
             if not q: return
             self.query(q)
 
-    # shows tuples of Natlog rule base
+    # shows tuples of Nalog rule base
     def __repr__(self):
         xs = [str(cs) + '\n' for cs in self.css]
         return " ".join(xs)
@@ -240,7 +227,7 @@ def test_minlog():
     print(n)
     n.query("tc Who is animal ?")
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
     n = MinLog(file_name="../natprogs/perm.nat")
@@ -250,24 +237,14 @@ def test_minlog():
     n = MinLog(file_name="../natprogs/py_call.nat")
     # print(n)
     n.query("goal X?")
-    # n.repl()
 
     n = MinLog(file_name="../natprogs/family.nat")
     # print(n)
     n.query("cousin of X C, male C?")
-    # n.repl()
+    n.repl()
 
-    #n = MinLog(file_name="../natprogs/queens.nat")
-
-    #print(n.count("goal8  X ?"))
-
-    n = MinLog(file_name="../natprogs/lib.nat")
-    print(n)
     n.repl()
 
 
 if __name__ == "__main__":
-    #test_minlog()
-    n = MinLog(file_name="../natprogs/lib.nat")
-    print(n)
-    n.repl()
+    test_minlog()

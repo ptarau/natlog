@@ -1,4 +1,4 @@
-from mscanner import VarNum
+from .mscanner import VarNum
 
 
 class Var:
@@ -248,7 +248,7 @@ def path_of(t):
 def list2tuple(ls):
     #print('!!! LS=',ls)
     def scan(xs):
-      while xs is not () and isinstance(xs,tuple):
+      while xs != () and isinstance(xs,tuple):
         x,xs=xs
         yield x
     if not isinstance(ls,tuple):

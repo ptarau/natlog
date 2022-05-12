@@ -1,8 +1,8 @@
 from math import *
 
-from mparser import *
-from unify import *  # unify, lazy_unify, activate, extractTerm
-from db import Db
+from .mparser import *
+from .unify import *  # unify, lazy_unify, activate, extractTerm
+from .db import Db
 
 
 def to_python(x):
@@ -85,7 +85,7 @@ def interp(css, goals0, db=None):
                 if not unify(e,r, trail):
                     undo(trail)
                 else:
-                    v=next(runner, None)
+                    _ = next(runner, None)
                     yield from step(goals)
 
             def ask(eng_answer):
@@ -187,13 +187,20 @@ def interp(css, goals0, db=None):
     yield from step(goals0)  # assumed activated
 
 
-class MinLog:
-    def __init__(self, text=None, file_name=None, db_name=None):
+LIB='../natprogs/lib.nat'
+
+class Natlog:
+    def __init__(self, text=None, file_name=None, db_name=None, with_lib=None):
         if file_name:
             with open(file_name, 'r') as f:
                 self.text = f.read()
         else:
             self.text = text
+
+        if with_lib:
+            with open(with_lib, 'r') as f:
+                lib = f.read()
+            self.text=self.text + '\n'+ lib
 
         css, ixss = zip(*parse(self.text, ground=False, rule=True))
 
@@ -242,8 +249,12 @@ class MinLog:
         show answers for given query
         """
         print('QUERY:', quest)
+        success=False
         for answer in self.solve(quest):
+            success=True
             print('ANSWER:', answer)
+        if not success:
+            print('No ANSWER!')
         print('')
 
     def repl(self):
@@ -254,7 +265,10 @@ class MinLog:
         while True:
             q = input('?- ')
             if not q: return
-            self.query(q)
+            try:
+              self.query(q)
+            except Exception as e:
+              print('EXCEPTION:',type(e).__name__,e.args)
 
     # shows tuples of Natlog rule base
     def __repr__(self):
@@ -271,39 +285,39 @@ def numlist(n, m):
 # tests
 
 def test_minlog():
-    n = MinLog(file_name="../natprogs/tc.nat")
+    n = Natlog(file_name="../natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
     # n.query("goal8 Queens?")
 
-    n = MinLog(file_name="../natprogs/perm.nat")
+    n = Natlog(file_name="../natprogs/perm.nat")
     # print(n)
     n.query("perm (1 (2 (3 ())))  X ?")
 
-    n = MinLog(file_name="../natprogs/py_call.nat")
+    n = Natlog(file_name="../natprogs/py_call.nat")
     # print(n)
     n.query("goal X?")
     # n.repl()
 
-    n = MinLog(file_name="../natprogs/family.nat")
+    n = Natlog(file_name="../natprogs/family.nat")
     # print(n)
     n.query("cousin of X C, male C?")
     # n.repl()
 
-    # n = MinLog(file_name="../natprogs/queens.nat")
+    # n = Natlog(file_name="../natprogs/queens.nat")
 
     # print(n.count("goal8  X ?"))
 
-    n = MinLog(file_name="../natprogs/lib.nat")
+    n = Natlog(file_name="../natprogs/lib.nat")
     print(n)
     n.repl()
 
 
 if __name__ == "__main__":
     # test_minlog()
-    n = MinLog(file_name="../natprogs/lib.nat")
+    n = Natlog(file_name="../natprogs/lib.nat")
     # print(n)
     n.query('t6?')
     n.query('t5?')
