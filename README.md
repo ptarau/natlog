@@ -1,4 +1,4 @@
-## A lightweight Prolog-like interpreter with a natural-language style syntax and neuro-symbolic tuple database interface
+## A lightweight Prolog-like interpreter with a natural-language style syntax and deeply indexed tuple database interface
 
 We closely follow Einstein's *"Everything should be made as simple as possible, but no simpler."*
 
@@ -121,81 +121,3 @@ Who is What?
 
 ```
 
-### Neuro-symbolic tuple database NOT ADDED YET TO THIS VERSION
-
-As an extension to the nested tuple store the neuro-symbolic tuple database uses a machine learning algorithm instead of its indexer.Thus it offers the same interface as the tuple store that it extends. The learner is trained upon loading the database file (from a .nat,  .csv or .tsv file) and its inference mechanism is triggered when facts from the database are queried. The stream of tuples returned from the query is then filtered via unification (and possibly, more general integrity constraints, expressed via logic programming constructs).
-
-#### Example of usage (see more at https://github.com/ptarau/pypro/blob/master/tests.py )
-```
-def ndb_test() :
-  nd = neural_natlog(file_name="natprogs/dbtc.nat",db_name="natprogs/db.nat")
-  print('RULES')
-  print(nd)
-  print('DB FACTS')
-  print(nd.db)
-  nd.query("tc Who is_a animal ?")
-```
-The output will show the ```X``` and ```y``` numpy arrays used to fit the sklearn learner and then the logic program's rules and the facts from which the arrays were extracted when the facts were loaded.
-
-```
-X:
- [[1 0 0 0 0 0 0 0 0 0 0 0]
- [0 1 0 0 0 0 0 0 0 0 0 0]
- [0 0 1 0 0 0 0 0 0 0 0 0]
- [0 0 0 1 0 0 0 0 0 0 0 0]
- [0 0 0 0 1 0 0 0 0 0 0 0]
- [0 0 0 0 0 1 0 0 0 0 0 0]
- [0 0 0 0 0 0 1 0 0 0 0 0]
- [0 0 0 0 0 0 0 1 0 0 0 0]
- [0 0 0 0 0 0 0 0 1 0 0 0]
- [0 0 0 0 0 0 0 0 0 1 0 0]
- [0 0 0 0 0 0 0 0 0 0 1 0]
- [0 0 0 0 0 0 0 0 0 0 0 1]]
-
-y:
- [[1 0 1 0 0 0 0 0 0 0]
- [1 1 1 1 1 1 1 1 1 1]
- [1 0 0 0 0 0 0 0 0 0]
- [0 1 0 1 0 0 0 0 0 0]
- [0 1 0 0 0 0 0 0 0 0]
- [0 0 1 1 0 1 0 0 0 0]
- [0 0 0 0 1 0 0 0 0 0]
- [0 0 0 0 1 0 1 0 0 0]
- [0 0 0 0 0 1 1 0 0 1]
- [0 0 0 0 0 0 0 1 1 1]
- [0 0 0 0 0 0 0 1 0 0]
- [0 0 0 0 0 0 0 0 1 0]] 
-
-RULES
-(('cat', 'is_a', 'feline'), ())
-((0, 'is_a', 1), (('~', 0, 'is', 1),))
-(('tc', 0, 1, 2), ((0, 1, 3), ('tc1', 3, 1, 2)))
-(('tc1', 0, 1, 0), ())
-(('tc1', 0, 1, 2), (('tc', 0, 1, 2),))
-
-DB FACTS
-(0, ('tiger', 'is', 'feline'))
-(1, ('mouse', 'is', 'rodent'))
-(2, ('feline', 'is', 'mammal'))
-(3, ('rodent', 'is', 'mammal'))
-(4, ('snake', 'is', 'reptile'))
-(5, ('mammal', 'is', 'animal'))
-(6, ('reptile', 'is', 'animal'))
-(7, ('bee', 'is', 'insect'))
-(8, ('ant', 'is', 'insect'))
-(9, ('insect', 'is', 'animal'))
-
-GOAL PARSED: (('tc', 0, 'is_a', 'animal'),)
-ANSWER: ('tc', 'cat', 'is_a', 'animal')
-ANSWER: ('tc', 'tiger', 'is_a', 'animal')
-ANSWER: ('tc', 'mouse', 'is_a', 'animal')
-ANSWER: ('tc', 'feline', 'is_a', 'animal')
-ANSWER: ('tc', 'rodent', 'is_a', 'animal')
-ANSWER: ('tc', 'snake', 'is_a', 'animal')
-ANSWER: ('tc', 'mammal', 'is_a', 'animal')
-ANSWER: ('tc', 'reptile', 'is_a', 'animal')
-ANSWER: ('tc', 'bee', 'is_a', 'animal')
-ANSWER: ('tc', 'ant', 'is_a', 'animal')
-ANSWER: ('tc', 'insect', 'is_a', 'animal')
-
-```

@@ -2,6 +2,6 @@ include ./natlog/natprogs/*.nat
 include ./natlog/natprogs/*.json
 include ./natlog/natprogs/*.pro
 include ./natlog/natprogs/*.tsv
-include ./bak/*.py
 include ./natlog/test/*.py
+include ./bak/*.py
 include ./bin/*.py
