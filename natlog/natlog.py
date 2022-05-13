@@ -35,12 +35,10 @@ def interp(css, goals0, db=None):
             undo(trail)
             return None  # FAILURE
 
-        # NOT TO BE CHANGED !!!
-        bsgs = gs
         for b in reversed(bs):
             b = activate(b, d)
-            bsgs = (b, bsgs)
-        return bsgs  # SUCCESS
+            gs = (b, gs)
+        return gs  # SUCCESS
 
     def step(goals):
         #print("STEP", goals)
