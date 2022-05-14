@@ -30,26 +30,33 @@ tc A Rel B : A Rel B.
 tc A Rel C : A Rel B, tc B Rel C.
 ```
 
+After 
+
+```pip3 install -U natlog```
+
+
+
 To query it, try:
 
-``` python3 -i natlog.py
+``` python3 -i
 
->>> n=natlog(file_name="natprogs/tc.nat")
+>>> from natlog import Natlog, natprogs
+>>> n=Natlog(file_name=natprogs()+"tc.nat")
 >>> n.query("tc Who is animal ?")
 ```
 
-It will return the transitive closure of the ```is``` relation.
+It will return answers based on the the transitive closure of the ```is``` relation.
 
 ```
-GOAL PARSED: (('tc', 0, 'is', 'animal'),)
-ANSWER: ('tc', 'cat', 'is', 'animal')
-ANSWER: ('tc', 'tiger', 'is', 'animal')
-ANSWER: ('tc', 'mouse', 'is', 'animal')
-ANSWER: ('tc', 'feline', 'is', 'animal')
-ANSWER: ('tc', 'rodent', 'is', 'animal')
-ANSWER: ('tc', 'snake', 'is', 'animal')
-ANSWER: ('tc', 'mammal', 'is', 'animal')
-ANSWER: ('tc', 'reptile', 'is', 'animal')
+QUERY: tc Who is animal ?
+ANSWER: {'Who': 'cat'}
+ANSWER: {'Who': 'tiger'}
+ANSWER: {'Who': 'mouse'}
+ANSWER: {'Who': 'feline'}
+ANSWER: {'Who': 'rodent'}
+ANSWER: {'Who': 'snake'}
+ANSWER: {'Who': 'mammal'}
+ANSWER: {'Who': 'reptile'}
 ```
 
 List processing is also supported as in:
@@ -84,40 +91,35 @@ for a match.
 
 To try it out, do:
 
-```python3 -i tests.py```
+```python3 -i ```
 
-`````>>> dtest()`````
+```
+>>> from natlog.test.tests import *
+>>> dtest()
+
+```
 
 It gives, after digesting a text and then querying it:
 
 ```
-   John has (a car).
-   Mary has (a bike).
-   Mary is (a student).
-   John is (a pilot).
-   
-('John', 'has', ('a', 'car'))
-('Mary', 'has', ('a', 'bike'))
-('Mary', 'is', ('a', 'student'))
-('John', 'is', ('a', 'pilot'))
-
-
-Who has (a What)?
+QUERY: Who has (a What)?
 --> ('John', 'has', ('a', 'car'))
 --> ('Mary', 'has', ('a', 'bike'))
 
-Who is (a pilot)?
+QUERY: Who is (a pilot)?
 --> ('John', 'is', ('a', 'pilot'))
 
-'Mary' is What?
+QUERY: 'Mary' is What?
 --> ('Mary', 'is', ('a', 'student'))
 
-'John' is (a What)?
+QUERY: 'John' is (a What)?
 --> ('John', 'is', ('a', 'pilot'))
 
-Who is What?
+QUERY: Who is What?
 --> ('Mary', 'is', ('a', 'student'))
 --> ('John', 'is', ('a', 'pilot'))
-
 ```
+
+Take a look at https://github.com/ptarau/minlog/blob/main/natlog/doc/natlog.pdf
+for more examples of uses, including some features of older version ```0.4.3``` not yet ported to this version.
 
