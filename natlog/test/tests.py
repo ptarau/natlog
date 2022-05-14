@@ -114,7 +114,7 @@ def loop():
 def db_test():
     nd = Natlog(
         file_name=NATPROGS+"dbtc.nat",
-        db_name=NATPROGS+"Db.nat")
+        db_name=NATPROGS+"db.nat")
     print('RULES')
     print(nd)
     print('DB FACTS')

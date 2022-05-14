@@ -1,4 +1,5 @@
 from setuptools import setup
+import setuptools
 
 import natlog
 
@@ -15,17 +16,19 @@ setup(name='natlog',
       long_description_content_type='text/markdown',
       url='https://github.com/ptarau/minlog.git',
       author='Paul Tarau',
-      author_USER_EMAIL='<paul.tarau@gmail.com>',
+      author_email='paul.tarau@gmail.com',
       license='Apache',
-      packages=['natlog', 'natlog.test'],
-      #scripts=['bin/*.py'],
-      package_data={'natprogs': ['natlog/natprogs/*.nat',
-                                 'natlog/natprogs/*.tsv',
-                                 'natlog/natprogs/*.pro',
-                                 'natlog/natprogs/*.json'
-                                 ]
+      packages=setuptools.find_packages(),
+      package_data={'natlog': [
+                               'natprogs/*.nat',
+                               'natprogs/*.tsv',
+                               'natprogs/*.pro',
+                               'natprogs/*.json',
+                               'doc/*.pdf',
+                               ]
                     },
       include_package_data=True,
+      # scripts=['bin/*'],
       install_requires=required,
       zip_safe=False
       )

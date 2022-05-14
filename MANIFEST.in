@@ -5,3 +5,4 @@ include ./natlog/natprogs/*.tsv
 include ./natlog/test/*.py
 include ./bak/*.py
 include ./bin/*.py
+include ./natlog/doc/*.pdf
