@@ -1,9 +1,10 @@
 import os
 
 import streamlit as st
+
 from natlog.natlog import *
 
-print('streamlit :-)')
+print('Running Natlog as a streamlit app!')
 
 st.set_page_config(layout="wide")
 
@@ -22,7 +23,7 @@ suf = '.nat'
 def handle_uploaded(uploaded_file):
     if uploaded_file is not None:
         fname = save_uploaded_file(uploaded_file)
-        suf0 = '.'+fname.split('.')[-1]
+        suf0 = '.' + fname.split('.')[-1]
         if suf0 == suf:
             return fname
         else:
@@ -50,9 +51,8 @@ def exists_file(fname):
     return os.path.exists(fname)
 
 
-fname=handle_uploaded(st.sidebar.file_uploader('Select a File', type=[suf]))
-print(f'fname{fname}:')
-
+fname = handle_uploaded(st.sidebar.file_uploader('Select a File', type=[suf]))
+print(f'fname={fname}:')
 
 with st.sidebar:
     question = st.text_area('Query?')
@@ -61,10 +61,16 @@ with st.sidebar:
 
 def do_query():
     if fname is not None:
-        nat = Natlog(file_name=fname)
-        #print(nat)
+        lib = natprogs() + "lib.nat"
+        if fname != lib:
+            with_lib=lib
+        else:
+            with_lib=None
+        nat = Natlog(file_name=fname, with_lib=lib)
+
     else:
-        return
+        print('running with lib.nat')
+        nat = Natlog(file_name=natprogs() + "lib.nat")
 
     ppp('?- ' + question)
 
@@ -79,3 +85,5 @@ def do_query():
 
 if query_it:
     do_query()
+else:
+    st.write('Please upload a .nat file, then query it!')

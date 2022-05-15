@@ -98,6 +98,14 @@ def t7():
     n = Natlog(file_name=NATPROGS+"family.nat")
     n.query("cousin of X B?")
 
+def t8() :
+    n = Natlog(file_name=NATPROGS + "lib.nat")
+    n.query('`numlist 1 5 Xs, findall X (member X Xs) Ys.')
+    #n.repl()
+
+def t9():
+    n = Natlog(file_name=NATPROGS + "pro.nat")
+    n.repl()
 
 def fam_repl():
     n = Natlog(file_name=NATPROGS+"family.nat", with_lib=LIB)

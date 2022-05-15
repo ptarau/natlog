@@ -1,1 +1,1 @@
-streamlit run app.py
+streamlit run ../natlog/app/natapp.py

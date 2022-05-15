@@ -5,11 +5,14 @@ from .mparser import *
 from .unify import *  # unify, lazy_unify, activate, extractTerm
 from .db import Db
 
+
 def my_path():
-    return str(Path(__file__).parent)+"/"
+    return str(Path(__file__).parent) + "/"
+
 
 def natprogs():
-    return my_path()+'natprogs/'
+    return my_path() + 'natprogs/'
+
 
 def to_python(x):
     return x
@@ -41,7 +44,7 @@ def interp(css, goals0, db=None):
         return gs  # SUCCESS
 
     def step(goals):
-        #print("STEP", goals)
+        # print("STEP", goals)
 
         def dispatch_call(op, g, goals):
             """
@@ -84,22 +87,22 @@ def interp(css, goals0, db=None):
                 x0, eg0, e = xge
                 (x, eg) = copy_term((x0, eg0))
                 g = (eg, ())
-                runner=step(g)
+                runner = step(g)
                 r = ('$ENG', runner, x, g)
-                if not unify(e,r, trail):
+                if not unify(e, r, trail):
                     undo(trail)
                 else:
                     _ = next(runner, None)
                     yield from step(goals)
 
             def ask(eng_answer):
-                #print('ASK ENG0:', eng_answer)
+                # print('ASK ENG0:', eng_answer)
                 eng0, answer = eng_answer
                 code, e, x, g = eng0
                 assert code == '$ENG'
                 a = next(e, None)
 
-                if a is None and isinstance(x,Var):
+                if a is None and isinstance(x, Var):
                     r = 'no'
                 else:
                     x = copy_term(x)
@@ -191,7 +194,8 @@ def interp(css, goals0, db=None):
     yield from step(goals0)  # assumed activated
 
 
-LIB='../natprogs/lib.nat'
+LIB = '../natprogs/lib.nat'
+
 
 class Natlog:
     def __init__(self, text=None, file_name=None, db_name=None, with_lib=None):
@@ -204,7 +208,7 @@ class Natlog:
         if with_lib:
             with open(with_lib, 'r') as f:
                 lib = f.read()
-            self.text=self.text + '\n'+ lib
+            self.text = self.text + '\n' + lib
 
         css, ixss = zip(*parse(self.text, ground=False, rule=True))
 
@@ -253,9 +257,9 @@ class Natlog:
         show answers for given query
         """
         print('QUERY:', quest)
-        success=False
+        success = False
         for answer in self.solve(quest):
-            success=True
+            success = True
             print('ANSWER:', answer)
         if not success:
             print('No ANSWER!')
@@ -270,9 +274,9 @@ class Natlog:
             q = input('?- ')
             if not q: return
             try:
-              self.query(q)
+                self.query(q)
             except Exception as e:
-              print('EXCEPTION:',type(e).__name__,e.args)
+                print('EXCEPTION:', type(e).__name__, e.args)
 
     # shows tuples of Natlog rule base
     def __repr__(self):
@@ -286,9 +290,14 @@ def numlist(n, m):
     return to_goal(range(n, m))
 
 
+def consult(natfile=natprogs()+'family.nat'):
+    n = Natlog(file_name=natfile, with_lib=natprogs() + 'lib.nat')
+    n.repl()
+
+
 # tests
 
-def test_minlog():
+def test_natlog():
     n = Natlog(file_name="natprogs/tc.nat")
     print(n)
     n.query("tc Who is animal ?")
@@ -319,10 +328,3 @@ def test_minlog():
     n.repl()
 
 
-if __name__ == "__main__":
-    # test_minlog()
-    n = Natlog(file_name="natprogs/lib.nat")
-    # print(n)
-    n.query('t6?')
-    n.query('t5?')
-    n.repl()
