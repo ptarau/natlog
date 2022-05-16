@@ -149,7 +149,7 @@ def interp(css, goals0, db=None):
                     yield from step((no, goals))
 
             if op == 'eng':
-                # print('!!!', eng)
+
                 yield from eng(g)
             elif op == 'ask':
                 yield from ask(g)
