@@ -143,7 +143,8 @@ def interp(css, goals0, db=None):
             def if_op(g):
                 cond, yes, no = g
                 cond = extractTerm(cond)
-                if next(step((cond[0], ())), None) is not None:
+
+                if next(step((cond, ())), None) is not None:
                     yield from step((yes, goals))
                 else:
                     yield from step((no, goals))
