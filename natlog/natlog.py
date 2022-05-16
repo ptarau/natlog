@@ -297,6 +297,9 @@ def consult(natfile=natprogs()+'family.nat'):
     n = Natlog(file_name=natfile, with_lib=natprogs() + 'lib.nat')
     n.repl()
 
+def load(natfile):
+    Natlog(file_name=natprogs()+natfile+".nat").repl()
+
 
 # tests
 

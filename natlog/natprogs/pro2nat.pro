@@ -1,6 +1,6 @@
 c:-make.
 
-go:-pro2nat('pro'),shell('cat pro.nat').
+go:-pro2nat('sudoku4'),shell('cat sudoku4.nat').
 
 pro2nat(F):-
  pl2nl(F),
@@ -8,7 +8,7 @@ pro2nat(F):-
 
 
 pl2nl(F):-
-  atom_concat(F,'.pro',PL),
+  atomic_list_concat(['prolog_progs/',F,'.pro'],PL),
   atom_concat(F,'.nat',NL),
   pl2nl(PL,NL).
 

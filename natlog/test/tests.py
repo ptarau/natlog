@@ -107,6 +107,11 @@ def t9():
     n = Natlog(file_name=NATPROGS + "pro.nat")
     n.repl()
 
+def t10() :
+    n = Natlog(file_name=NATPROGS+"sudoku4.nat",with_lib=NATPROGS + "lib.nat")
+    #n.repl()
+    n.query("goal Xss, nl, member Xs Xss, tuple Xs T, writeln T, fail?")
+
 def fam_repl():
     n = Natlog(file_name=NATPROGS+"family.nat", with_lib=LIB)
     print('Enter some queries!')

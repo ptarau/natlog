@@ -74,7 +74,8 @@ more in E (the _) X : in E X.
 @ X <> Y : `ne X Y R, `int R 1.
 @ X == Y : `eq X Y R, `int R 1.
 
-
+writeln X : #print X.
+nl : #print.
 
 t1 : `numlist 1 5 X, #print X, maplist permute (X (X ())) Ys, #print Ys, fail.
 t2 : `numlist 1 5 X, `numlist 11 15 Y, maplist sum X Y Z, #print Z, fail.
