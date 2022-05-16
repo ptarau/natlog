@@ -40,7 +40,7 @@ max X Y Z : `max X Y Z.
 min X Y Z : `min X Y Z.
 sum X Y Z : `add X Y Z.
 
-between A B X : `` range A B X.
+between A B X : + B 1 SB, `` range A SB X.
 
 arg I T X : `arg T I X.
 tuple Xs T : `from_goal Xs T.
@@ -51,6 +51,13 @@ findall X G Xs : eng X G E, ask E Y, collect E Y Xs.
 collect _ no ().
 collect E (the X) (X Xs) : ask E Y, collect E Y Xs.
 
+copy_term T CT : eng T true E, ask E (the CT).
+
+
+in E X : ask E A, more in E A X.
+
+more in E (the X) X.
+more in E (the _) X : in E X.
 
 + X Y Z  : `add X Y Z.
 - X Y Z  : `sub X Y Z.
@@ -59,8 +66,6 @@ collect E (the X) (X Xs) : ask E Y, collect E Y Xs.
 // Z X Y : `floordiv X Y Z.
 
 % defs that have a var as 1-st arg should start with @ .
-
-@ X = X.
 
 @ X < Y  : `lt X Y R, `int R 1.
 @ X > Y  : `gt X Y R, `int R 1.

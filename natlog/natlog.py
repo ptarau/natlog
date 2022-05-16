@@ -124,8 +124,10 @@ def interp(css, goals0, db=None):
                 args = to_python(g[:-1])
                 for r in gen(*args):
                     r = from_python(r)
+
                     if unify(v, r, trail):
                         yield from step(goals)
+                        undo(trail)
 
             def neg(g):
                 """
