@@ -120,6 +120,82 @@ QUERY: Who is What?
 --> ('John', 'is', ('a', 'pilot'))
 ```
 
-Take a look at https://github.com/ptarau/minlog/blob/main/natlog/doc/natlog.pdf
-for more examples of uses, including some features of older version ```0.4.3``` not yet ported to this version.
+### Neuro-symbolic tuple database
 
+As an extension to the nested tuple store the neuro-symbolic tuple database uses a machine learning algorithm instead of its indexer.Thus it offers the same interface as the tuple store that it extends. The learner is trained upon loading the database file (from a .nat,  .csv or .tsv file) and its inference mechanism is triggered when facts from the database are queried. The stream of tuples returned from the query is then filtered via unification (and possibly, more general integrity constraints, expressed via logic programming constructs).
+
+#### Example of usage (see more at https://github.com/ptarau/pypro/blob/master/tests.py )
+```
+def ndb_test() :
+  nd = neural_natlog(file_name=natprogs()+"dbtc.nat",db_name=natprogs()+"db.nat")
+  print('RULES')
+  print(nd)
+  print('DB FACTS')
+  print(nd.db)
+  nd.query("tc Who is_a animal ?")
+```
+The output will show the ```X``` and ```y``` numpy arrays used to fit the sklearn learner and then the logic program's rules and the facts from which the arrays were extracted when the facts were loaded.
+
+```
+X:
+ [[1 0 0 0 0 0 0 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0 0 0 0 0]
+ [0 0 1 0 0 0 0 0 0 0 0 0]
+ [0 0 0 1 0 0 0 0 0 0 0 0]
+ [0 0 0 0 1 0 0 0 0 0 0 0]
+ [0 0 0 0 0 1 0 0 0 0 0 0]
+ [0 0 0 0 0 0 1 0 0 0 0 0]
+ [0 0 0 0 0 0 0 1 0 0 0 0]
+ [0 0 0 0 0 0 0 0 1 0 0 0]
+ [0 0 0 0 0 0 0 0 0 1 0 0]
+ [0 0 0 0 0 0 0 0 0 0 1 0]
+ [0 0 0 0 0 0 0 0 0 0 0 1]]
+
+y:
+ [[1 0 1 0 0 0 0 0 0 0]
+ [1 1 1 1 1 1 1 1 1 1]
+ [1 0 0 0 0 0 0 0 0 0]
+ [0 1 0 1 0 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0 0 0]
+ [0 0 1 1 0 1 0 0 0 0]
+ [0 0 0 0 1 0 0 0 0 0]
+ [0 0 0 0 1 0 1 0 0 0]
+ [0 0 0 0 0 1 1 0 0 1]
+ [0 0 0 0 0 0 0 1 1 1]
+ [0 0 0 0 0 0 0 1 0 0]
+ [0 0 0 0 0 0 0 0 1 0]] 
+
+RULES
+(('cat', 'is_a', 'feline'), ())
+ ((_0, 'is_a', _1), (('~', _0, 'is', _1),))
+ (('tc', _0, _1, _2), ((_0, _1, _3), ('tc1', _3, _1, _2)))
+ (('tc1', _0, _1, _0), ())
+ (('tc1', _0, _1, _2), (('tc', _0, _1, _2),))
+
+DB FACTS
+(0, ('tiger', 'is', 'feline'))
+(1, ('mouse', 'is', 'rodent'))
+(2, ('feline', 'is', 'mammal'))
+(3, ('rodent', 'is', 'mammal'))
+(4, ('snake', 'is', 'reptile'))
+(5, ('mammal', 'is', 'animal'))
+(6, ('reptile', 'is', 'animal'))
+(7, ('bee', 'is', 'insect'))
+(8, ('ant', 'is', 'insect'))
+(9, ('insect', 'is', 'animal'))
+
+QUERY: tc Who is_a animal ?
+ANSWER: {'Who': 'cat'}
+ANSWER: {'Who': 'tiger'}
+ANSWER: {'Who': 'mouse'}
+ANSWER: {'Who': 'feline'}
+ANSWER: {'Who': 'rodent'}
+ANSWER: {'Who': 'snake'}
+ANSWER: {'Who': 'mammal'}
+ANSWER: {'Who': 'reptile'}
+ANSWER: {'Who': 'bee'}
+ANSWER: {'Who': 'ant'}
+ANSWER: {'Who': 'insect'}
+
+
+```

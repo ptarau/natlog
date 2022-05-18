@@ -1,6 +1,6 @@
 from natlog.natlog import *
 from natlog.unify import *
-
+from natlog.neural_natlog import *
 
 NATPROGS=natprogs()
 
@@ -136,6 +136,13 @@ def db_test():
     nd.query("tc Who is_a animal ?")
     # nd.repl()
 
+def ndb_test():
+    nd = NeuralNatlog(file_name=NATPROGS+"dbtc.nat", db_name=NATPROGS+"db.nat")
+    print('RULES')
+    print(nd)
+    print('DB FACTS')
+    print(nd.db)
+    nd.query("tc Who is_a animal ?")
 
 def db_chem():
     nd = Natlog(
@@ -151,7 +158,7 @@ def db_chem():
 
 
 def ndb_chem():
-    nd = NeuralMinLog(
+    nd = NeuralNatlog(
         file_name=NATPROGS+"elements.nat",
         db_name=NATPROGS+"elements.tsv"
     )
