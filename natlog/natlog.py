@@ -28,7 +28,10 @@ def const(x):
 
 
 def stop_engine(g):
-    g.close()
+    E,e,_,_,_,flag=g
+    assert E=='$ENG'
+    e.close()
+    flag[0]=2
 
 
 def interp(css, goals0, db=None):

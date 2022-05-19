@@ -48,7 +48,7 @@ arg I T X : `arg T I X.
 tuple Xs T : `from_goal Xs T.
 list T Xs : `to_goal T Xs.
 
-stop E = # stop_egine E.
+stop E : # stop_engine E.
 
 findall X G Xs : eng X G E, ask E Y, collect E Y Xs.
 
@@ -61,13 +61,6 @@ in E X : ask E A, more in E A X.
 
 more in E (the X) X.
 more in E (the _) X : in E X.
-
-
-if_ C Y N : eng C C E, ask E R, #print R, pick_ R Y N, stop E.
-
-pick_ (the _C) Y _N : writeln Y, call Y.
-pick_ no _Y N : writeln N, call N.
-
 
 + X Y Z  : `add X Y Z.
 - X Y Z  : `sub X Y Z.
@@ -110,4 +103,16 @@ t8: eng X (true) E, ask E R, writeln R, fail.
 
 t9: eq G (p X), eng G G E, ask E A, ask E B, #print A B, fail.
 
-t10: eq G (p X), eng G G E, in E A, #print answer A, fail?
+t10: eq G (p X), eng G G E, in E A, #print answer A, fail.
+
+if_ C Y N : eng C C E, ask E R, stop E, pick_ R C Y N.
+
+pick_ (the C)  C Y _N : call Y.
+pick_ no _C _Y N : call N.
+
+
+t11: if_ (eq X 1) (eq Y X) (eq Y 42), # print X Y, fail.
+
+t12 :
+  eng X (between 1 5 X) E, stop E, ask E A, #print here A, fail.
+
