@@ -27,6 +27,10 @@ def const(x):
     return eval(x)
 
 
+def stop_engine(g):
+    g.close()
+
+
 def interp(css, goals0, db=None):
     def undo(trail):
         while trail:
@@ -85,29 +89,28 @@ def interp(css, goals0, db=None):
 
             def eng(xge):
                 x0, eg0, e = xge
+                occ = occurs(x0,eg0)
                 (x, eg) = copy_term((x0, eg0))
                 g = (eg, ())
+                assert isinstance(e, Var)
                 runner = step(g)
-                r = ('$ENG', runner, x, g)
-                if not unify(e, r, trail):
-                    undo(trail)
-                else:
-                    _ = next(runner, None)
-                    yield from step(goals)
+                r = ('$ENG', runner, ('the', x), g, occ)
+                e.bind(r, trail)
+                a = next(runner, None)
+                print('DUMMY:',a)
+                yield from step(goals)
 
             def ask(eng_answer):
-                # print('ASK ENG0:', eng_answer)
                 eng0, answer = eng_answer
-                code, e, x, g = eng0
-                assert code == '$ENG'
+                fun, e, x, g, occ = eng0
+                assert fun == '$ENG'
                 a = next(e, None)
+                #print('REAL:', a)
 
-                if a is None and isinstance(x, Var):
-                    r = 'no'
+                if a is None and occ and isinstance(x[1], Var):
+                    r = 'no'  # bug when true or eq 1 1 is the goal
                 else:
-                    x = copy_term(x)
-                    r = ('the', x)
-
+                    r = copy_term(x)
                 if not unify(answer, r, trail):
                     undo(trail)
                 else:
@@ -293,12 +296,13 @@ def numlist(n, m):
     return to_goal(range(n, m))
 
 
-def consult(natfile=natprogs()+'family.nat'):
+def consult(natfile=natprogs() + 'family.nat'):
     n = Natlog(file_name=natfile, with_lib=natprogs() + 'lib.nat')
     n.repl()
 
+
 def load(natfile):
-    Natlog(file_name=natprogs()+natfile+".nat").repl()
+    Natlog(file_name=natprogs() + natfile + ".nat").repl()
 
 
 # tests
@@ -332,5 +336,3 @@ def test_natlog():
     n = Natlog(file_name="natprogs/lib.nat")
     print(n)
     n.repl()
-
-

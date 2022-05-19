@@ -97,8 +97,9 @@ def activate(t, d):
     else:
         return tuple(activate(x, d) for x in t)
 
+
 def extractTerm(t):
-    t=deref(t)
+    t = deref(t)
     if isinstance(t, Var):
         return t
     elif not isinstance(t, tuple):
@@ -106,9 +107,24 @@ def extractTerm(t):
     else:
         return tuple(map(extractTerm, t))
 
+
+def occurs(x0, t0):
+
+    def occ(t):
+        t = deref(t)
+        if x == t:
+            return True
+        if not isinstance(t, tuple):
+            return False
+        return any(map(occ, t))
+
+    x = deref(x0)
+    return occ(t0)
+
+
 def copy_term(t0):
     def ct(t):
-        t=deref(t)
+        t = deref(t)
         if isinstance(t, Var):
             return d.setdefault(t, Var())
         elif not isinstance(t, tuple):
@@ -117,14 +133,15 @@ def copy_term(t0):
             return tuple(map(ct, t))
 
     d = dict()
-    #print('CT <<<',t0)
-    r= ct(t0)
-    #print('CT >>>', r)
+    # print('CT <<<',t0)
+    r = ct(t0)
+    # print('CT >>>', r)
     return r
 
 
-def arg(x,i) :
+def arg(x, i):
     return x[i]
+
 
 """
 def activate_(t0, d):
@@ -187,7 +204,6 @@ def activate(template, d):
     return from_postfix(ws,d)
 """
 
-
 """
 def const_of(t):
     def const_of0(t):
@@ -235,31 +251,33 @@ def path_of(t):
             pass
         elif isinstance(t, tuple):
             for i, x in enumerate(t):
-                for c,ps in path_of0(x):
-                    yield c,(i, ps)
+                for c, ps in path_of0(x):
+                    yield c, (i, ps)
         else:
-            yield t,()
+            yield t, ()
 
-    ps=set(path_of0(t))
-    qs=set((c,list2tuple(x)) for (c,x) in ps)
+    ps = set(path_of0(t))
+    qs = set((c, list2tuple(x)) for (c, x) in ps)
     return qs
 
 
 def list2tuple(ls):
-    #print('!!! LS=',ls)
+    # print('!!! LS=',ls)
     def scan(xs):
-      while xs != () and isinstance(xs,tuple):
-        x,xs=xs
-        yield x
-    if not isinstance(ls,tuple):
+        while xs != () and isinstance(xs, tuple):
+            x, xs = xs
+            yield x
+
+    if not isinstance(ls, tuple):
         return ls
     return tuple(scan(ls))
+
 
 def test_unify():
     a, b, c, d, e, f, g, x, y = "abcdefgxy"
     x, y = VarNum(0), VarNum(1)
     t = (f, a, (g, (b, x, (e, b, c, y)), d))
-    for p in path_of(t): print('PATH:',p)
+    for p in path_of(t): print('PATH:', p)
 
     c = activate(t, dict())
 

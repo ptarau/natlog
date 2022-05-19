@@ -22,7 +22,9 @@ select X Xs Ys : insert X Ys Xs.
 or X _ : call X.
 or _ Y : call Y.
 
-once X : if X true fail.
+and X Y: call X, call Y.
+
+once X : if X (true) (fail).
 
 maplist _ ().
 maplist F (X Xs) : F X , maplist F Xs.
@@ -46,6 +48,8 @@ arg I T X : `arg T I X.
 tuple Xs T : `from_goal Xs T.
 list T Xs : `to_goal T Xs.
 
+stop E = # stop_egine E.
+
 findall X G Xs : eng X G E, ask E Y, collect E Y Xs.
 
 collect _ no ().
@@ -53,11 +57,17 @@ collect E (the X) (X Xs) : ask E Y, collect E Y Xs.
 
 copy_term T CT : eng T true E, ask E (the CT).
 
-
 in E X : ask E A, more in E A X.
 
 more in E (the X) X.
 more in E (the _) X : in E X.
+
+
+if_ C Y N : eng C C E, ask E R, #print R, pick_ R Y N, stop E.
+
+pick_ (the _C) Y _N : writeln Y, call Y.
+pick_ no _Y N : writeln N, call N.
+
 
 + X Y Z  : `add X Y Z.
 - X Y Z  : `sub X Y Z.
@@ -93,3 +103,7 @@ p 4.
 
 t6 : eng X (p X) E, #print engine  E,
      ask E R1, ask E R2, ask E R3, ask E R4, #print results R1 R2 R3 R4, fail.
+
+t7: eng X (between 1 5 X) E, in E A , writeln A, fail.
+
+t8: eng X (true) E, ask E R, writeln R, fail.
