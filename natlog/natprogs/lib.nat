@@ -107,3 +107,7 @@ t6 : eng X (p X) E, #print engine  E,
 t7: eng X (between 1 5 X) E, in E A , writeln A, fail.
 
 t8: eng X (true) E, ask E R, writeln R, fail.
+
+t9: eq G (p X), eng G G E, ask E A, ask E B, #print A B, fail.
+
+t10: eq G (p X), eng G G E, in E A, #print answer A, fail?

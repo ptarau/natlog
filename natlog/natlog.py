@@ -94,23 +94,30 @@ def interp(css, goals0, db=None):
                 g = (eg, ())
                 assert isinstance(e, Var)
                 runner = step(g)
-                r = ('$ENG', runner, ('the', x), g, occ)
+                flag=[0]
+                r = ('$ENG', runner, ('the', x), g, occ,flag)
                 e.bind(r, trail)
                 a = next(runner, None)
-                print('DUMMY:',a)
+                #print('DUMMY:',a, flag)
                 yield from step(goals)
 
             def ask(eng_answer):
                 eng0, answer = eng_answer
-                fun, e, x, g, occ = eng0
+                fun, e, x, g, occ, flag = eng0
                 assert fun == '$ENG'
                 a = next(e, None)
-                #print('REAL:', a)
+                #print('REAL:', a, flag)
 
                 if a is None and occ and isinstance(x[1], Var):
                     r = 'no'  # bug when true or eq 1 1 is the goal
+                elif flag[0]>0:
+                    r='no'
+                    e.close()
                 else:
                     r = copy_term(x)
+
+                if a is None : flag[0]+=1
+
                 if not unify(answer, r, trail):
                     undo(trail)
                 else:
