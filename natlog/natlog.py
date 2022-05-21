@@ -55,6 +55,7 @@ def interp(css, goals0, db=None):
     """
     main interpreter
     """
+
     def dispatch_call(op, g, goals, trail):
         """
         dispatches several types of calls to Python
@@ -145,17 +146,6 @@ def interp(css, goals0, db=None):
                     yield from step(goals)
                     undo(trail)
 
-        def neg(g):
-            """
-            negation as failure
-            """
-            no_sol = object()
-            # g = extractTerm(g)
-            a = next(step((g, ())), no_sol)
-            if a is no_sol:
-                return True
-            return False
-
         def if_op(g):
             cond, yes, no = g
             cond = extractTerm(cond)
@@ -170,10 +160,7 @@ def interp(css, goals0, db=None):
         elif op == 'ask':
             yield from ask(g)
         elif op == 'call':
-            yield from step((g[0]+g[1:], goals))
-        elif op == 'not':
-            if neg(g):
-                yield from step(goals)
+            yield from step((g[0] + g[1:], goals))
         elif op == 'if':
             yield from if_op(g)
 
@@ -204,7 +191,7 @@ def interp(css, goals0, db=None):
         else:
             g, goals = goals
             op = g[0] if g else None
-            if op in {"not", "call", "~", "`", "``", "^", "#", "if", "eng", "ask"}:
+            if op in {"call", "~", "`", "``", "^", "#", "if", "eng", "ask"}:
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals, trail)
             else:
@@ -216,17 +203,18 @@ def interp(css, goals0, db=None):
 
     done = False
     while not done:
-        gen=step(goals0)
-        done=True
+        gen = step(goals0)
+        done = True
         for a in gen:
             if a is not None and len(a) >= 2 and a[0] == 'trust':
                 newg = a[1:], ()
                 goals0 = newg
-                done=False
+                done = False
                 break
             yield a
         if done:
             break
+
 
 LIB = '../natprogs/lib.nat'
 
@@ -321,7 +309,7 @@ class Natlog:
 # built-ins, callable with ` notation
 
 def numlist(n, m):
-    return to_goal(range(n, m+1))
+    return to_goal(range(n, m + 1))
 
 
 def consult(natfile=natprogs() + 'family.nat'):

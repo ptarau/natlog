@@ -84,18 +84,18 @@ def t3():
 # longer output: 8 queens
 def t5():
     n = Natlog(file_name=NATPROGS+"queens.nat")
-    print(n)
+    #print(n)
     n.query("goal8 Queens?")
 
 
 def t6():
-    n = Natlog(file_name=NATPROGS+"family.nat")
-    print(n)
+    n = Natlog(file_name=NATPROGS+"family.nat",with_lib=NATPROGS + "lib.nat")
+    #print(n)
     n.query("grand parent of 'Adam' GP ?")
 
 
 def t7():
-    n = Natlog(file_name=NATPROGS+"family.nat")
+    n = Natlog(file_name=NATPROGS+"family.nat",with_lib=NATPROGS + "lib.nat")
     n.query("cousin of X B?")
 
 def t8() :

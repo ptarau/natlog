@@ -1,5 +1,3 @@
-same as X X.
-
 male 'Adam'.
 male 'Bill'.
 male 'Paul'.
@@ -26,8 +24,7 @@ parent of 'Sandy' 'Mary'.
 parent of 'Paul' 'Anna'.
 parent of 'Paul' 'Peter'.
 
-
-sibling of X S: parent of X P, parent of S P, not same as S X.
+sibling of X S: parent of X P, parent of S P, not (eq S X).
 
 brother of X B: sibling of X B, male B.
 
@@ -43,7 +40,7 @@ cousin of X C:
   parent of X P,
   parent of P GP,
   parent of Q GP,
-  not eq P Q,
+  not (eq P Q),
   parent of C Q,
-  not same as X C.
+  not (eq X C).
 

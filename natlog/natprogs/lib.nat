@@ -24,6 +24,8 @@ or _ Y : call Y.
 
 and X Y: call X, call Y.
 
+not X : if X (fail) (true).
+
 once X : if X (true) (fail).
 
 maplist _ ().
