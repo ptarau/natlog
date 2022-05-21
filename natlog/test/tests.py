@@ -108,6 +108,7 @@ def t9():
     n.repl()
 
 def t10() :
+    print('it takes a while to start')
     n = Natlog(file_name=NATPROGS+"sudoku4.nat",with_lib=NATPROGS + "lib.nat")
     #n.repl()
     n.query("goal Xss, nl, member Xs Xss, tuple Xs T, writeln T, fail?")

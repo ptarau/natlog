@@ -203,18 +203,14 @@ def interp(css, goals0, db=None):
 
     done = False
     while not done:
-        gen = step(goals0)
         done = True
-        for a in gen:
+        for a in step(goals0):
             if a is not None and len(a) >= 2 and a[0] == 'trust':
                 newg = a[1:], ()
                 goals0 = newg
                 done = False
                 break
             yield a
-        if done:
-            break
-
 
 LIB = '../natprogs/lib.nat'
 
