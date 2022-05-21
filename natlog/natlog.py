@@ -34,22 +34,24 @@ def stop_engine(g):
     flag[0] = 2
 
 
+def undo(trail):
+    while trail:
+        trail.pop().unbind()
+
+
+def unfold1(g, gs, h, bs, trail):
+    d = dict()
+    if not lazy_unify(h, g, trail, d):
+        undo(trail)
+        return None  # FAILURE
+
+    for b in reversed(bs):
+        b = activate(b, d)
+        gs = (b, gs)
+    return gs  # SUCCESS
+
+
 def interp(css, goals0, db=None):
-    def undo(trail):
-        while trail:
-            trail.pop().unbind()
-
-    def unfold1(g, gs, h, bs, trail):
-        d = dict()
-        if not lazy_unify(h, g, trail, d):
-            undo(trail)
-            return None  # FAILURE
-
-        for b in reversed(bs):
-            b = activate(b, d)
-            gs = (b, gs)
-        return gs  # SUCCESS
-
     def step(goals):
         # print("STEP", goals)
 
@@ -208,9 +210,9 @@ def interp(css, goals0, db=None):
 
     # yield from step(goals0)  # assumed activated
     while goals0 is not None:
-        #print('GOAL:',goals0)
+        # print('GOAL:',goals0)
         for a in step(goals0):
-            #print('STEP:', a)
+            # print('STEP:', a)
             if len(a) >= 2 and a[0] == 'trust':
                 newg = a[1:], ()
                 print('NEW:', newg)
