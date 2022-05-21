@@ -35,20 +35,21 @@ def unify(x, y, trail):
     while ustack:
         x1 = deref(ustack.pop())
         x2 = deref(ustack.pop())
-        if x1 == x2: continue
         if isinstance(x1, Var):
             x1.bind(x2, trail)
         elif isinstance(x2, Var):
             x2.bind(x1, trail)
-        elif not (isinstance(x1, tuple) and isinstance(x2, tuple)):
-            return False
-        else:  # assumed x1,x2 is a tuple
+        elif isinstance(x2, tuple) and isinstance(x1, tuple):
             arity = len(x1)
             if len(x2) != arity:
                 return False
             for i in range(arity - 1, -1, -1):
                 ustack.append(x2[i])
                 ustack.append(x1[i])
+        elif x1 == x2 and type(x1) == type(x2):
+            continue
+        else:
+            return False
     return True
 
 
@@ -67,23 +68,29 @@ def lazy_unify(x, y, trail, d):
     while ustack:
         x1 = deref(ustack.pop())
         x2 = deref(ustack.pop())
-        if isinstance(x1, VarNum):
-            x1 = new_var(x1, d)
-            x1.bind(x2, trail)
-        elif x1 == x2:
-            continue
-        elif isinstance(x1, Var):
+
+        if isinstance(x1, Var):
             x1.bind(x2, trail)
         elif isinstance(x2, Var):
             x1 = activate(x1, d)
             x2.bind(x1, trail)
-        elif isinstance(x2, tuple) and isinstance(x1, tuple):
+        elif type(x1) != type(x2):
+            # this should be before next
+            return False
+        elif isinstance(x2, tuple) : #and isinstance(x1, tuple):
             arity = len(x2)
             if len(x1) != arity:
                 return False
             for i in range(arity - 1, -1, -1):
                 ustack.append(x2[i])
                 ustack.append(activate(x1[i], d))
+        elif isinstance(x1, VarNum):
+            # conflating int and VarNum not possible now
+            x1 = new_var(x1, d)
+            x1.bind(x2, trail)
+        elif x1 == x2:
+            # not tuples, should be other objects
+            continue
         else:
             return False
     return True
@@ -109,7 +116,6 @@ def extractTerm(t):
 
 
 def occurs(x0, t0):
-
     def occ(t):
         t = deref(t)
         if x == t:

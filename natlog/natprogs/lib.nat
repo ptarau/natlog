@@ -99,7 +99,7 @@ t6 : eng X (p X) E, #print engine  E,
 
 t7: eng X (between 1 5 X) E, in E A , writeln A, fail.
 
-t8: eng X (true) E, ask E R, writeln R, fail.
+t8: eng X true E, ask E R, writeln R, fail.
 
 t9: eq G (p X), eng G G E, ask E A, ask E B, #print A B, fail.
 
@@ -115,4 +115,13 @@ t11: if_ (eq X 1) (eq Y X) (eq Y 42), # print X Y, fail.
 
 t12 :
   eng X (between 1 5 X) E, stop E, ask E A, #print here A, fail.
+
+
+loop N  : #print n is N, + N 1 M, ^trust loop M.
+
+t13: loop 1 .
+
+bug Zero : #print Zero.
+
+t14 : bug 0 .
 

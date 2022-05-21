@@ -28,10 +28,10 @@ def const(x):
 
 
 def stop_engine(g):
-    E,e,_,_,_,flag=g
-    assert E=='$ENG'
+    E, e, _, _, _, flag = g
+    assert E == '$ENG'
     e.close()
-    flag[0]=2
+    flag[0] = 2
 
 
 def interp(css, goals0, db=None):
@@ -92,16 +92,17 @@ def interp(css, goals0, db=None):
 
             def eng(xge):
                 x0, eg0, e = xge
-                occ = occurs(x0,eg0)
+                occ = occurs(x0, eg0)
                 (x, eg) = copy_term((x0, eg0))
                 g = (eg, ())
                 assert isinstance(e, Var)
-                runner = step(g)
-                flag=[0]
-                r = ('$ENG', runner, ('the', x), g, occ,flag)
+                # runner = step(g)
+                runner = interp(css, g, db=db)
+                flag = [0]
+                r = ('$ENG', runner, ('the', x), g, occ, flag)
                 e.bind(r, trail)
                 a = next(runner, None)
-                #print('DUMMY:',a, flag)
+                # print('DUMMY:',a, flag)
                 yield from step(goals)
 
             def ask(eng_answer):
@@ -109,17 +110,17 @@ def interp(css, goals0, db=None):
                 fun, e, x, g, occ, flag = eng0
                 assert fun == '$ENG'
                 a = next(e, None)
-                #print('REAL:', a, flag)
+                # print('REAL:', a, flag)
 
                 if a is None and occ and isinstance(x[1], Var):
                     r = 'no'  # bug when true or eq 1 1 is the goal
-                elif flag[0]>0:
-                    r='no'
+                elif flag[0] > 0:
+                    r = 'no'
                     e.close()
                 else:
                     r = copy_term(x)
 
-                if a is None : flag[0]+=1
+                if a is None: flag[0] += 1
 
                 if not unify(answer, r, trail):
                     undo(trail)
@@ -163,12 +164,10 @@ def interp(css, goals0, db=None):
                     yield from step((no, goals))
 
             if op == 'eng':
-
                 yield from eng(g)
             elif op == 'ask':
                 yield from ask(g)
             elif op == 'call':
-                # cg = extractTerm(g)
                 yield from step((g[0], goals))
             elif op == 'not':
                 if neg(g):
@@ -179,7 +178,7 @@ def interp(css, goals0, db=None):
             elif op == '~':  # matches against database of facts
                 yield from db_call(g)
             elif op == '^':  # yield g as an answer directly
-                yield g
+                yield extractTerm(g)
                 yield from step(goals)
             elif op == '`':  # function call, last arg unified
                 yield from python_fun(g)
@@ -207,7 +206,18 @@ def interp(css, goals0, db=None):
                         yield from step(bsgs)
                         undo(trail)
 
-    yield from step(goals0)  # assumed activated
+    # yield from step(goals0)  # assumed activated
+    while goals0 is not None:
+        #print('GOAL:',goals0)
+        for a in step(goals0):
+            #print('STEP:', a)
+            if len(a) >= 2 and a[0] == 'trust':
+                newg = a[1:], ()
+                print('NEW:', newg)
+                goals0 = newg
+                break
+            yield a
+        goals0 = None
 
 
 LIB = '../natprogs/lib.nat'

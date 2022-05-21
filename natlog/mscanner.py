@@ -7,6 +7,13 @@ import re
 
 
 class VarNum(int):
+    """
+    def __hash__(self):
+        return super().__hash__()
+
+    def __eq__(self,other):
+       return isinstance(other,VarNum) and int(self)==int(other)
+    """
     def __repr__(self):
         return "_" + str(int(self))
 
