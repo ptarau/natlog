@@ -52,145 +52,143 @@ def unfold1(g, gs, h, bs, trail):
 
 
 def interp(css, goals0, db=None):
-    def step(goals):
-        # print("STEP", goals)
+    def dispatch_call(op, g, goals, trail):
+        """
+        dispatches several types of calls to Python
+        """
 
-        def dispatch_call(op, g, goals):
-            """
-            dispatches several types of calls to Python
-            """
-
-            # yields facts matching g in Db
-            def db_call(g):
-                for ok in db.unify_with_fact(g, trail):
-                    if not ok:  # FAILURE
-                        undo(trail)
-                        continue
-                    yield from step(goals)  # SUCCESS
+        # yields facts matching g in Db
+        def db_call(g):
+            for ok in db.unify_with_fact(g, trail):
+                if not ok:  # FAILURE
                     undo(trail)
+                    continue
+                yield from step(goals)  # SUCCESS
+                undo(trail)
 
-            def python_call(g):
-                """
-                simple call to Python (e.g., print, no return expected)
-                """
-                f = eval(g[0])
-                args = to_python(g[1:])
-                f(*args)
+        def python_call(g):
+            """
+            simple call to Python (e.g., print, no return expected)
+            """
+            f = eval(g[0])
+            args = to_python(g[1:])
+            f(*args)
 
-            def python_fun(g):
-                """
-                function call to Python, last arg unified with result
-                """
-                f = eval(g[0])
-                g = g[1:]
-                v = g[-1]
-                args = to_python(g[:-1])
-                r = f(*args)
+        def python_fun(g):
+            """
+            function call to Python, last arg unified with result
+            """
+            f = eval(g[0])
+            g = g[1:]
+            v = g[-1]
+            args = to_python(g[:-1])
+            r = f(*args)
+            r = from_python(r)
+            if not unify(v, r, trail):
+                undo(trail)
+            else:
+                yield from step(goals)
+
+        def eng(xge):
+            x0, eg0, e = xge
+            occ = occurs(x0, eg0)
+            (x, eg) = copy_term((x0, eg0))
+            g = (eg, ())
+            assert isinstance(e, Var)
+            # runner = step(g)
+            runner = interp(css, g, db=db)
+            flag = [0]
+            r = ('$ENG', runner, ('the', x), g, occ, flag)
+            e.bind(r, trail)
+            a = next(runner, None)
+            # print('DUMMY:',a, flag)
+            yield from step(goals)
+
+        def ask(eng_answer):
+            eng0, answer = eng_answer
+            fun, e, x, g, occ, flag = eng0
+            assert fun == '$ENG'
+            a = next(e, None)
+            # print('REAL:', a, flag)
+
+            if a is None and occ and isinstance(x[1], Var):
+                r = 'no'  # bug when true or eq 1 1 is the goal
+            elif flag[0] > 0:
+                r = 'no'
+                e.close()
+            else:
+                r = copy_term(x)
+
+            if a is None: flag[0] += 1
+
+            if not unify(answer, r, trail):
+                undo(trail)
+            else:
+                yield from step(goals)
+
+        def gen_call(g):
+            """
+              unifies with last arg yield from a generator
+              and first args, assumed ground, passed to it
+            """
+            gen = eval(g[0])
+            g = g[1:]
+            v = g[-1]
+            args = to_python(g[:-1])
+            for r in gen(*args):
                 r = from_python(r)
-                if not unify(v, r, trail):
+
+                if unify(v, r, trail):
+                    yield from step(goals)
                     undo(trail)
-                else:
-                    yield from step(goals)
 
-            def eng(xge):
-                x0, eg0, e = xge
-                occ = occurs(x0, eg0)
-                (x, eg) = copy_term((x0, eg0))
-                g = (eg, ())
-                assert isinstance(e, Var)
-                # runner = step(g)
-                runner = interp(css, g, db=db)
-                flag = [0]
-                r = ('$ENG', runner, ('the', x), g, occ, flag)
-                e.bind(r, trail)
-                a = next(runner, None)
-                # print('DUMMY:',a, flag)
+        def neg(g):
+            """
+            negation as failure
+            """
+            no_sol = object()
+            # g = extractTerm(g)
+            a = next(step((g, ())), no_sol)
+            if a is no_sol:
+                return True
+            return False
+
+        def if_op(g):
+            cond, yes, no = g
+            cond = extractTerm(cond)
+
+            if next(step((cond, ())), None) is not None:
+                yield from step((yes, goals))
+            else:
+                yield from step((no, goals))
+
+        if op == 'eng':
+            yield from eng(g)
+        elif op == 'ask':
+            yield from ask(g)
+        elif op == 'call':
+            yield from step((g[0], goals))
+        elif op == 'not':
+            if neg(g):
                 yield from step(goals)
+        elif op == 'if':
+            yield from if_op(g)
 
-            def ask(eng_answer):
-                eng0, answer = eng_answer
-                fun, e, x, g, occ, flag = eng0
-                assert fun == '$ENG'
-                a = next(e, None)
-                # print('REAL:', a, flag)
+        elif op == '~':  # matches against database of facts
+            yield from db_call(g)
+        elif op == '^':  # yield g as an answer directly
+            yield extractTerm(g)
+            yield from step(goals)
+        elif op == '`':  # function call, last arg unified
+            yield from python_fun(g)
+        elif op == "``":  # generator call, last arg unified
+            yield from gen_call(g)
+        else:  # op == '#',  simple call, no return
+            python_call(g)
+            yield from step(goals)
+        undo(trail)
 
-                if a is None and occ and isinstance(x[1], Var):
-                    r = 'no'  # bug when true or eq 1 1 is the goal
-                elif flag[0] > 0:
-                    r = 'no'
-                    e.close()
-                else:
-                    r = copy_term(x)
-
-                if a is None: flag[0] += 1
-
-                if not unify(answer, r, trail):
-                    undo(trail)
-                else:
-                    yield from step(goals)
-
-            def gen_call(g):
-                """
-                  unifies with last arg yield from a generator
-                  and first args, assumed ground, passed to it
-                """
-                gen = eval(g[0])
-                g = g[1:]
-                v = g[-1]
-                args = to_python(g[:-1])
-                for r in gen(*args):
-                    r = from_python(r)
-
-                    if unify(v, r, trail):
-                        yield from step(goals)
-                        undo(trail)
-
-            def neg(g):
-                """
-                negation as failure
-                """
-                no_sol = object()
-                # g = extractTerm(g)
-                a = next(step((g, ())), no_sol)
-                if a is no_sol:
-                    return True
-                return False
-
-            def if_op(g):
-                cond, yes, no = g
-                cond = extractTerm(cond)
-
-                if next(step((cond, ())), None) is not None:
-                    yield from step((yes, goals))
-                else:
-                    yield from step((no, goals))
-
-            if op == 'eng':
-                yield from eng(g)
-            elif op == 'ask':
-                yield from ask(g)
-            elif op == 'call':
-                yield from step((g[0], goals))
-            elif op == 'not':
-                if neg(g):
-                    yield from step(goals)
-            elif op == 'if':
-                yield from if_op(g)
-
-            elif op == '~':  # matches against database of facts
-                yield from db_call(g)
-            elif op == '^':  # yield g as an answer directly
-                yield extractTerm(g)
-                yield from step(goals)
-            elif op == '`':  # function call, last arg unified
-                yield from python_fun(g)
-            elif op == "``":  # generator call, last arg unified
-                yield from gen_call(g)
-            else:  # op == '#',  simple call, no return
-                python_call(g)
-                yield from step(goals)
-            undo(trail)
-
+    def step(goals):
         trail = []
         if goals == ():
             yield extractTerm(goals0)
@@ -200,7 +198,7 @@ def interp(css, goals0, db=None):
             op = g[0] if g else None
             if op in {"not", "call", "~", "`", "``", "^", "#", "if", "eng", "ask"}:
                 g = extractTerm(g[1:])
-                yield from dispatch_call(op, g, goals)
+                yield from dispatch_call(op, g, goals, trail)
             else:
                 for (h, bs) in css:
                     bsgs = unfold1(g, goals, h, bs, trail)
