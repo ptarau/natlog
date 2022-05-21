@@ -170,7 +170,7 @@ def interp(css, goals0, db=None):
         elif op == 'ask':
             yield from ask(g)
         elif op == 'call':
-            yield from step((g[0], goals))
+            yield from step((g[0]+g[1:], goals))
         elif op == 'not':
             if neg(g):
                 yield from step(goals)
@@ -214,20 +214,19 @@ def interp(css, goals0, db=None):
                         yield from step(bsgs)
                         undo(trail)
 
-    while goals0 is not None:
-        #print('GOALS', goals0)
-        for a in step(goals0):
+    done = False
+    while not done:
+        gen=step(goals0)
+        done=True
+        for a in gen:
             if a is not None and len(a) >= 2 and a[0] == 'trust':
                 newg = a[1:], ()
-                #print('NEW:', newg)
                 goals0 = newg
+                done=False
                 break
-
-            goals0 = None
             yield a
-        #print('AFTER:',goals0)
-        if goals0 is None:
-            return
+        if done:
+            break
 
 LIB = '../natprogs/lib.nat'
 
@@ -322,7 +321,7 @@ class Natlog:
 # built-ins, callable with ` notation
 
 def numlist(n, m):
-    return to_goal(range(n, m))
+    return to_goal(range(n, m+1))
 
 
 def consult(natfile=natprogs() + 'family.nat'):
