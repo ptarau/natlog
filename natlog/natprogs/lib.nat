@@ -27,7 +27,7 @@ and X Y: call X, call Y.
 once X : if X (true) (fail).
 
 maplist _ ().
-maplist F (X Xs) : F X , maplist F Xs.
+maplist F (X Xs) : call F X , maplist F Xs.
 
 maplist _ () ().
 maplist F (X Xs) (Y Ys) : call F X Y, maplist F Xs Ys.
