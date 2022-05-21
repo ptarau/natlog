@@ -52,6 +52,9 @@ def unfold1(g, gs, h, bs, trail):
 
 
 def interp(css, goals0, db=None):
+    """
+    main interpreter
+    """
     def dispatch_call(op, g, goals, trail):
         """
         dispatches several types of calls to Python
@@ -189,6 +192,9 @@ def interp(css, goals0, db=None):
         undo(trail)
 
     def step(goals):
+        """
+        recursive inner function
+        """
         trail = []
         if goals == ():
             yield extractTerm(goals0)
