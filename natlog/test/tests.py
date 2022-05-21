@@ -283,9 +283,7 @@ def bigdb():
 def libtest():
     n = Natlog(file_name=NATPROGS+'lib.nat')
     #print(n)
-    #n.query("t14?")
-    n.query("bug 1?")
-    n.query("bug 0?")
+    n.query("t13.")
     n.repl()
 
 

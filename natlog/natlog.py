@@ -179,9 +179,11 @@ def interp(css, goals0, db=None):
 
         elif op == '~':  # matches against database of facts
             yield from db_call(g)
+
         elif op == '^':  # yield g as an answer directly
             yield extractTerm(g)
             yield from step(goals)
+
         elif op == '`':  # function call, last arg unified
             yield from python_fun(g)
         elif op == "``":  # generator call, last arg unified
@@ -212,19 +214,20 @@ def interp(css, goals0, db=None):
                         yield from step(bsgs)
                         undo(trail)
 
-    # yield from step(goals0)  # assumed activated
     while goals0 is not None:
-        # print('GOAL:',goals0)
+        #print('GOALS', goals0)
         for a in step(goals0):
-            # print('STEP:', a)
-            if len(a) >= 2 and a[0] == 'trust':
+            if a is not None and len(a) >= 2 and a[0] == 'trust':
                 newg = a[1:], ()
-                print('NEW:', newg)
+                #print('NEW:', newg)
                 goals0 = newg
                 break
-            yield a
-        goals0 = None
 
+            goals0 = None
+            yield a
+        #print('AFTER:',goals0)
+        if goals0 is None:
+            return
 
 LIB = '../natprogs/lib.nat'
 

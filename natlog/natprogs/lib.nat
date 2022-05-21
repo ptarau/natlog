@@ -117,11 +117,9 @@ t12 :
   eng X (between 1 5 X) E, stop E, ask E A, #print here A, fail.
 
 
-loop N  : #print n is N, + N 1 M, ^trust loop M.
+loop N N.
+loop N X : + N 1 M, ^trust loop M X.
 
-t13: loop 1 .
+t13 : eng X (loop 0 X) E, ask E A, ask E B, #print A B.
 
-bug Zero : #print Zero.
-
-t14 : bug 0 .
 
