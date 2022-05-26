@@ -1,4 +1,4 @@
-from .mscanner import VarNum
+from .scanner import VarNum
 
 
 class Var:

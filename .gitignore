@@ -181,3 +181,4 @@ minlog/temp.py
 bad/
 
 
+natlog/natprogs/*.pickle

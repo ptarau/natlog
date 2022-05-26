@@ -1,6 +1,8 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 import numpy as np
+import os
+import pickle
 
 from .db import *
 
@@ -42,6 +44,24 @@ def seq2nums(xs):
     return d
 
 
+def exists_file(fname):
+    return os.path.exists(fname)
+
+def to_pickle(obj, fname):
+    """
+    serializes an object to a .pickle file
+    """
+    with open(fname, "wb") as outf:
+        pickle.dump(obj, outf)
+
+
+def from_pickle(fname):
+    """
+    deserializes an object from a pickle file
+    """
+    with open(fname, "rb") as inf:
+        return pickle.load(inf)
+
 class Ndb(Db):
     """
     replaces indexing in Db with machine-learned equivalent
@@ -51,6 +71,11 @@ class Ndb(Db):
         """
         overrides loading mechanism to fit learner
         """
+        model_name=fname+".pickle"
+        if exists_file(model_name):
+            self.learner, self.db_const_dict, self.css=from_pickle(model_name)
+            return
+
         super().load(fname)
         db_const_dict = seq2nums(self.index)  # assuming dict ordered
         # create diagonal numpy matrix, one row for each constant
@@ -61,6 +86,7 @@ class Ndb(Db):
         print('\ny:', y.shape, '\n', y, '\n')
         learner.fit(X, y)
         self.learner, self.db_const_dict = learner, db_const_dict
+        to_pickle((learner, db_const_dict,self.css), model_name)
 
     def ground_match_of(self, query_tuple):
         """
@@ -73,5 +99,5 @@ class Ndb(Db):
         qs = np.array([set2bits(db_const_count, query_consts_nums)])
         rs = self.learner.predict(qs)
         matches = bits2set(list(rs[0]))
-        #print('!!!!!!:',matches)
+        print('!!!!!!:',matches,self.css)
         return matches

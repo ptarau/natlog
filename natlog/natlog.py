@@ -1,7 +1,7 @@
 from math import *
 from pathlib import Path
 
-from .mparser import *
+from .parser import *
 from .unify import *  # unify, lazy_unify, activate, extractTerm
 from .db import Db
 

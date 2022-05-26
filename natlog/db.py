@@ -3,7 +3,7 @@ import json
 import csv
 
 from .unify import unify, activate, path_of
-from .mparser import mparse
+from .parser import mparse
 
 
 def make_index():
