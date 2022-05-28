@@ -1,3 +1,6 @@
+import os
+import pickle
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 import numpy as np
@@ -6,16 +9,20 @@ import pickle
 
 from .db import *
 
-# simple multi-layer percdeptron
-neural_learner = MLPClassifier(
-    hidden_layer_sizes=(16, 16),
-    random_state=1234,
-    verbose=1,
-    # activation='relu',
-    max_iter=10000
-)
 
-rf_learaner = RandomForestClassifier(random_state=1234)  # alternative
+# simple multi-layer percdeptron
+def neural_learner():
+    return MLPClassifier(
+        hidden_layer_sizes=(16, 16),
+        random_state=1234,
+        verbose=1,
+        # activation='relu',
+        max_iter=300
+    )
+
+
+def rf_learner():
+    return RandomForestClassifier(random_state=1234)  # alternative
 
 
 def set2bits(n, xs):
@@ -47,6 +54,7 @@ def seq2nums(xs):
 def exists_file(fname):
     return os.path.exists(fname)
 
+
 def to_pickle(obj, fname):
     """
     serializes an object to a .pickle file
@@ -62,18 +70,27 @@ def from_pickle(fname):
     with open(fname, "rb") as inf:
         return pickle.load(inf)
 
+
 class Ndb(Db):
     """
     replaces indexing in Db with machine-learned equivalent
     """
 
-    def load(self, fname, learner=neural_learner):
+    def __init__(self, learner=neural_learner):
+        super().__init__()
+        self.learner_name=learner.__name__
+        self.learner = learner()
+
+    def to_model_name(self, fname):
+        return fname + "."+self.learner_name+".pickle"
+
+    def load(self, fname):
         """
         overrides loading mechanism to fit learner
         """
-        model_name=fname+".pickle"
+        model_name = self.to_model_name(fname)
         if exists_file(model_name):
-            self.learner, self.db_const_dict, self.css=from_pickle(model_name)
+            self.learner, self.db_const_dict, self.css = from_pickle(model_name)
             return
 
         super().load(fname)
@@ -84,9 +101,9 @@ class Ndb(Db):
         y = np.array([set2bits(val_count, xs) for xs in self.index.values()])
         print('X:', X.shape, '\n', X)
         print('\ny:', y.shape, '\n', y, '\n')
-        learner.fit(X, y)
-        self.learner, self.db_const_dict = learner, db_const_dict
-        to_pickle((learner, db_const_dict,self.css), model_name)
+        self.learner.fit(X, y)
+        self.db_const_dict = db_const_dict
+        to_pickle((self.learner, db_const_dict, self.css), model_name)
 
     def ground_match_of(self, query_tuple):
         """
@@ -99,5 +116,5 @@ class Ndb(Db):
         qs = np.array([set2bits(db_const_count, query_consts_nums)])
         rs = self.learner.predict(qs)
         matches = bits2set(list(rs[0]))
-        print('!!!!!!:',matches,self.css)
+        # print('!!!!!!:',matches,self.css)
         return matches

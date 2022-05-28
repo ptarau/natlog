@@ -269,7 +269,7 @@ def dtestj():
     d.ask(query)
 
 
-def bigdb():
+def big_db():
     prog = """
        quest X Y : ~ (text_term (give X Y)) ?
     """
@@ -280,6 +280,16 @@ def bigdb():
     n.query("quest X Y?")
     # n.repl()
 
+def big_ndb():
+    prog = """
+       quest X Y : ~ (text_term (give X Y)) ?
+    """
+    n = NeuralNatlog(text=prog, db_name=NATPROGS+'facts.nat')
+    #print(n)
+    print('SIZE:', n.db.size(), 'LEN:', len(n.db.css[0]))
+    # print(n.db.css[0])
+    n.query("quest X Y?")
+    # n.repl()
 
 def libtest():
     n = Natlog(file_name=NATPROGS+'lib.nat')

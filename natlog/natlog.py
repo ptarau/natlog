@@ -104,7 +104,7 @@ def interp(css, goals0, db=None):
             flag = [0]
             r = ('$ENG', runner, ('the', x), g, occ, flag)
             e.bind(r, trail)
-            a = next(runner, None)
+            #a = next(runner, None)
             # print('DUMMY:',a, flag)
             yield from step(goals)
 
