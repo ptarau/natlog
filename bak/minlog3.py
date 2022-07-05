@@ -1,3 +1,4 @@
+minlog
 from mparser import mparse
 from mscanner import VarNum
 
