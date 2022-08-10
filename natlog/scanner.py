@@ -32,12 +32,13 @@ class Scanner:
             (r"[a-z]+[\w]*", lambda sc, tok: ("ID", tok)),
             (r"'[\w\s\-\.\/,%=!\+\(\)]+'", lambda sc, tok: ("ID", qtrim(tok))),
             (r"[A-Z_]+[\w]*", lambda sc, tok: ("VAR", self.sym(tok))),
-            (r"~|``|`|\^|#|@|%|&|;|\+|\-|\*|/|=|<|>|<=|>=|//|==", lambda sc, tok: ("OP", tok)),
             (r"[(]", lambda sc, tok: ("LPAR", tok)),
             (r"[)]", lambda sc, tok: ("RPAR", tok)),
             (r"[.?]", lambda sc, tok: ("END", self.newsyms())),
-            (r"[:]", lambda sc, tok: ("IF", tok)),
+            (r":", lambda sc, tok: ("IF", tok)),
+            (r"=>", lambda sc, tok: ("REW", tok)),
             (r"[,]", lambda sc, tok: ("AND", tok)),
+            (r"~|``|`|\^|#|@|%|&|;|<=|>=|//|==|\->|\+|\-|\*|/|=|<|>", lambda sc, tok: ("OP", tok)),
             #     (r"[;]", lambda sc, tok: ("OR", tok)),
             (r"\s+", None),  # None == skip tok.
         ])
@@ -79,6 +80,21 @@ def stest():
     s = Scanner(sent, ground=False)
     print(list(s.run()))
 
+def gtest():
+    sent = """
+sent  => a,noun,verb, @ on a,place.
+
+noun => @ cat.
+noun => @ dog.
+
+verb => @sits.
+
+place => @ mat.
+place => @ bed.
+"""
+    s = Scanner(sent, ground=False)
+    print(list(s.run()))
+
 
 if __name__ == '__main__':
-    stest()
+    gtest()

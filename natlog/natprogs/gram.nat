@@ -1,0 +1,14 @@
+sent  => @a,noun,verb, @on, @a, place.
+
+noun => @cat.
+noun => @dog.
+
+verb => @sits.
+
+place => @mat.
+place => @bed.
+
+@ X (X Xs) Xs.
+
+goal Xs : sent Xs ().
+

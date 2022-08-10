@@ -1,7 +1,6 @@
-
 from operator import *
 
-from .scanner import Scanner
+from .scanner import Scanner,VarNum
 
 trace = 0
 
@@ -59,21 +58,58 @@ class Parser:
 
 # extracts a Prolog-like clause made of tuples
 def to_clause(xs):
-    if ':' not in xs: return (xs, ())
-    neck = xs.index(':')
+    if not (':' in xs or '=>' in xs): return xs, ()
+    if "=>" in xs:
+        sep = '=>'
+    else:
+        sep = ':'
+    neck = xs.index(sep)
     head = xs[:neck]
     body = xs[neck + 1:]
-    if ',' not in xs: return (head, (body,))
-    bss = []
-    bs = []
-    for b in body:
-        if b == ',':
-            bss.append(tuple(bs))
-            bs = []
+
+    if sep==':':
+        if ',' not in xs:
+            res = head, (body,)
         else:
-            bs.append(b)
-    bss.append(tuple(bs))
-    return (head, tuple(bss))
+            bss = []
+            bs = []
+            for b in body:
+                if b == ',':
+                    bss.append(tuple(bs))
+                    bs = []
+                else:
+                    bs.append(b)
+            bss.append(tuple(bs))
+
+            res = head, tuple(bss)
+        return res
+    if sep=='=>':
+        n0 = 100
+        n=n0
+        if ',' not in xs:
+            vs=(VarNum(n),VarNum(n+1))
+            res = head + vs, (body+vs,)
+        else:
+            bss = []
+            bs = []
+            for b in body:
+                if b == ',':
+                    vs = VarNum(n), VarNum(n + 1)
+                    n += 1
+                    bs = tuple(bs) + vs
+                    bss.append(bs)
+                    bs = []
+                else:
+                    bs.append(b)
+
+            vs = VarNum(n), VarNum(n + 1)
+            n += 1
+            bs = tuple(bs) + vs
+            bss.append(bs)
+            head=head+(VarNum(n0),VarNum(n))
+
+            res = head, tuple(bss)
+        return res
 
 
 # main exported Parser + Scanner
@@ -108,6 +144,7 @@ def to_tuple(xy):
         ts = to_tuple(y)
         return (t,) + ts
 
+
 def to_goal(ts):
     gs = ()
     for g in reversed(ts):
@@ -115,10 +152,10 @@ def to_goal(ts):
     return gs
 
 
-def from_goal(xs) :
-    rs=[]
+def from_goal(xs):
+    rs = []
     while xs:
-        x,xs=xs
+        x, xs = xs
         rs.append(x)
     return tuple(rs)
 
@@ -157,14 +194,36 @@ def ptest2():
     ws = "( 1 ( 2 3 4 ) 5 6 )".split()
 
     p = Parser(ws)
-    print('WS:',ws)
+    print('WS:', ws)
     r = p.par()
-    print('R:',r)
-    t=to_tuple(r)
-    print('T:',t)
-    print('WR:',p.words)
-    print('RES:',Parser(ws).run())
+    print('R:', r)
+    t = to_tuple(r)
+    print('T:', t)
+    print('WR:', p.words)
+    print('RES:', Parser(ws).run())
+
+
+def ptest3():
+    text = """
+sent  => a,noun,verb, @on, @a, place.
+
+noun => @cat.
+noun => @dog.
+
+verb => @sits.
+
+place => @mat.
+place => @bed.
+    
+@ X (X Xs) Xs.
+
+goal Xs : sent Xs ().
+
+"""
+
+    r = parse(text, ground=False, rule=True)
+    print(list(r))
 
 
 if __name__ == '__main__':
-    ptest2()
+    ptest3()

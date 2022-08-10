@@ -298,6 +298,12 @@ def libtest():
     n.repl()
 
 
+def gramtest():
+    n = Natlog(file_name=NATPROGS+'gram.nat')
+    print(n)
+    n.query("goal Xs.")
+    #n.repl()
+
 def go():
     ts = [dtest1,
           dtest,
@@ -312,7 +318,8 @@ def go():
           t6,
           t7,
           db_test, db_chem, py_test, py_test1,
-          bigdb
+          big_db,
+          gramtest
           ]
     for t in ts:
         print('\n\n', '*' * 20, t.__name__, '*' * 20, '\n')
@@ -322,3 +329,4 @@ def go():
 if __name__ == "__main__":
     go()
     #libtest()
+    #gramtest()
