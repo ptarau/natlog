@@ -124,7 +124,7 @@ QUERY: Who is What?
 
 As an extension to the nested tuple store the neuro-symbolic tuple database uses a machine learning algorithm instead of its indexer.Thus it offers the same interface as the tuple store that it extends. The learner is trained upon loading the database file (from a .nat,  .csv or .tsv file) and its inference mechanism is triggered when facts from the database are queried. The stream of tuples returned from the query is then filtered via unification (and possibly, more general integrity constraints, expressed via logic programming constructs).
 
-#### Example of usage (see more at https://github.com/ptarau/pypro/blob/master/tests.py )
+#### Example of usage (see more at https://github.com/ptarau/minlog/blob/main/natlog/test/tests.py )
 ```
 def ndb_test() :
   nd = neural_natlog(file_name=natprogs()+"dbtc.nat",db_name=natprogs()+"db.nat")
