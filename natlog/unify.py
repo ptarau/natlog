@@ -77,7 +77,7 @@ def lazy_unify(x, y, trail, d):
         elif type(x1) != type(x2):
             # this should be before next
             return False
-        elif isinstance(x2, tuple) : #and isinstance(x1, tuple):
+        elif isinstance(x2, tuple):  # and isinstance(x1, tuple):
             arity = len(x2)
             if len(x1) != arity:
                 return False
@@ -127,116 +127,6 @@ def occurs(x0, t0):
     x = deref(x0)
     return occ(t0)
 
-
-def copy_term(t0):
-    def ct(t):
-        t = deref(t)
-        if isinstance(t, Var):
-            return d.setdefault(t, Var())
-        elif not isinstance(t, tuple):
-            return t
-        else:
-            return tuple(map(ct, t))
-
-    d = dict()
-    # print('CT <<<',t0)
-    r = ct(t0)
-    # print('CT >>>', r)
-    return r
-
-
-def arg(x, i):
-    return x[i]
-
-
-"""
-def activate_(t0, d):
-    if isinstance(t0, VarNum):
-        return new_var(t0, d)
-    elif not isinstance(t0, tuple):
-        return t0
-    top = [None]
-    stack = [(top, 0, t0)]
-
-    while stack:
-        parent, pos, t = stack.pop()
-        c = [None] * len(t)
-        for i, x in enumerate(t):
-            if isinstance(x, tuple):
-                #c[i]=x
-                stack.append((c, i, x))
-            else:
-                if isinstance(x, VarNum):
-                    x = new_var(x, d)
-                c[i] = x
-        parent[pos] = c
-    return top[0]
-
- 
-class arity(int):
-    def __repr__(self):
-        return f'$({int(self)})'
-
-def to_postfix(term):
-    args = [term]
-    stack = []
-    while args:
-        t = args.pop()
-        if not isinstance(t, tuple):
-            stack.append(t)
-        else:
-            stack.append(arity(len(t)))
-            for x in reversed(t):
-                args.append(x)
-    return reversed(stack)
-
-def from_postfix(ws,d):
-    stack = []
-    for w in ws:
-        if not isinstance(w, arity):
-            stack.append(w)
-        else:
-            xs = []
-            for _ in range(w):
-                x = stack.pop()
-                if isinstance(x, VarNum):
-                    x= new_var(x, d)
-                xs.append(x)
-            stack.append(tuple(xs))
-    return stack.pop()
-
-def activate(template, d):
-    ws=to_postfix(template)
-    return from_postfix(ws,d)
-"""
-
-"""
-def const_of(t):
-    def const_of0(t):
-        if isinstance(t, Var):
-            pass
-        elif isinstance(t, tuple):
-            for x in t:
-                yield from const_of0(x)
-        else:
-            yield t
-
-    return set(const_of0(t))
-
-def vars_of(t):
-    def vars_of0(t):
-        if isinstance(t, Var):
-            yield t
-        elif isinstance(t, tuple):
-            for x in t:
-                yield from vars_of0(x)
-        else:
-            pass
-
-    return set(vars_of0(t))
-"""
-
-
 def path_of_(t):
     def path_of0(t):
         if isinstance(t, Var):
@@ -265,7 +155,6 @@ def path_of(t):
     ps = set(path_of0(t))
     qs = set((c, list2tuple(x)) for (c, x) in ps)
     return qs
-
 
 def list2tuple(ls):
     # print('!!! LS=',ls)

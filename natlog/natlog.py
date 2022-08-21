@@ -3,6 +3,7 @@ from pathlib import Path
 
 from .parser import *
 from .unify import *  # unify, lazy_unify, activate, extractTerm
+from .tools import *
 from .db import Db
 
 
@@ -20,11 +21,6 @@ def to_python(x):
 
 def from_python(x):
     return x
-
-
-def const(x):
-    assert len(x) <= 2
-    return eval(x)
 
 
 def stop_engine(g):
@@ -51,10 +47,18 @@ def unfold1(g, gs, h, bs, trail):
     return gs  # SUCCESS
 
 
-def interp(css, goals0, db=None):
+def interp(css, goals0, db=None, callables=dict()):
     """
     main interpreter
     """
+
+    def to_callable(name):
+        """
+          associates string names  to callables
+        """
+        f = callables.get(name, None)
+        if f is not None: return f
+        return eval(name)
 
     def dispatch_call(op, g, goals, trail):
         """
@@ -74,7 +78,7 @@ def interp(css, goals0, db=None):
             """
             simple call to Python (e.g., print, no return expected)
             """
-            f = eval(g[0])
+            f = to_callable(g[0])
             args = to_python(g[1:])
             f(*args)
 
@@ -82,7 +86,7 @@ def interp(css, goals0, db=None):
             """
             function call to Python, last arg unified with result
             """
-            f = eval(g[0])
+            f = to_callable(g[0])
             g = g[1:]
             v = g[-1]
             args = to_python(g[:-1])
@@ -104,7 +108,7 @@ def interp(css, goals0, db=None):
             flag = [0]
             r = ('$ENG', runner, ('the', x), g, occ, flag)
             e.bind(r, trail)
-            #a = next(runner, None)
+            # a = next(runner, None)
             # print('DUMMY:',a, flag)
             yield from step(goals)
 
@@ -135,7 +139,7 @@ def interp(css, goals0, db=None):
               unifies with last arg yield from a generator
               and first args, assumed ground, passed to it
             """
-            gen = eval(g[0])
+            gen = to_callable(g[0])
             g = g[1:]
             v = g[-1]
             args = to_python(g[:-1])
@@ -212,11 +216,12 @@ def interp(css, goals0, db=None):
                 break
             yield a
 
+
 LIB = '../natprogs/lib.nat'
 
 
 class Natlog:
-    def __init__(self, text=None, file_name=None, db_name=None, with_lib=None):
+    def __init__(self, text=None, file_name=None, db_name=None, with_lib=None, callables=dict()):
         if file_name:
             with open(file_name, 'r') as f:
                 self.text = f.read()
@@ -227,6 +232,8 @@ class Natlog:
             with open(with_lib, 'r') as f:
                 lib = f.read()
             self.text = self.text + '\n' + lib
+
+        self.callables = callables
 
         css, ixss = zip(*parse(self.text, ground=False, rule=True))
 
@@ -254,7 +261,7 @@ class Natlog:
         vs = dict()
         goals0 = activate(goals0, vs)
         ns = dict(zip(vs, ixs))
-        for answer in interp(self.css, goals0, self.db):
+        for answer in interp(self.css, goals0, self.db,self.callables):
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
             else:
