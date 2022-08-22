@@ -38,7 +38,7 @@ class Scanner:
             (r":", lambda sc, tok: ("IF", tok)),
             (r"=>", lambda sc, tok: ("REW", tok)),
             (r"[,]", lambda sc, tok: ("AND", tok)),
-            (r"~|``|`|\^|#|@|%|&|;|<=|>=|//|==|\->|\+|\-|\*|/|=|<|>", lambda sc, tok: ("OP", tok)),
+            (r"~|``|`|\^|\$|#|@|%|&|;|<=|>=|//|==|\->|\+|\-|\*|/|=|<|>", lambda sc, tok: ("OP", tok)),
             #     (r"[;]", lambda sc, tok: ("OR", tok)),
             (r"\s+", None),  # None == skip tok.
         ])

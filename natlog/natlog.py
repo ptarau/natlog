@@ -22,7 +22,6 @@ def to_python(x):
 def from_python(x):
     return x
 
-
 def stop_engine(g):
     E, e, _, _, _, flag = g
     assert E == '$ENG'
@@ -91,6 +90,18 @@ def interp(css, goals0, db=None, callables=dict()):
             v = g[-1]
             args = to_python(g[:-1])
             r = f(*args)
+            r = from_python(r)
+            if not unify(v, r, trail):
+                undo(trail)
+            else:
+                yield from step(goals)
+
+        def python_var(g):
+            """
+            query value of Python var last arg unified with result
+            """
+            r = to_callable(g[0])
+            v = g[-1]
             r = from_python(r)
             if not unify(v, r, trail):
                 undo(trail)
@@ -179,9 +190,12 @@ def interp(css, goals0, db=None, callables=dict()):
             yield from python_fun(g)
         elif op == "``":  # generator call, last arg unified
             yield from gen_call(g)
-        else:  # op == '#',  simple call, no return
+        elif op == '#':  # simple call, no return
             python_call(g)
             yield from step(goals)
+        else:  # op == '$' find value of variable
+            yield from python_var(g)
+
         undo(trail)
 
     def step(goals):
@@ -195,7 +209,7 @@ def interp(css, goals0, db=None, callables=dict()):
         else:
             g, goals = goals
             op = g[0] if g else None
-            if op in {"call", "~", "`", "``", "^", "#", "if", "eng", "ask"}:
+            if op in {"call", "~", "`", "``", "^", "#","$",  "if", "eng", "ask"}:
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals, trail)
             else:
@@ -261,7 +275,7 @@ class Natlog:
         vs = dict()
         goals0 = activate(goals0, vs)
         ns = dict(zip(vs, ixs))
-        for answer in interp(self.css, goals0, self.db,self.callables):
+        for answer in interp(self.css, goals0, self.db, self.callables):
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
             else:
