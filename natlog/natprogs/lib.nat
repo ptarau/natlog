@@ -116,7 +116,7 @@ t2 : `numlist 1 5 X, `numlist 11 15 Y, maplist (sum) X Y Z, #print Z, fail.
 t3 : `numlist 1 5 X, nth 2 X R, #print R ,fail.
 t4 : list (1 2 3) Xs, permute Xs Ys, tuple Ys T, #print T, fail.
 
-t5 : list (1 2 3) Xs, #print Xs, eng X (member X Xs) E,  #print E,
+t5 : list (1 2 3 4) Xs, #print Xs, eng X (member X Xs) E,  #print E,
      ask E R1, ask E R2, ask E R3, ask E R4, #print R1 R2 R3 R4, fail.
 
 p 1.
@@ -142,7 +142,7 @@ pick_ (the C)  C Y _N : call Y.
 pick_ no _C _Y N : call N.
 
 
-t11: if_ (eq X 1) (eq Y X) (eq Y 42), # print X Y, fail.
+t11: if_ fail (eq X 0) (eq X 1), # print bug X, fail.
 
 t12 :
   eng X (between 1 5 X) E, stop E, ask E A, #print here A, fail.

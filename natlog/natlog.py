@@ -118,6 +118,8 @@ def interp(css, goals0, db=None, callables=dict()):
             runner = interp(css, g, db=db)
             flag = [0]
             r = ('$ENG', runner, ('the', x), g, occ, flag)
+
+            next(runner,None) # triggers bug in if_ in lib
             e.bind(r, trail)
             # a = next(runner, None)
             # print('DUMMY:',a, flag)

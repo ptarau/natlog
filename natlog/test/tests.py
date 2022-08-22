@@ -294,7 +294,7 @@ def big_ndb():
 def libtest():
     n = Natlog(file_name=NATPROGS+'lib.nat')
     #print(n)
-    n.query("t13.")
+    n.query("t7.")
     n.repl()
 
 
