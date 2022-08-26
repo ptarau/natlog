@@ -4,6 +4,8 @@ We closely follow Einstein's *"Everything should be made as simple as possible, 
 
 At this point, we rely on Python's natural error checking, without doing much to warn about syntactic or semantic errors. This can be added, but this is meant as an *executable specification* of an otherwise simple and natural logic language that we hereby name **Natlog**.
 
+### NEW: a demo app in folder ```apps/nat3d``` combining Natlog and vpython to build (quite easily!) 3D objects and amimations
+
 ###  **Natlog** : a succinct overview
 
 * Terms are represented as nested tuples.

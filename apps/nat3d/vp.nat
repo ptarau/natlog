@@ -1,0 +1,83 @@
+
+sphere R : `sphere R.
+
+vector X Y Z V: `vector X Y Z V.
+
+size X A B C : `vector A B C V, setprop X size V.
+
+go1: `sphere S, #sleep 1, #hide S, #sleep 1, #show S.
+
+go2 : `sphere S, #sleep 1, #left S, sleep 1, #right S, between 1 5 _, #farther S, fail.
+
+go3 :
+  `ellipsoid X,
+  size X 1 2 3,
+  #col X red.
+
+
+go4 :
+   `pyramid P,
+   #col P blue,
+   between 1 10 _,
+     #left P,
+     #rotx P,
+     #right P,
+     #sleep 1,
+   fail.
+
+go :
+  #print humpy dumpy sat on a wall,
+  humpty_dumpty C,
+  tumble C,
+  #print humpy dumpy had a great fall.
+
+humpty_dumpty C:
+  eye X,
+  #left X,
+  eye Y,
+  #right Y,
+  head H,
+  leg L,
+  #left L,
+  leg R,
+  #right R,
+  `compound (X Y H L R) C.
+
+leg S:
+  `sphere S,
+  #size S 1 3 1,
+  #col S blue,
+  #down S.
+
+head H:
+  `sphere H,
+  size H 2 3 2,
+  #col H white,
+  #up H,
+  #up H,
+  #up H.
+
+eye S:
+  `sphere S,
+  size S 0.5 0.3 0.3,
+  #col S red,
+  #closer S,
+  #closer S,
+  #up S,
+  #up S,
+  #up S,
+  #up S,
+  #rotz S.
+
+tumble C:
+  between 1 12 _,
+    #left C,
+    #sleep 0.5,
+    #rotx C,
+    #sleep 0.5,
+    #roty C,
+    #sleep 0.5,
+    #rotz C,
+    #right C,
+  fail.
+tumble _ .
