@@ -1,29 +1,4 @@
-
-sphere R : `sphere R.
-
-vector X Y Z V: `vector X Y Z V.
-
 size X A B C : `vector A B C V, setprop X size V.
-
-go1: `sphere S, #sleep 1, #hide S, #sleep 1, #show S.
-
-go2 : `sphere S, #sleep 1, #left S, sleep 1, #right S, between 1 5 _, #farther S, fail.
-
-go3 :
-  `ellipsoid X,
-  size X 1 2 3,
-  #col X red.
-
-
-go4 :
-   `pyramid P,
-   #col P blue,
-   between 1 10 _,
-     #left P,
-     #rotx P,
-     #right P,
-     #sleep 1,
-   fail.
 
 go :
   #print humpy dumpy sat on a wall,
@@ -81,3 +56,41 @@ tumble C:
     #right C,
   fail.
 tumble _ .
+
+
+bot dance:
+  `sphere S, #resize S 0.1, #col S red,
+  `bot B, #col B blue, times 2 (# left B),
+  `bot C, #col C green, times 3 (# right C),
+  tumble B,
+  #print done b,
+  tumble C,
+  #print done c.
+
+
+times K Action:
+  between 1 K _,
+    call Action,
+  fail.
+times K _.
+
+test1: `sphere S, #sleep 1, #hide S, #sleep 1, #show S.
+
+test2 : `sphere S, #sleep 1, #left S, sleep 1, #right S,
+         between 1 5 _, #farther S, fail.
+
+test3 :
+  `ellipsoid X,
+  size X 1 2 3,
+  #col X red.
+
+
+test4 :
+   `pyramid P,
+   #col P blue,
+   between 1 10 _,
+     #left P,
+     #rotx P,
+     #right P,
+     #sleep 1,
+   fail.

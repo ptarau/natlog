@@ -1,6 +1,8 @@
 from vpython import *
 from natlog import Natlog, natprogs
 
+scene=canvas(width=1200, height=800, title='Natlog 3D DEMO, zoom in!')
+
 shared = dict()
 
 
@@ -36,6 +38,15 @@ def objects():
 
 
 delta = 0.5
+
+
+@share
+def desc(o):
+    try:
+        d = o.__dict__
+    except Exception:
+        d = dict()
+    print(d)
 
 
 @share
@@ -101,7 +112,7 @@ def rotz(o, angle=90):
 
 @share
 def col(x, c):
-    if isinstance(c,str):
+    if isinstance(c, str):
         c = getattr(color, c)
     x.color = c
 
@@ -110,6 +121,18 @@ def col(x, c):
 def size(o, x, y, z):
     v = vector(x, y, z)
     o.size = v
+
+
+@share
+def resize(o, k):
+    o.size = o.size * float(k)
+
+
+def normalize(o):
+    v=o.size
+    k = 3/(v.x + v.y + v.z)
+    o.pos = vector(0, 0, 0)
+    resize(o, k)
 
 
 # tests
@@ -157,15 +180,52 @@ def ttest(i=10):
         w()
 
 
+def from_stl(fname):  # specify file
+    with open(fname, mode='rb') as fd:
+        fd.seek(0)
+        vs = []
+        ts = []  # list of triangles to compound
+        for line in fd.readlines():
+            ps = line.split()
+            if ps[0] == b'facet':
+                N = vec(float(ps[2]), float(ps[3]), float(ps[4]))
+            elif ps[0] == b'vertex':
+                vs.append(vertex(pos=vec(float(ps[1]), float(ps[2]),
+                                         float(ps[3])), normal=N,
+                                 color=color.white))
+                if len(vs) == 3:
+                    ts.append(triangle(vs=vs))
+                    vs = []
+
+        return compound(ts)
+
+@share
+def follow(o):
+    scene.camera.follow(o)
+
+@share
+def camera(x,y,z):
+    scene.camera.pos=vector(x,y,z)
+
+@share
+def bot():
+    b = from_stl('bot.stl')
+    normalize(b)
+    return b
+
+
 def nats():
     share_primitives()
     start()
-    n = Natlog(file_name="vp.nat", with_lib=natprogs() + "lib.nat", callables=shared)
-    n.query("go.")
+    n = Natlog(file_name="vp.nat",
+               with_lib=natprogs() + "lib.nat", callables=shared)
+    # n.query("go.")
+    n.query("bot dance.")
     n.repl()
 
 
 if __name__ == "__main__":
     # ttest()
     # rtest()
+    #bot()
     nats()
