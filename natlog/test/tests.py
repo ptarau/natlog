@@ -118,6 +118,9 @@ def fam_repl():
     print('Enter some queries!')
     n.repl()
 
+def lib():
+    n=Natlog(file_name=NATPROGS+"lib.nat")
+    n.repl()
 
 def loop():
     n = Natlog(file_name=NATPROGS+"loop.nat")
@@ -299,10 +302,12 @@ def libtest():
 
 
 def gramtest():
-    n = Natlog(file_name=NATPROGS+'gram.nat')
+    n = Natlog(file_name=NATPROGS+'dall_e.nat')
     print(n)
-    n.query("goal Xs.")
+    n.query("go.")
     #n.repl()
+
+
 
 def go():
     ts = [dtest1,
@@ -327,6 +332,6 @@ def go():
 
 
 if __name__ == "__main__":
-    go()
-    libtest()
-    #gramtest()
+    #go()
+    #libtest()
+    gramtest()

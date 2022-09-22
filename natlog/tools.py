@@ -33,3 +33,17 @@ def from_dict(d):
 def in_dict(d):
     yield from d.items()
 
+
+def write(args):
+    print(*args, end=' ')
+
+
+def nl():
+    print()
+
+
+def writeln(args):
+    write(args)
+    nl()
+
+
