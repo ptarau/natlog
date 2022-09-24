@@ -28,6 +28,8 @@ not X : if X (fail) (true).
 
 once X : if X (true) (fail).
 
+distinct X Y : not (eq X Y).
+
 maplist _ ().
 maplist F (X Xs) : call F X , maplist F Xs.
 

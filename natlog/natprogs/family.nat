@@ -24,7 +24,7 @@ parent of 'Sandy' 'Mary'.
 parent of 'Paul' 'Anna'.
 parent of 'Paul' 'Peter'.
 
-sibling of X S: parent of X P, parent of S P, not (eq S X).
+sibling of X S: parent of X P, parent of S P, distinct S X.
 
 brother of X B: sibling of X B, male B.
 
@@ -36,11 +36,16 @@ father of X M: parent of X M, male M.
 
 grand parent of X GP: parent of X P, parent of P GP.
 
+ancestor of X A : parent of X  P, parent or ancestor P A.
+
+parent or ancestor P P.
+parent or ancestor P A : ancestor of P A.
+
 cousin of X C:
   parent of X P,
   parent of P GP,
   parent of Q GP,
-  not (eq P Q),
+  distinct P Q,
   parent of C Q,
-  not (eq X C).
+  distinct X C.
 
