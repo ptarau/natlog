@@ -34,6 +34,8 @@ class Scanner:
             (r"[A-Z_]+[\w]*", lambda sc, tok: ("VAR", self.sym(tok))),
             (r"[(]", lambda sc, tok: ("LPAR", tok)),
             (r"[)]", lambda sc, tok: ("RPAR", tok)),
+            (r"[\[]", lambda sc, tok: ("LPAR_", tok)),
+            (r"[\]]", lambda sc, tok: ("RPAR_", tok)),
             (r"[.?]", lambda sc, tok: ("END", self.newsyms())),
             (r":", lambda sc, tok: ("IF", tok)),
             (r"=>", lambda sc, tok: ("REW", tok)),
@@ -76,7 +78,7 @@ class Scanner:
 
 def stest():
     sent = \
-        "(The ~ cat -42) (~ 'sits on' (the mat 0.42)). \n the ` Dog _barks . (` a `` b) and (`b `a) ."
+        "(The ~ cat -42) (~ 'sits on' [the mat 0.42]). \n the ` Dog _barks . (` a `` b) and (`b `a) ."
     s = Scanner(sent, ground=False)
     print(list(s.run()))
 
@@ -97,4 +99,5 @@ place => @ bed.
 
 
 if __name__ == '__main__':
-    gtest()
+    stest()
+    #gtest()

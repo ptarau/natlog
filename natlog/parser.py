@@ -1,8 +1,20 @@
 from operator import *
 
-from .scanner import Scanner,VarNum
+from .scanner import Scanner, VarNum
 
 trace = 0
+
+
+def rp(LP):
+    return ')' if LP == '(' else ']'
+
+
+def from_none(LP, w):
+    # return [] if w is None and  LP=='['  else  w
+    if w is None:
+        if LP == '(': return ()
+        if LP == '[': return []
+    return w
 
 
 # simple LL(1) recursive descent Parser
@@ -27,31 +39,41 @@ class Parser:
         else:
             return None
 
-    def par(self):
+    def par(self, LP, RP):
         w = self.get()
-        assert w == '('
-        return self.pars()
+        assert w == LP
+        return self.pars(LP, RP)
 
-    def pars(self):
+    def pars(self, LP, RP):
         w = self.peek()
-        if w == ')':
+        if w == RP:
             self.get()
             return None
-        elif w == '(':
-            t = self.par()
-            ts = self.pars()
-            return (t, ts)
+        elif w == LP:
+            t = self.par(LP, RP)
+            ts = self.pars(LP, RP)
+            ts = from_none(LP, ts)
+            return (t, ts) if LP == '(' else [t] + ts
+        elif w == '(' or w == '[' and w != LP:
+            t = self.par(w, rp(w))
+            ts = self.pars(LP, RP)
+            ts = from_none(LP, ts)
+            return (t, ts) if LP == '(' else [t] + ts
         else:
-            self.get()
-            ts = self.pars()
-            return (w, ts)
+            t = self.get()
+            ts = self.pars(LP, RP)
+            ts = from_none(LP, ts)
+            return (w, ts) if LP == '(' else [w] + ts
 
     def run(self):
         ls = sum(1 for x in self.words if x == '(')
         rs = sum(1 for x in self.words if x == ')')
         assert ls == rs
+        ls = sum(1 for x in self.words if x == '[')
+        rs = sum(1 for x in self.words if x == ']')
+        assert ls == rs
 
-        t = to_tuple(self.par())
+        t = to_tuple(self.par('(', ')'))
         if trace: print("PARSED", t)
         return t
 
@@ -67,7 +89,7 @@ def to_clause(xs):
     head = xs[:neck]
     body = xs[neck + 1:]
 
-    if sep==':':
+    if sep == ':':
         if ',' not in xs:
             res = head, (body,)
         else:
@@ -83,12 +105,12 @@ def to_clause(xs):
 
             res = head, tuple(bss)
         return res
-    if sep=='=>':
+    if sep == '=>':
         n0 = 100
-        n=n0
+        n = n0
         if ',' not in xs:
-            vs=(VarNum(n),VarNum(n+1))
-            res = head + vs, (body+vs,)
+            vs = (VarNum(n), VarNum(n + 1))
+            res = head + vs, (body + vs,)
         else:
             bss = []
             bs = []
@@ -106,7 +128,7 @@ def to_clause(xs):
             n += 1
             bs = tuple(bs) + vs
             bss.append(bs)
-            head=head+(VarNum(n0),VarNum(n))
+            head = head + (VarNum(n0), VarNum(n))
 
             res = head, tuple(bss)
         return res
@@ -134,30 +156,37 @@ def mparse(text, ground=False, rule=False):
 # turns cons-like tuples into long tuples
 # do not change, deep recursion needed
 def to_tuple(xy):
-    if xy is None:
+    if xy is None or xy is ():
         return ()
+    elif isinstance(xy, list):
+        return [to_tuple(x) for x in xy]
     elif not isinstance(xy, tuple):
         return xy
-    else:
+    else:  # tuple
         x, y = xy
         t = to_tuple(x)
         ts = to_tuple(y)
         return (t,) + ts
 
-
 def to_goal(ts):
+    return from_array(ts)
+
+def from_array(ts):
     gs = ()
     for g in reversed(ts):
         gs = (g, gs)
     return gs
 
-
-def from_goal(xs):
+def to_array(xs):
     rs = []
     while xs:
         x, xs = xs
         rs.append(x)
-    return tuple(rs)
+    return rs
+
+def from_goal(xs):
+    return tuple(to_array(xs))
+
 
 
 def numlist(n, m):
@@ -190,13 +219,14 @@ def ptest1():
 
 
 def ptest2():
-    ws = "( x y ( a ( b ( c 1 2 ) ) d ) ( xx yy ) )".split()
-    ws = "( 1 ( 2 3 4 ) 5 6 )".split()
+    ws = "( x y [ a ( b [ c 1 2 ] ) d ] ( xx yy ) )".split()
+    # ws = "( 1 [ 2 3 4 ] 5 6 )".split()
 
     p = Parser(ws)
     print('WS:', ws)
-    r = p.par()
+    r = p.par('(', ')')
     print('R:', r)
+    # return
     t = to_tuple(r)
     print('T:', t)
     print('WR:', p.words)
@@ -226,4 +256,4 @@ goal Xs : sent Xs ().
 
 
 if __name__ == '__main__':
-    ptest3()
+    ptest2()

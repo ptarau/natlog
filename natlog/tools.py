@@ -21,6 +21,8 @@ def copy_term(t0):
 def arg(x, i):
     return x[i]
 
+def setarg(x,i,v):
+    x[i]=v
 
 def to_dict(kvs):
     return dict((kv[0], kv[1]) for kv in kvs)

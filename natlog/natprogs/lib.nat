@@ -49,14 +49,17 @@ sum X Y Z : `add X Y Z.
 between A B X : + B 1 SB, `` range A SB X.
 
 arg I T X : `arg T I X.
+setarg I T X : #setarg T I X.
+
 tuple Xs T : `from_goal Xs T.
 list T Xs : `to_goal T Xs.
 
+to_array Xs A : `to_array Xs A.
+from_array A Xs : `from_array A Xs.
 
 to_dict Xs D : `to_dict Xs D.
 from_dict D Xs : `from_dict D Xs.
 in_dict D K_V : ``in_dict D K_V.
-at K D : `at K D.
 
 stop E : # stop_engine E.
 
