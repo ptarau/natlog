@@ -1,0 +1,66 @@
+def init_weights Features Layer_sizes Weights:
+   `init_weights Features Layer_sizes Weights.
+
+linear_layer (W B) Input Output :
+   `transpose W T,
+   `matmul Input T M,
+   `matsum M B Output.
+
+forward_pass Weights Input Result :
+    `len Weights L,
+    - L 1 L1,
+    `crop Weights 0 L1 HiddenWeights,
+    arg L1 Weights LastWeight,
+    hidden_loop 0 L1 HiddenWeights Input Penultimate,
+    linear_layer  LastWeight Penultimate Last,
+    `sigmoid Last Result.
+
+hidden_loop L L _HiddenWeights Last Last .
+hidden_loop I L HiddenWeights In Out:
+  @ I < L,
+  + I 1 J,
+  arg I HiddenWeights WB,
+  linear_layer WB In LinOut,
+  `relu LinOut Temp,
+  hidden_loop J L HiddenWeights Temp Out.
+
+
+impl 0 0 1.
+impl 0 1 1.
+impl 1 0 0.
+impl 1 1 1.
+
+in_dataset (X Y Z U) R:
+   impl X Y A,
+   impl A Z B,
+   impl B U R.
+
+dataset Xss Ys :
+  findall X  (in_dataset X _) XssList,
+  findall Y  (in_dataset _ Y) YsList,
+  tuple XssList Xss,
+  tuple YsList Ys.
+
+
+go:
+   dataset Xss Ys,
+   `array Xss X,
+   `array Ys Y,
+   `type X S,
+   #print S,
+   `init_weights 4 (4 8 8 4 1) Weights,
+   forward_pass Weights X Result,
+   #print result Result.
+
+
+x1 :  `eye 4 M, `dot M M X, #print X, fail.
+x2 :
+  `array [10 20] X,
+  `array [[1.1 2] [3 4]] W,
+  `array [5 6] B,
+  lin_layer (W B) X R,
+  #print W,
+  #print B,
+  #print R,
+  fail.
+

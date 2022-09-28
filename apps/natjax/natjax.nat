@@ -1,0 +1,34 @@
+impl 0 0 1.
+impl 0 1 1.
+impl 1 0 0.
+impl 1 1 1.
+
+in_dataset (X Y Z U) R:
+   impl X Y A,
+   impl A Z B,
+   impl B U R.
+
+dataset Xss Ys :
+  findall X  (in_dataset X _) XssList,
+  findall Y  (in_dataset _ Y) YsList,
+  tuple XssList Xss,
+  tuple YsList Ys.
+
+
+run Epochs Loss Acc:
+   dataset Xss Ys,
+   `array Xss X,
+   `array Ys Y,
+   `init_weights 4 (4 8 8 4 1) Weights,
+   eq Learning_rate 0.01,
+   `train_model Weights X Y Learning_rate Epochs Model,
+   `test_model Model X Y (Loss Acc) .
+
+go:
+   run 1000 Loss Acc,
+
+   #print loss = Loss,
+   #print accuracy = Acc.
+
+
+

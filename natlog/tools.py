@@ -24,6 +24,9 @@ def arg(x, i):
 def setarg(x,i,v):
     x[i]=v
 
+def crop(a, l1, l2):
+    return a[l1:l2]
+
 def to_dict(kvs):
     return dict((kv[0], kv[1]) for kv in kvs)
 
