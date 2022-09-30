@@ -3,32 +3,92 @@ impl 0 1 1.
 impl 1 0 0.
 impl 1 1 1.
 
-in_dataset (X Y Z U) R:
-   impl X Y A,
-   impl A Z B,
-   impl B U R.
+nand 0 0 1.
+nand 0 1 1.
+nand 1 0 1.
+nand 1 1 0.
 
-dataset Xss Ys :
-  findall X  (in_dataset X _) XssList,
-  findall Y  (in_dataset _ Y) YsList,
+xor 0 0 0.
+xor 0 1 1.
+xor 1 0 1.
+xor 1 1 0.
+
+iter N Op X Y:
+  iter_op N Op () E 0 Y,
+  tuple E X.
+
+iter_op 0 _Op E E R R.
+iter_op I Op  E1 E2 R1 R3 :
+   @ I > 0,
+   - I 1 J,
+   Op X R1 R2,
+   + X X XX, - XX 1.0 X1,
+   iter_op J Op (X1 E1) E2 R2 R3.
+
+dataset N Op Xss (Ys):
+  findall (X Y)  (iter N Op X Y) XssYsList,
+  to_pairs XssYsList XssList YsList,
   tuple XssList Xss,
   tuple YsList Ys.
 
+to_pairs () () ().
+to_pairs ((Xs Y)  Zss) (Xs Xss) (Y Ys) :
+    to_pairs Zss Xss Ys.
 
-run Epochs Loss Acc:
-   dataset Xss Ys,
+to_jax_dataset Xss Ys Xtr Xt Ytr Yt:
    `array Xss X,
-   `array Ys Y,
-   `init_weights 4 (4 8 8 4 1) Weights,
+   `array Ys Y0,
+   `transpose Y0 Y,
+   `split X Y 0 0.1 (Xtr Xt Ytr Yt),
+   #print 'X',#print Xt,#print 'Y',#print Yt.
+
+
+run N Op Epochs Loss Acc LossT AccT:
+   dataset N Op Xss Ys,
+   to_jax_dataset Xss Ys X Xt Y Yt,
+   * 2 N M, * 4 N MM,
+   eq Seed 0,
+   `init_weights N (M MM M N 1) Seed Weights,
+   eq Learning_rate 0.01,
+   `train_model Weights X Y Learning_rate Epochs Model,
+   `test_model Model X Y (Loss Acc),
+   `test_model Model Xt Yt (LossT AccT) .
+
+
+go:
+   eq Op nand,
+   run 12 Op 1000 Loss Acc LossT AccT,
+   #print train loss = Loss,
+   #print train accuracy = Acc,
+   #print test loss = LossT,
+   #print test accuracy = AccT.
+
+
+
+
+
+tt1: iter 2 xor E R, #print result E R, fail.
+
+tt2 : dataset 1 nand Xss Ys, #print Xss Ys, fail.
+
+tt: $xor F, #test_natjax 12 F 0,fail.
+
+test_alt_run N Op0 _Epochs Loss Acc:
+
+   $Op0 Op,
+   eq Seed 0,
+   `load_dataset N Op Seed  (Data Layer_sizes Epochs),
+   eq Data (X _1 Y _2),
+   #print 'X',
+   #print X,
+   #print 'Y',
+   #print Y,
+   `init_weights N Layer_sizes Seed Weights,
    eq Learning_rate 0.01,
    `train_model Weights X Y Learning_rate Epochs Model,
    `test_model Model X Y (Loss Acc) .
 
-go:
-   run 1000 Loss Acc,
-
+alt:
+   test_alt_run 8 xor 1000 Loss Acc,
    #print loss = Loss,
    #print accuracy = Acc.
-
-
-

@@ -61,14 +61,28 @@ to_dict Xs D : `to_dict Xs D.
 from_dict D Xs : `from_dict D Xs.
 in_dict D K_V : ``in_dict D K_V.
 
+
+setprop O K V : #setattr O K V.
+getprop O K V : `getattr O K V.
+
+stack S : `list S.
+push S X : #meth_call S append (X).
+pop S X : `meth_call S pop () X.
+
+findall X G Xs: stack S, collect_ S X G Xs.
+
+collect_ S X G _ : call G, `copy_term X CX, push S CX, fail.
+collect_ S _X _G Xs : list S Xs.
+
+
 stop E : # stop_engine E.
 
-findall X G Xs : eng X G E, ask E Y, collect E Y Xs.
+findall_ X G Xs : eng X G E, ask E Y, collect_all E Y Xs.
 
-collect _ no ().
-collect E (the X) (X Xs) : ask E Y, collect E Y Xs.
+collect_all _ no ().
+collect_all E (the X) (X Xs) : ask E Y, collect_all E Y Xs.
 
-copy_term T CT : eng T (true) E, ask E (the CT), stop E.
+copy_term_ T CT : eng T (true) E, ask E (the CT), stop E.
 
 in E X : ask E A, more in E A X.
 
@@ -112,8 +126,7 @@ take_more (the X) K E (X Xs) : take K E Xs.
 writeln X : #print X.
 nl : #print.
 
-setprop O K V : #setattr O K V.
-getprop O K V : `getattr O K V.
+
 
 lib_t00: `numlist 1 3 Xs, maplist (+ 10) Xs Ys, #print Ys, fail.
 lib_t01 : `numlist 1 3 Xs, maplist (permute) (Xs (Xs ())) Yss, #print Yss, fail.

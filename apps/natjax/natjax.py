@@ -1,3 +1,4 @@
+import sys
 import jax
 from jax import *
 import jax.numpy as jnp
@@ -7,9 +8,11 @@ from sklearn.metrics import accuracy_score
 
 from natlog import Natlog, natprogs
 
+sys.setrecursionlimit(1 << 14)
 jax.config.update("jax_enable_x64", True)
+
 DTYPE = jnp.float32
-SEED = jax.random.PRNGKey(0)
+
 
 shared = dict()
 
@@ -42,9 +45,10 @@ def matsum(x, y):
     return jnp.add(x, y)
 
 
-def init_weights(features, layer_sizes):
+def init_weights(features, layer_sizes,seed):
+    KEY = jax.random.PRNGKey(seed)
     weights = []
-    keys = jax.random.split(SEED, len(layer_sizes) + 1)
+    keys = jax.random.split(KEY, len(layer_sizes) + 1)
     for i, units in enumerate(layer_sizes):
         if i == 0:
             w = jax.random.uniform(key=keys[i], shape=(units, features), minval=-1.0, maxval=1.0, dtype=DTYPE)
@@ -62,12 +66,12 @@ def init_weights(features, layer_sizes):
 @jit
 def linear_layer(weights, input_data):
     w, b = weights
-    return jnp.dot(input_data, w.T) + b
+    return dot(input_data, w.T) + b
 
 
 @jit
 def mlp_forward_pass(weights, input_data):
-    layer_out = input_data
+    layer_out=input_data
     for i in range(len(weights) - 1):
         layer_out = relu(linear_layer(weights[i], layer_out))
     return sigmoid(linear_layer(weights[-1], layer_out))
@@ -86,7 +90,7 @@ def apply_grad(weights, input_data, actual):
 
 def init_optimizer(weights, learning_rate):
     optimizer = optax.adam(learning_rate)
-    opt_state = optimizer.init(weights)
+    opt_state = jit(optimizer.init)(weights)
     return optimizer, opt_state
 
 
@@ -105,7 +109,7 @@ def train_model(weights, X, Y, learning_rate, epochs):
         weights, opt_state = apply_optimizer(weights, X, Y, optimizer, opt_state)
 
         if i % 50 == 0:
-            print("Loss : {:.2f}".format(loss))
+            print(f"Loss at epoch {i} : \t{loss}")
 
     return weights
 
@@ -131,6 +135,78 @@ def run_natlog():
     n.repl()
 
 
+# testers
+
+def xor(x, y):
+    return x ^ y
+
+
+def impl(x, y):
+    return max(abs(1 - x), y)
+
+
+def to_jnp(a):
+    return jnp.array(a, dtype=DTYPE)
+
+
+def split(X, y,seed, test_size=0.1):
+    print('SHAPES:',X.shape,y.shape)
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = \
+        train_test_split(X, y, test_size=test_size, random_state=seed)
+    return X_train, X_test, y_train, y_test
+
+
+def load_dataset(features, op, seed):
+    from itertools import product
+
+    n = 2 * features
+    layer_sizes = [features, n, n + n, n, features, 1]
+
+    def data_x():
+        return jnp.array(list(product([-1.0, 1.0], repeat=features)))
+
+    def data_y():
+        m = 2 ** features
+        rs = []
+        for xs in data_x():
+            r = 0
+            for x in xs:
+                x = int((x + 1) / 2)
+                r = op(r, x)
+            # rs.append(2*r-1)
+            rs.append(r)
+        ys = to_jnp(rs).reshape(m, 1)
+        print(ys)
+        return ys
+
+    data = split(data_x(), data_y(), seed)
+
+    epochs = features ** 2
+    if op == xor: epochs *= 4
+    return data, layer_sizes, epochs
+
+
+def test_natjax(features, op, seed):
+    learning_rate = jnp.array(0.01)
+
+    (X_train, X_test, Y_train, Y_test), layer_sizes, epochs = load_dataset(features, op, seed)
+    _, features = X_train.shape
+
+    weights = init_weights(features, layer_sizes, seed)
+
+    weights = train_model(weights, X_train, Y_train, learning_rate, epochs)
+
+    train_score, train_acc = test_model(weights, X_train, Y_train)
+    test_score, test_acc = test_model(weights, X_test, Y_test)
+
+    print("Train Loss Score : {:.2f}".format(train_score))
+    print("Test  Loss Score : {:.2f}".format(test_score))
+
+    print("Train Accuracy : {:.2f}".format(train_acc))
+    print("Test  Accuracy : {:.2f}".format(test_acc))
+
+
 if __name__ == "__main__":
-    # test_natjax()
+    #test_natjax(features=12, op=xor)
     run_natlog()

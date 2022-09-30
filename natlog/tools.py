@@ -35,6 +35,10 @@ def from_dict(d):
     return tuple(d.items())
 
 
+def meth_call(o,f,xs):
+    m=getattr(o,f)
+    return m(*xs)
+
 def in_dict(d):
     yield from d.items()
 

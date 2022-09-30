@@ -125,7 +125,7 @@ def optimize_grads(weights, input_data, actual, optimizer, opt_state):
 
 def TrainModel(weights, X, Y, learning_rate, epochs):
     optimizer = optax.adam(learning_rate)
-    opt_state = optimizer.init(weights)
+    opt_state = jax.jit(optimizer.init)(weights)
 
     for i in range(epochs):
         loss = Loss(weights, X, Y)
