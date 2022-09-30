@@ -183,7 +183,7 @@ def load_dataset(features, op, seed):
     data = split(data_x(), data_y(), seed)
 
     epochs = features ** 2
-    if op == xor: epochs *= 4
+    if op == xor: epochs *= 8
     return data, layer_sizes, epochs
 
 

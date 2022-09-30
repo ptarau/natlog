@@ -56,8 +56,8 @@ run N Op Epochs Loss Acc LossT AccT:
 
 
 go:
-   eq Op nand,
-   run 12 Op 1000 Loss Acc LossT AccT,
+   eq Op xor,
+   run 10 Op 1000 Loss Acc LossT AccT,
    #print train loss = Loss,
    #print train accuracy = Acc,
    #print test loss = LossT,
@@ -71,14 +71,13 @@ tt1: iter 2 xor E R, #print result E R, fail.
 
 tt2 : dataset 1 nand Xss Ys, #print Xss Ys, fail.
 
-tt: $xor F, #test_natjax 12 F 0,fail.
+tt: $xor F, #test_natjax 10 F 0,fail.
 
-test_alt_run N Op0 _Epochs Loss Acc:
-
-   $Op0 Op,
+test_alt_run N OpName _Epochs Loss Acc  LossT AccT:
+   $ OpName Op,
    eq Seed 0,
    `load_dataset N Op Seed  (Data Layer_sizes Epochs),
-   eq Data (X _1 Y _2),
+   eq Data (X Xt Y Yt),
    #print 'X',
    #print X,
    #print 'Y',
@@ -86,9 +85,12 @@ test_alt_run N Op0 _Epochs Loss Acc:
    `init_weights N Layer_sizes Seed Weights,
    eq Learning_rate 0.01,
    `train_model Weights X Y Learning_rate Epochs Model,
-   `test_model Model X Y (Loss Acc) .
+   `test_model Model X Y (Loss Acc),
+   `test_model Model Xt Yt (LossT AccT) .
 
 alt:
-   test_alt_run 8 xor 1000 Loss Acc,
-   #print loss = Loss,
-   #print accuracy = Acc.
+   test_alt_run 10 xor 1000 Loss Acc LossT AccT,
+   #print train loss = Loss,
+   #print train accuracy = Acc,
+   #print test loss = LossT,
+   #print test accuracy = AccT.
