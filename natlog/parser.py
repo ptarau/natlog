@@ -168,14 +168,17 @@ def to_tuple(xy):
         ts = to_tuple(y)
         return (t,) + ts
 
+
 def to_goal(ts):
     return from_array(ts)
+
 
 def from_array(ts):
     gs = ()
     for g in reversed(ts):
         gs = (g, gs)
     return gs
+
 
 def to_array(xs):
     rs = []
@@ -184,13 +187,29 @@ def to_array(xs):
         rs.append(x)
     return rs
 
+
 def from_goal(xs):
     return tuple(to_array(xs))
 
 
-
 def numlist(n, m):
     return to_goal(range(n, m))
+
+
+def clean_comments(text):
+    lines=text.split('\n')
+    cleaned=[]
+    for line in lines:
+        parts=line.split("%")
+        if len(parts)>1:
+            line=parts[0]
+        cleaned.append(line)
+    return "\n".join(cleaned)
+
+
+
+
+
 
 
 # tests
@@ -254,6 +273,18 @@ goal Xs : sent Xs ().
     r = parse(text, ground=False, rule=True)
     print(list(r))
 
+def clean_test():
+    text="""   
+    a b c % d e
+        mmm nn pp
+    xx yyyy % a % b
+    
+    % zzz zz z   
+    """
+    print(text)
+    print('-----')
+    print(clean_comments(text))
 
 if __name__ == '__main__':
-    ptest2()
+    #ptest2()
+    clean_test()

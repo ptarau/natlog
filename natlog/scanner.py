@@ -24,6 +24,7 @@ def qtrim(s):
 class Scanner:
     def __init__(self, text, ground=True):
         self.text = text
+        self.varcount=0
         self.initsyms()
         self.ground = ground
         self.Scanner = re.Scanner([
@@ -31,6 +32,7 @@ class Scanner:
             (r"[-+]?\d+", lambda sc, tok: ("INT", int(tok))),
             (r"[a-z]+[\w]*", lambda sc, tok: ("ID", tok)),
             (r"'[\w\s\-\.\/,%=!\+\(\)]+'", lambda sc, tok: ("ID", qtrim(tok))),
+            (r"_", lambda sc, tok: ("VAR", self.sym(tok+self.ctr()))),
             (r"[A-Z_]+[\w]*", lambda sc, tok: ("VAR", self.sym(tok))),
             (r"[(]", lambda sc, tok: ("LPAR", tok)),
             (r"[)]", lambda sc, tok: ("RPAR", tok)),
@@ -44,6 +46,11 @@ class Scanner:
             #     (r"[;]", lambda sc, tok: ("OR", tok)),
             (r"\s+", None),  # None == skip tok.
         ])
+
+    def ctr(self):
+       s = str(self.varcount)
+       self.varcount+=1
+       return s
 
     def initsyms(self):
       self.syms = dict()

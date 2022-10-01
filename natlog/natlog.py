@@ -249,6 +249,8 @@ class Natlog:
                 lib = f.read()
             self.text = self.text + '\n' + lib
 
+        self.text=clean_comments(self.text)
+
         self.callables = callables
 
         css, ixss = zip(*parse(self.text, ground=False, rule=True))
@@ -323,6 +325,9 @@ class Natlog:
     def __repr__(self):
         xs = [str(cs) + '\n' for cs in self.css]
         return " ".join(xs)
+
+
+
 
 
 # built-ins, callable with ` notation

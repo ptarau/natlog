@@ -100,19 +100,20 @@ enum more E (the _) X I1 I2 : enum from E X I1 I2.
 
 first_sols N G R: eng G G E, enum from E R 0 K, if (@K<N) (true) (stop E).
 
-
-+ X Y Z  : `add X Y Z.
-- X Y Z  : `sub X Y Z.
-* X Y Z  : `mul X Y Z.
-/ X  Y Z : `truediv X Y Z.
-// Z X Y : `floordiv X Y Z.
-
 take 0 E () : stop E.
 take K E XXs : @K>0, ask E X, - K 1 K1, take_more X K1 E XXs.
 
 take_more no _K E () : stop E.
 take_more (the X) K E (X Xs) : take K E Xs.
 
+
+% arithmetics
+
++ X Y Z  : `add X Y Z.
+- X Y Z  : `sub X Y Z.
+* X Y Z  : `mul X Y Z.
+/ X  Y Z : `truediv X Y Z.
+// Z X Y : `floordiv X Y Z.
 
 % defs that have a var as 1-st arg should start with @ .
 
