@@ -10,7 +10,6 @@ def rp(LP):
 
 
 def from_none(LP, w):
-    # return [] if w is None and  LP=='['  else  w
     if w is None:
         if LP == '(': return ()
         if LP == '[': return []
@@ -48,7 +47,7 @@ class Parser:
         w = self.peek()
         if w == RP:
             self.get()
-            return None
+            return from_none(LP, None)
         elif w == LP:
             t = self.par(LP, RP)
             ts = self.pars(LP, RP)
@@ -60,7 +59,7 @@ class Parser:
             ts = from_none(LP, ts)
             return (t, ts) if LP == '(' else [t] + ts
         else:
-            t = self.get()
+            self.get()
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
             return (w, ts) if LP == '(' else [w] + ts
@@ -72,8 +71,8 @@ class Parser:
         ls = sum(1 for x in self.words if x == '[')
         rs = sum(1 for x in self.words if x == ']')
         assert ls == rs
-
-        t = to_tuple(self.par('(', ')'))
+        t = self.par('(', ')')
+        t = to_tuple(t)
         if trace: print("PARSED", t)
         return t
 
@@ -143,7 +142,7 @@ def parse(text, ground=False, rule=False):
         p = Parser(ws)
         r = p.run()
         r = to_clause(r)
-        if not rule: r = to_goal(r[1])
+        if not rule: r = to_cons_list(r[1])
         if not rule and ground: r = (r[0],)  # db fact
         yield r, s.names
 
@@ -156,7 +155,7 @@ def mparse(text, ground=False, rule=False):
 # turns cons-like tuples into long tuples
 # do not change, deep recursion needed
 def to_tuple(xy):
-    if xy is None or xy is ():
+    if xy is None or xy == ():
         return ()
     elif isinstance(xy, list):
         return [to_tuple(x) for x in xy]
@@ -168,19 +167,18 @@ def to_tuple(xy):
         ts = to_tuple(y)
         return (t,) + ts
 
+def from_cons_list_as_tuple(xs):
+    return tuple(from_cons_list(xs))
 
-def to_goal(ts):
-    return from_array(ts)
 
-
-def from_array(ts):
+def to_cons_list(ts):
     gs = ()
     for g in reversed(ts):
         gs = (g, gs)
     return gs
 
 
-def to_array(xs):
+def from_cons_list(xs):
     rs = []
     while xs:
         x, xs = xs
@@ -188,28 +186,19 @@ def to_array(xs):
     return rs
 
 
-def from_goal(xs):
-    return tuple(to_array(xs))
-
-
 def numlist(n, m):
-    return to_goal(range(n, m))
+    return to_cons_list(range(n, m))
 
 
 def clean_comments(text):
-    lines=text.split('\n')
-    cleaned=[]
+    lines = text.split('\n')
+    cleaned = []
     for line in lines:
-        parts=line.split("%")
-        if len(parts)>1:
-            line=parts[0]
+        parts = line.split("%")
+        if len(parts) > 1:
+            line = parts[0]
         cleaned.append(line)
     return "\n".join(cleaned)
-
-
-
-
-
 
 
 # tests
@@ -273,8 +262,14 @@ goal Xs : sent Xs ().
     r = parse(text, ground=False, rule=True)
     print(list(r))
 
+
+def ptest4():
+    r = parse('a [].')
+    print(list(r))
+
+
 def clean_test():
-    text="""   
+    text = """   
     a b c % d e
         mmm nn pp
     xx yyyy % a % b
@@ -285,6 +280,7 @@ def clean_test():
     print('-----')
     print(clean_comments(text))
 
+
 if __name__ == '__main__':
-    #ptest2()
-    clean_test()
+    ptest4()
+    # clean_test()

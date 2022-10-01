@@ -15,7 +15,7 @@ xor 1 1 0.
 
 iter N Op X Y:
   iter_op N Op () E 0 Y,
-  tuple E X.
+  to_tuple E X.
 
 iter_op 0 _Op E E R R.
 iter_op I Op  E1 E2 R1 R3 :
@@ -28,8 +28,8 @@ iter_op I Op  E1 E2 R1 R3 :
 dataset N Op Xss (Ys):
   findall (X Y)  (iter N Op X Y) XssYsList,
   to_pairs XssYsList XssList YsList,
-  tuple XssList Xss,
-  tuple YsList Ys.
+  to_tuple XssList Xss,
+  to_tuple YsList Ys.
 
 to_pairs () () ().
 to_pairs ((Xs Y)  Zss) (Xs Xss) (Y Ys) :
@@ -40,7 +40,7 @@ to_jax_dataset Xss Ys Xtr Xt Ytr Yt:
    `array Ys Y0,
    `transpose Y0 Y,
    `split X Y 0 0.1 (Xtr Xt Ytr Yt),
-   list (X Xt Y Yt) Vals,
+   to_cons_list (X Xt Y Yt) Vals,
    maplist (` size) Vals Sizes,
    #print sizes are Sizes.
 

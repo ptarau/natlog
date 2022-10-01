@@ -17,5 +17,5 @@ location => @moon.
 instrument => @violin.
 instrument => @trumpet.
 
-go: dall_e Words (), `from_goal Words Ws, #writeln Ws, fail.
+go: dall_e Words (), `from_cons_list Words Ws, #writeln Ws, fail.
 go.

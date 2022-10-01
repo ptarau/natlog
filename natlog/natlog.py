@@ -333,7 +333,7 @@ class Natlog:
 # built-ins, callable with ` notation
 
 def numlist(n, m):
-    return to_goal(range(n, m + 1))
+    return to_cons_list(range(n, m + 1))
 
 
 def consult(natfile=natprogs() + 'family.nat'):

@@ -51,11 +51,9 @@ between A B X : + B 1 SB, `` range A SB X.
 arg I T X : `arg T I X.
 setarg I T X : #setarg T I X.
 
-tuple Xs T : `from_goal Xs T.
-list T Xs : `to_goal T Xs.
+to_tuple Xs T : `from_cons_list_as_tuple Xs T.
+to_cons_list T Xs : `to_cons_list T Xs.
 
-to_array Xs A : `to_array Xs A.
-from_array A Xs : `from_array A Xs.
 
 to_dict Xs D : `to_dict Xs D.
 from_dict D Xs : `from_dict D Xs.
@@ -72,7 +70,7 @@ pop S X : `meth_call S pop () X.
 findall X G Xs: stack S, collect_ S X G Xs.
 
 collect_ S X G _ : call G, `copy_term X CX, push S CX, fail.
-collect_ S _X _G Xs : list S Xs.
+collect_ S _X _G Xs : to_cons_list S Xs.
 
 
 stop E : # stop_engine E.
