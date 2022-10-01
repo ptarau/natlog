@@ -40,31 +40,36 @@ to_jax_dataset Xss Ys Xtr Xt Ytr Yt:
    `array Ys Y0,
    `transpose Y0 Y,
    `split X Y 0 0.1 (Xtr Xt Ytr Yt),
-   #print 'X',#print Xt,#print 'Y',#print Yt.
+   list (X Xt Y Yt) Vals,
+   maplist (` size) Vals Sizes,
+   #print sizes are Sizes.
 
 
-run N Op Epochs Loss Acc LossT AccT:
+hidden_sizes N (M MM M N 1):
+     * 2 N M, * 4 N MM.
+
+run N Op Seed Epochs Loss Acc LossT AccT:
    dataset N Op Xss Ys,
    to_jax_dataset Xss Ys X Xt Y Yt,
-   * 2 N M, * 4 N MM,
-   eq Seed 0,
-   `init_weights N (M MM M N 1) Seed Weights,
+   hidden_sizes N Sizes,
+   `init_weights N Sizes Seed Weights,
    eq Learning_rate 0.01,
    `train_model Weights X Y Learning_rate Epochs Model,
    `test_model Model X Y (Loss Acc),
    `test_model Model Xt Yt (LossT AccT) .
 
 
-go:
-   eq Op xor,
-   run 10 Op 1000 Loss Acc LossT AccT,
+run with Op:
+   run 10 Op 0 1000 Loss Acc LossT AccT,
    #print train loss = Loss,
    #print train accuracy = Acc,
    #print test loss = LossT,
    #print test accuracy = AccT.
 
 
-
+go: run with xor.
+go1 : run with nand.
+go2 : run with impl.
 
 
 tt1: iter 2 xor E R, #print result E R, fail.

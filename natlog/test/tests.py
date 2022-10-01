@@ -308,6 +308,10 @@ def gramtest():
     #n.repl()
 
 
+def meta_test():
+  n = Natlog(file_name=NATPROGS+'meta.nat')
+  n.query("metaint ((goal R) ()) ?")
+  n.repl()
 
 def go():
     ts = [dtest1,
@@ -332,6 +336,7 @@ def go():
 
 
 if __name__ == "__main__":
-    go()
-    libtest()
+    #go()
+    #libtest()
     #gramtest()
+    meta_test()

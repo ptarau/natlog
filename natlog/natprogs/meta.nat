@@ -1,0 +1,19 @@
+metaint ().
+metaint (G Gs) :
+   cls (G Bs) Gs,
+   metaint Bs.
+
+
+cls
+   ((add 0 X X) Tail)
+   Tail.
+cls  (
+         (add (s X) Y (s Z))
+            (
+               (add X Y Z) Tail
+            )
+     )
+     Tail.
+
+cls ((goal R)  ((add (s (s 0)) (s (s 0)) R) Tail))
+    Tail.
