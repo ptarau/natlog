@@ -8,7 +8,7 @@ linear_layer (W B) Input Output :
 
 forward_pass Weights Input Result :
     `len Weights L,
-    - L 1 L1,
+    with L - 1 as L1,
     `crop Weights 0 L1 HiddenWeights,
     arg L1 Weights LastWeight,
     hidden_loop 0 L1 HiddenWeights Input Penultimate,
@@ -17,8 +17,8 @@ forward_pass Weights Input Result :
 
 hidden_loop L L _HiddenWeights Last Last .
 hidden_loop I L HiddenWeights In Out:
-  @ I < L,
-  + I 1 J,
+  when I < L,
+  with I + 1 as J,
   arg I HiddenWeights WB,
   linear_layer WB In LinOut,
   `relu LinOut Temp,

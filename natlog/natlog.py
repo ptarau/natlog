@@ -372,3 +372,14 @@ def test_natlog():
     n = Natlog(file_name="natprogs/lib.nat")
     print(n)
     n.repl()
+
+
+def lconsult(fname):
+    fname=natprogs()+fname+".nat"
+    n=Natlog(file_name=fname,with_lib=natprogs() + 'lib.nat')
+    n.repl()
+
+def consult(fname):
+    fname=natprogs()+fname+".nat"
+    n=Natlog(file_name=fname)
+    n.repl()

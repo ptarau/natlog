@@ -1,4 +1,4 @@
-lib_t00: `numlist 1 3 Xs, maplist (+ 10) Xs Ys, #print Ys, fail.
+lib_t00: `numlist 1 3 Xs, maplist (`add 10) Xs Ys, #print Ys, fail.
 lib_t01 : `numlist 1 3 Xs, maplist (permute) (Xs (Xs ())) Yss, #print Yss, fail.
 lib_t02 : `numlist 1 5 X, `numlist 11 15 Y, maplist (sum) X Y Z, #print Z, fail.
 lib_t03 : `numlist 1 5 X, nth 2 X R, #print R ,fail.

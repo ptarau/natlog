@@ -19,10 +19,11 @@ iter N Op X Y:
 
 iter_op 0 _Op E E R R.
 iter_op I Op  E1 E2 R1 R3 :
-   @ I > 0,
+   when I > 0,
    - I 1 J,
    Op X R1 R2,
-   + X X XX, - XX 1 X1,
+   with X + X as XX,
+   with XX - 1 as X1,
    iter_op J Op (X1 E1) E2 R2 R3.
 
 dataset N Op Xss (Ys):
@@ -47,7 +48,8 @@ to_jax_dataset Xss Ys Xtr Xt Ytr Yt:
 
 
 hidden_sizes N (M MM M N 1):
-     * 2 N M, * 4 N MM.
+     with 2 * N as M,
+     with 4 * N as MM.
 
 run N Op Seed Epochs Loss Acc LossT AccT:
    dataset N Op Xss Ys,

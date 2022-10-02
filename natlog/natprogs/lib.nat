@@ -40,13 +40,13 @@ maplist _ () () ().
 maplist F (X Xs) (Y Ys) (Z Zs) : call F X Y Z, maplist F Xs Ys Zs.
 
 nth 0 (X _) X .
-nth N (_ Xs) R : @ N > 0, - N 1 M , nth M Xs R.
+nth N (_ Xs) R : when N > 0, with N - 1 as M , nth M Xs R.
 
 max X Y Z : `max X Y Z.
 min X Y Z : `min X Y Z.
 sum X Y Z : `add X Y Z.
 
-between A B X : + B 1 SB, `` range A SB X.
+between A B X : with B + 1 as SB, `` range A SB X.
 
 arg I T X : `arg T I X.
 setarg I T X : #setarg T I X.
@@ -85,41 +85,40 @@ more in E (the _) X : in E X.
 
 enum X G (N R) : eng X G E, enum from E R -1 N.
 
-enum from E R I1 I3 : ask E A, + I1 1 I2, enum more E A R I2 I3.
+enum from E R I1 I3 : ask E A, with I1 + 1 as I2, enum more E A R I2 I3.
 
 enum more E (the X) X I I.
 enum more E (the _) X I1 I2 : enum from E X I1 I2.
 
 
-first_sols N G R: eng G G E, enum from E R 0 K, if (@K<N) (true) (stop E).
+first_sols N G R: eng G G E, enum from E R 0 K, if (when K<N) (true) (stop E).
 
 take 0 E () : stop E.
-take K E XXs : @K>0, ask E X, - K 1 K1, take_more X K1 E XXs.
+take K E XXs : when K>0, ask E X, with K - 1 as K1, take_more X K1 E XXs.
 
 take_more no _K E () : stop E.
 take_more (the X) K E (X Xs) : take K E Xs.
 
 loop N N.
-loop N X : + N 1 M, ^trust loop M X.
+loop N X : with N + 1 as M, ^trust loop M X.
 
 % arithmetics
 
-boo 42.
 
-+ X Y Z  : `add X Y Z.
-- X Y Z  : `sub X Y Z.
-* X Y Z  : `mul X Y Z.
-/ X  Y Z : `truediv X Y Z.
-// Z X Y : `floordiv X Y Z.
+with X + Y as Z  : `add X Y Z.
+with X - Y as Z  : `sub X Y Z.
+with X * Y as Z  : `mul X Y Z.
+with X / Y as Z  : `truediv X Y Z.
+with X // Y as Z : `floordiv X Y Z.
 
-% defs that have a var as 1-st arg should start with @ .
+% defs that have a var as 1-st arg should start with when  .
 
-@ X < Y  : `lt X Y R, `int R 1.
-@ X > Y  : `gt X Y R, `int R 1.
-@ X <= Y : `le X Y R, `int R 1.
-@ X >= Y : `ge X Y R, `int R 1.
-@ X <> Y : `ne X Y R, `int R 1.
-@ X == Y : `eq X Y R, `int R 1.
+when  X < Y  : `lt X Y R, `int R 1.
+when  X > Y  : `gt X Y R, `int R 1.
+when  X <= Y : `le X Y R, `int R 1.
+when  X >= Y : `ge X Y R, `int R 1.
+when  X <> Y : `ne X Y R, `int R 1.
+when  X == Y : `eq X Y R, `int R 1.
 
 writeln X : #print X.
 nl : #print.
