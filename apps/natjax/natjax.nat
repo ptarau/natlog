@@ -22,7 +22,7 @@ iter_op I Op  E1 E2 R1 R3 :
    @ I > 0,
    - I 1 J,
    Op X R1 R2,
-   + X X XX, - XX 1.0 X1,
+   + X X XX, - XX 1 X1,
    iter_op J Op (X1 E1) E2 R2 R3.
 
 dataset N Op Xss (Ys):
@@ -40,8 +40,9 @@ to_jax_dataset Xss Ys Xtr Xt Ytr Yt:
    `array Ys Y0,
    `transpose Y0 Y,
    `split X Y 0 0.1 (Xtr Xt Ytr Yt),
-   to_cons_list (X Xt Y Yt) Vals,
-   maplist (` size) Vals Sizes,
+   to_cons_list (X Y Xtr Xt Ytr Yt) Vals,
+   maplist (` shape) Vals SizesList,
+   to_tuple SizesList Sizes,
    #print sizes are Sizes.
 
 

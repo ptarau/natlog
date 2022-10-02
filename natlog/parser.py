@@ -148,6 +148,7 @@ def parse(text, ground=False, rule=False):
 
 
 def mparse(text, ground=False, rule=False):
+    text=clean_comments(text)
     for r, ixs in parse(text, ground=ground, rule=rule):
         yield r
 

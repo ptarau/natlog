@@ -22,6 +22,7 @@ def to_python(x):
 def from_python(x):
     return x
 
+
 def stop_engine(g):
     E, e, _, _, _, flag = g
     assert E == '$ENG'
@@ -119,7 +120,7 @@ def interp(css, goals0, db=None, callables=dict()):
             flag = [0]
             r = ('$ENG', runner, ('the', x), g, occ, flag)
 
-            next(runner,None) # triggers bug in if_ in lib
+            next(runner, None)  # triggers bug in if_ in lib
             e.bind(r, trail)
             # a = next(runner, None)
             # print('DUMMY:',a, flag)
@@ -211,7 +212,7 @@ def interp(css, goals0, db=None, callables=dict()):
         else:
             g, goals = goals
             op = g[0] if g else None
-            if op in {"call", "~", "`", "``", "^", "#","$",  "if", "eng", "ask"}:
+            if op in {"call", "~", "`", "``", "^", "#", "$", "if", "eng", "ask"}:
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals, trail)
             else:
@@ -248,8 +249,6 @@ class Natlog:
             with open(with_lib, 'r') as f:
                 lib = f.read()
             self.text = self.text + '\n' + lib
-
-        self.text=clean_comments(self.text)
 
         self.callables = callables
 
@@ -325,9 +324,6 @@ class Natlog:
     def __repr__(self):
         xs = [str(cs) + '\n' for cs in self.css]
         return " ".join(xs)
-
-
-
 
 
 # built-ins, callable with ` notation

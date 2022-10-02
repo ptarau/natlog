@@ -86,7 +86,7 @@ def t5():
     n = Natlog(file_name=NATPROGS+"queens.nat")
     #print(n)
     n.query("goal8 Queens?")
-    n.repl()
+    #n.repl()
 
 
 def t6():
