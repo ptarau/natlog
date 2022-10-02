@@ -73,6 +73,8 @@ go1 : run with nand.
 go2 : run with impl.
 
 
+tt0: iter_op 2 xor () B C D, #print result B C D, fail.
+
 tt1: iter 2 xor E R, #print result E R, fail.
 
 tt2 : dataset 1 nand Xss Ys, #print Xss Ys, fail.

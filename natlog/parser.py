@@ -135,6 +135,7 @@ def to_clause(xs):
 
 # main exported Parser + Scanner
 def parse(text, ground=False, rule=False):
+    text = clean_comments(text)
     s = Scanner(text, ground=ground)
     for ws in s.run():
         if not rule: ws = ('head_', ':') + ws
@@ -148,7 +149,6 @@ def parse(text, ground=False, rule=False):
 
 
 def mparse(text, ground=False, rule=False):
-    text=clean_comments(text)
     for r, ixs in parse(text, ground=ground, rule=rule):
         yield r
 
@@ -170,6 +170,14 @@ def to_tuple(xy):
 
 def from_cons_list_as_tuple(xs):
     return tuple(from_cons_list(xs))
+
+
+def from_cons_list(xs):
+    rs = []
+    while xs:
+        x, xs = xs
+        rs.append(x)
+    return rs
 
 
 def to_cons_list(ts):
@@ -199,7 +207,9 @@ def clean_comments(text):
         if len(parts) > 1:
             line = parts[0]
         cleaned.append(line)
-    return "\n".join(cleaned)
+    text = "\n".join(cleaned)
+    #print('>>> ???',text)
+    return text
 
 
 # tests
@@ -276,6 +286,12 @@ def clean_test():
     xx yyyy % a % b
     
     % zzz zz z   
+    more
+   
+% aaa
+
+boo.
+
     """
     print(text)
     print('-----')
@@ -284,4 +300,4 @@ def clean_test():
 
 if __name__ == '__main__':
     ptest4()
-    # clean_test()
+    clean_test()

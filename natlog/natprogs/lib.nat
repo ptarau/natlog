@@ -104,6 +104,8 @@ loop N X : + N 1 M, ^trust loop M X.
 
 % arithmetics
 
+boo 42.
+
 + X Y Z  : `add X Y Z.
 - X Y Z  : `sub X Y Z.
 * X Y Z  : `mul X Y Z.
