@@ -52,6 +52,10 @@ arg I T X : `arg T I X.
 setarg I T X : #setarg T I X.
 
 to_tuple Xs T : `from_cons_list_as_tuple Xs T.
+
+to_list Xs T : `from_cons_list Xs T.
+
+
 to_cons_list T Xs : `to_cons_list T Xs.
 
 

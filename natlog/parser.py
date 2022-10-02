@@ -179,7 +179,7 @@ def to_cons_list(ts):
     return gs
 
 
-def from_cons_list(xs):
+def q(xs):
     rs = []
     while xs:
         x, xs = xs
