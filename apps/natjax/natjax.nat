@@ -20,7 +20,7 @@ iter N Op X Y:
 iter_op 0 _Op E E R R.
 iter_op I Op  E1 E2 R1 R3 :
    when I > 0,
-   - I 1 J,
+   with I - 1 as J,
    Op X R1 R2,
    with X + X as XX,
    with XX - 1 as X1,
@@ -63,7 +63,7 @@ run N Op Seed Epochs Loss Acc LossT AccT:
 
 
 run with Op:
-   run 10 Op 0 1000 Loss Acc LossT AccT,
+   run 10 Op 0 4000 Loss Acc LossT AccT,
    #print train loss = Loss,
    #print train accuracy = Acc,
    #print test loss = LossT,
