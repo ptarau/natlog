@@ -1,0 +1,17 @@
+% engine based alternative primitive implementations
+
+if_ C Y N : eng C C E, ask E R, stop E, pick_ R C Y N.
+
+not_ G : if G fail true.
+
+once_ G : if_ G true fail.
+
+pick_ (the C)  C Y _N : call Y.
+pick_ no _C _Y N : call N.
+
+findall_ X G Xs : eng X G E, ask E Y, collect_all_ E Y Xs.
+
+collect_all_ _ no ().
+collectcollect_all__all E (the X) (X Xs) : ask E Y, collect_all_ E Y Xs.
+
+copy_term_ T CT : eng T (true) E, ask E (the CT), stop E.

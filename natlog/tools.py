@@ -21,11 +21,14 @@ def copy_term(t0):
 def arg(x, i):
     return x[i]
 
-def setarg(x,i,v):
-    x[i]=v
+
+def setarg(x, i, v):
+    x[i] = v
+
 
 def crop(a, l1, l2):
     return a[l1:l2]
+
 
 def to_dict(kvs):
     return dict((kv[0], kv[1]) for kv in kvs)
@@ -35,12 +38,13 @@ def from_dict(d):
     return tuple(d.items())
 
 
-def meth_call(o,f,xs):
-    m=getattr(o,f)
-    return m(*xs)
-
 def in_dict(d):
     yield from d.items()
+
+
+def meth_call(o, f, xs):
+    m = getattr(o, f)
+    return m(*xs)
 
 
 def write(args):
@@ -54,5 +58,3 @@ def nl():
 def writeln(args):
     write(args)
     nl()
-
-
