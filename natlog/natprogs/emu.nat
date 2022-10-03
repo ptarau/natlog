@@ -16,6 +16,9 @@ collect_all_ E (the X) (X Xs) : ask E Y, collect_all_ E Y Xs.
 
 copy_term_ T CT : eng T (true) E, ask E (the CT), stop E.
 
+var_ X : not_ (not_ (eq X 1)), not_ (not_ (eq X 2)).
+
+nonvar_ X: not_ (var_ X).
 
 emu1:
   if_ (eq 1 2) (eq X yes) (eq X no),
@@ -29,3 +32,5 @@ emu2:
 
 emu3:
   not_ (eq 1 2).
+
+emu4 : var_ X, nonvar_ a.
