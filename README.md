@@ -4,6 +4,8 @@ We closely follow Einstein's *"Everything should be made as simple as possible, 
 
 At this point, we rely on Python's natural error checking, without doing much to warn about syntactic or semantic errors. This can be added, but this is meant as an *executable specification* of an otherwise simple and natural logic language that we hereby name **Natlog**.
 
+### NEWER: demo apps in folder ```apps/deepnat``` interfacing Natlog with JAX and TORCH based neural nets
+
 ### NEW: a demo app in folder ```apps/nat3d``` combining Natlog and vpython to build (quite easily!) 3D objects and animations
 
 ###  **Natlog** : a succinct overview
@@ -83,6 +85,8 @@ The interpreter has also been extended to handle simple function and generator c
 - ``` ask G A```, resulting in next answer of engine E being unified to A
 
 Take a look at ```natprogs/lib.nat``` for examples of built-ins obtained by extending this interface, mostly at source level.
+
+Take a look at ```natprogs/emu.nat``` for emulation of built-ins in terms of First Class Logic Engines.
 
 ### A nested tuple store for unification-based tuple mining
 
