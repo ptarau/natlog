@@ -1,10 +1,10 @@
-## A lightweight Prolog-like interpreter with a natural-language style syntax and deeply indexed tuple database interface
+## A lightweight Prolog-like system designed to smoothly interoperate with deep learning tools
 
 We closely follow Einstein's *"Everything should be made as simple as possible, but no simpler."*
 
 At this point, we rely on Python's natural error checking, without doing much to warn about syntactic or semantic errors. This can be added, but this is meant as an *executable specification* of an otherwise simple and natural logic language that we hereby name **Natlog**.
 
-### NEW: a demo app in folder ```apps/nat3d``` combining Natlog and vpython to build (quite easily!) 3D objects and amimations
+### NEW: a demo app in folder ```apps/nat3d``` combining Natlog and vpython to build (quite easily!) 3D objects and animations
 
 ###  **Natlog** : a succinct overview
 
