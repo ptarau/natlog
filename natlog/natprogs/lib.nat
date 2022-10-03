@@ -2,6 +2,8 @@ true.
 
 eq X X.
 
+the X G : call G.
+
 member X (X _).
 member X (_ Xs) : member X Xs.
 
@@ -76,7 +78,7 @@ findall X G Xs: stack S, collect_ S X G Xs.
 collect_ S X G _ : call G, `copy_term X CX, push S CX, fail.
 collect_ S _X _G Xs : to_cons_list S Xs.
 
-stop E : # stop_engine E.
+stop E : getprop E stop S, #S.
 
 in E X : ask E A, more in E A X.
 

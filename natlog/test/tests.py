@@ -2,7 +2,7 @@ from natlog.natlog import *
 from natlog.unify import *
 from natlog.neural_natlog import *
 
-NATPROGS=natprogs()
+NATPROGS = natprogs()
 
 my_text = """
     app () Ys Ys. 
@@ -64,75 +64,81 @@ def t1():
 # testing with some .nat files
 
 def t2():
-    n = Natlog(file_name=NATPROGS+"tc.nat")
+    n = Natlog(file_name=NATPROGS + "tc.nat")
     print(n)
     n.query("tc Who is animal ?")
     # n.query("tc Who is What ?")
 
 
 def t4():
-    n = Natlog(file_name=NATPROGS+"perm.nat")
+    n = Natlog(file_name=NATPROGS + "perm.nat")
     n.query("perm (1 (2 (3 ()))) Ps?")
 
 
 def t3():
-    n = Natlog(file_name=NATPROGS+"arith.nat")
+    n = Natlog(file_name=NATPROGS + "arith.nat")
     print(n)
     n.query("goal R ?")
 
 
 # longer output: 8 queens
 def t5():
-    n = Natlog(file_name=NATPROGS+"queens.nat")
-    #print(n)
+    n = Natlog(file_name=NATPROGS + "queens.nat")
+    # print(n)
     n.query("goal8 Queens?")
-    #n.repl()
+    # n.repl()
 
 
 def t6():
-    n = Natlog(file_name=NATPROGS+"family.nat",with_lib=NATPROGS + "lib.nat")
-    #print(n)
+    n = Natlog(file_name=NATPROGS + "family.nat", with_lib=NATPROGS + "lib.nat")
+    # print(n)
     n.query("grand parent of 'Adam' GP ?")
 
 
 def t7():
-    n = Natlog(file_name=NATPROGS+"family.nat",with_lib=NATPROGS + "lib.nat")
+    n = Natlog(file_name=NATPROGS + "family.nat", with_lib=NATPROGS + "lib.nat")
     n.query("cousin of X B?")
 
-def t8() :
+
+def t8():
     n = Natlog(file_name=NATPROGS + "lib.nat")
     n.query('`numlist 1 5 Xs, findall X (member X Xs) Ys.')
-    #n.repl()
+    # n.repl()
+
 
 def t9():
     n = Natlog(file_name=NATPROGS + "pro.nat")
     n.repl()
 
-def t10() :
+
+def t10():
     print('it takes a while to start')
-    n = Natlog(file_name=NATPROGS+"sudoku4.nat",with_lib=NATPROGS + "lib.nat")
-    #n.repl()
+    n = Natlog(file_name=NATPROGS + "sudoku4.nat", with_lib=NATPROGS + "lib.nat")
+    # n.repl()
     n.query("goal Xss, nl, member Xs Xss, tuple Xs T, writeln T, fail?")
 
+
 def fam_repl():
-    n = Natlog(file_name=NATPROGS+"family.nat", with_lib=LIB)
+    n = Natlog(file_name=NATPROGS + "family.nat", with_lib=LIB)
     print('Enter some queries!')
     n.repl()
 
+
 def lib():
-    n=Natlog(file_name=NATPROGS+"lib.nat")
+    n = Natlog(file_name=NATPROGS + "lib.nat")
     n.repl()
 
+
 def loop():
-    n = Natlog(file_name=NATPROGS+"loop.nat")
+    n = Natlog(file_name=NATPROGS + "loop.nat")
     print(n)
     n.query("goal X?")
 
 
 def db_test():
     nd = Natlog(
-        file_name=NATPROGS+"dbtc.nat",
-        db_name=NATPROGS+"db.nat")
+        file_name=NATPROGS + "dbtc.nat",
+        db_name=NATPROGS + "db.nat")
     print('RULES')
     print(nd)
     print('DB FACTS')
@@ -141,18 +147,20 @@ def db_test():
     nd.query("tc Who is_a animal ?")
     # nd.repl()
 
+
 def ndb_test():
-    nd = NeuralNatlog(file_name=NATPROGS+"dbtc.nat", db_name=NATPROGS+"db.nat")
+    nd = NeuralNatlog(file_name=NATPROGS + "dbtc.nat", db_name=NATPROGS + "db.nat")
     print('RULES')
     print(nd)
     print('DB FACTS')
     print(nd.db)
     nd.query("tc Who is_a animal ?")
 
+
 def db_chem():
     nd = Natlog(
-        file_name=NATPROGS+"elements.nat",
-        db_name=NATPROGS+"elements.tsv"
+        file_name=NATPROGS + "elements.nat",
+        db_name=NATPROGS + "elements.tsv"
     )
     print('RULES')
     print(nd)
@@ -164,8 +172,8 @@ def db_chem():
 
 def ndb_chem():
     nd = NeuralNatlog(
-        file_name=NATPROGS+"elements.nat",
-        db_name=NATPROGS+"elements.tsv"
+        file_name=NATPROGS + "elements.nat",
+        db_name=NATPROGS + "elements.tsv"
     )
     print('RULES')
     print(nd)
@@ -175,14 +183,14 @@ def ndb_chem():
 
 
 def py_test():
-    nd = Natlog(file_name=NATPROGS+"py_call.nat")
+    nd = Natlog(file_name=NATPROGS + "py_call.nat")
     print('RULES')
     # print(nd)
     nd.query("goal X?")
 
 
 def py_test1():
-    nd = Natlog(file_name=NATPROGS+"py_call1.nat")
+    nd = Natlog(file_name=NATPROGS + "py_call1.nat")
     print('RULES')
     # print(nd)
     nd.query("goal X?")
@@ -248,7 +256,7 @@ def dtest():
 
 # Db from a .nat file
 def dtestf():
-    fname = NATPROGS+'db.tsv'
+    fname = NATPROGS + 'db.tsv'
     d = Db()
     d.load(fname)
     print(d)
@@ -258,7 +266,7 @@ def dtestf():
 
 # Db from a json file
 def dtestj():
-    fname = NATPROGS+'db'
+    fname = NATPROGS + 'db'
     jname = fname + '.json'
     nname = fname + '.nat'
     d = Db()
@@ -277,40 +285,43 @@ def big_db():
     prog = """
        quest X Y : ~ (text_term (give X Y)) ?
     """
-    n = Natlog(text=prog, db_name=NATPROGS+'facts.nat')
-    #print(n)
+    n = Natlog(text=prog, db_name=NATPROGS + 'facts.nat')
+    # print(n)
     print('SIZE:', n.db.size(), 'LEN:', len(n.db.css[0]))
     # print(n.db.css[0])
     n.query("quest X Y?")
     # n.repl()
+
 
 def big_ndb():
     prog = """
        quest X Y : ~ (text_term (give X Y)) ?
     """
-    n = NeuralNatlog(text=prog, db_name=NATPROGS+'facts.nat')
-    #print(n)
+    n = NeuralNatlog(text=prog, db_name=NATPROGS + 'facts.nat')
+    # print(n)
     print('SIZE:', n.db.size(), 'LEN:', len(n.db.css[0]))
     # print(n.db.css[0])
     n.query("quest X Y?")
     # n.repl()
 
+
 def libtest():
-    n = Natlog(file_name=NATPROGS+'lib.nat')
+    n = Natlog(file_name=NATPROGS + 'emu.nat', with_lib=NATPROGS + "lib.nat")
     n.repl()
 
 
 def gramtest():
-    n = Natlog(file_name=NATPROGS+'dall_e.nat')
+    n = Natlog(file_name=NATPROGS + 'dall_e.nat')
     print(n)
     n.query("go.")
-    #n.repl()
+    # n.repl()
 
 
 def meta_test():
-  n = Natlog(file_name=NATPROGS+'meta.nat')
-  n.query("metaint ((goal R) ()) ?")
-  #n.repl()
+    n = Natlog(file_name=NATPROGS + 'meta.nat')
+    n.query("metaint ((goal R) ()) ?")
+    # n.repl()
+
 
 def go():
     ts = [dtest1,
@@ -338,5 +349,5 @@ def go():
 if __name__ == "__main__":
     go()
     #libtest()
-    #gramtest()
-    #meta_test()
+    # gramtest()
+    # meta_test()

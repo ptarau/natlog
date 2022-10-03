@@ -23,11 +23,42 @@ def from_python(x):
     return x
 
 
-def stop_engine(g):
-    E, e, _, _, _, flag = g
-    assert E == '$ENG'
-    e.close()
-    flag[0] = 2
+# eng X (between 1 5 X) E,`next E R, #print R, fail?
+
+class Eng:
+    def __init__(self, interp, css, g, db, callables):
+        self.interp = interp
+        self.css = css
+        self.db = db
+        self.g = g
+        self.callables = callables
+        self.runner = None
+        self.stopped = False
+
+    def start(self):
+        if self.runner is None and not self.stopped:
+            self.runner = interp(self.css, self.g, db=self.db, callables=self.callables)
+
+    # eng X (between 1 5 X) E, stop E.
+    def stop(self):
+
+        if self.runner is not None and not self.stopped:
+            self.runner.close()
+        self.stopped = True
+
+    def __next__(self):
+        if self.stopped: return None
+        self.start()
+        return next(self.runner)
+
+    def __call__(self):
+        self.start()
+        if not self.stopped: yield from self.runner
+
+    def __repr__(self):
+        mes = ""
+        if self.stopped: mes = "stopped_"
+        return mes+'eng_' + str(id(self))
 
 
 def undo(trail):
@@ -56,6 +87,7 @@ def interp(css, goals0, db=None, callables=dict()):
         """
           associates string names  to callables
         """
+        if callable(name): return name
         f = callables.get(name, None)
         if f is not None: return f
         return eval(name)
@@ -110,40 +142,25 @@ def interp(css, goals0, db=None, callables=dict()):
                 yield from step(goals)
 
         def eng(xge):
-            x0, eg0, e = xge
-            occ = occurs(x0, eg0)
-            (x, eg) = copy_term((x0, eg0))
-            g = (eg, ())
+            x, g, e = xge
+            (x, g) = copy_term((x, g))
+            g = (('the', x, g), ())
             assert isinstance(e, Var)
-            # runner = step(g)
-            runner = interp(css, g, db=db)
-            flag = [0]
-            r = ('$ENG', runner, ('the', x), g, occ, flag)
-
-            next(runner, None)  # triggers bug in if_ in lib
+            r = Eng(interp, css, g, db, callables)
             e.bind(r, trail)
-            # a = next(runner, None)
-            # print('DUMMY:',a, flag)
             yield from step(goals)
 
-        def ask(eng_answer):
-            eng0, answer = eng_answer
-            fun, e, x, g, occ, flag = eng0
-            assert fun == '$ENG'
+        # eng X (between 1 5 X) E, ask E R, #print R, fail?
+        def ask(ex):
+            e, x = ex
             a = next(e, None)
-            # print('REAL:', a, flag)
-
-            if a is None and occ and isinstance(x[1], Var):
-                r = 'no'  # bug when true or eq 1 1 is the goal
-            elif flag[0] > 0:
+            if a is None:
                 r = 'no'
-                e.close()
+                e.stop()
             else:
-                r = copy_term(x)
-
-            if a is None: flag[0] += 1
-
-            if not unify(answer, r, trail):
+                ((the, r, g), ()) = a
+                r = (the, copy_term(r))
+            if not unify(x, r, trail):
                 undo(trail)
             else:
                 yield from step(goals)
@@ -375,11 +392,12 @@ def test_natlog():
 
 
 def lconsult(fname):
-    fname=natprogs()+fname+".nat"
-    n=Natlog(file_name=fname,with_lib=natprogs() + 'lib.nat')
+    fname = natprogs() + fname + ".nat"
+    n = Natlog(file_name=fname, with_lib=natprogs() + 'lib.nat')
     n.repl()
 
+
 def consult(fname):
-    fname=natprogs()+fname+".nat"
-    n=Natlog(file_name=fname)
+    fname = natprogs() + fname + ".nat"
+    n = Natlog(file_name=fname)
     n.repl()
