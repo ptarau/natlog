@@ -5,6 +5,7 @@ import jax.numpy as jnp
 from jax.numpy import *
 import optax
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 from natlog import Natlog, natprogs
 
@@ -151,7 +152,6 @@ def to_jnp(a):
 
 def split(X, y,seed, test_size=0.1):
     print('SHAPES:',X.shape,y.shape)
-    from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = \
         train_test_split(X, y, test_size=test_size, random_state=seed)
     return X_train, X_test, y_train, y_test

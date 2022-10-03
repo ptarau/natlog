@@ -1,0 +1,106 @@
+impl 0 0 1.
+impl 0 1 1.
+impl 1 0 0.
+impl 1 1 1.
+
+nand 0 0 1.
+nand 0 1 1.
+nand 1 0 1.
+nand 1 1 0.
+
+xor 0 0 0.
+xor 0 1 1.
+xor 1 0 1.
+xor 1 1 0.
+
+iter N Op X Y:
+  iter_op N Op () E 0 Y,
+  to_tuple E X.
+
+iter_op 0 _Op E E R R.
+iter_op I Op  E1 E2 R1 R3 :
+   when I > 0,
+   with I - 1 as J,
+   Op X R1 R2,
+   with X + X as XX,
+   with XX - 1 as X1,
+   iter_op J Op (X1 E1) E2 R2 R3.
+
+dataset N Op Xss (Ys):
+  findall (X Y)  (iter N Op X Y) XssYsList,
+  to_pairs XssYsList XssList YsList,
+  to_tuple XssList Xss,
+  to_tuple YsList Ys.
+
+to_pairs () () ().
+to_pairs ((Xs Y)  Zss) (Xs Xss) (Y Ys) :
+    to_pairs Zss Xss Ys.
+
+split_dataset Xss Ys Xtr Xt Ytr Yt:
+   `array Xss X,
+   `array Ys Y0,
+   `transpose Y0 Y,
+   `split X Y 0 0.1 (Xtr Xt Ytr Yt),
+   show_sizes (X Y Xtr Xt Ytr Yt).
+
+show_sizes Arrays:
+   to_cons_list Arrays Vals,
+   maplist (` shape) Vals SizesList,
+   to_tuple SizesList Sizes,
+   #print sizes are Sizes.
+
+
+hidden_sizes N (M MM M N 1):
+     with 2 * N as M,
+     with 4 * N as MM.
+
+% run 4 xor 0 5 L A LL AA?
+
+run N Op Seed Epochs Loss Acc LossT AccT:
+   dataset N Op Xss Ys,
+   split_dataset Xss Ys X Xt Y Yt,
+   hidden_sizes N Sizes,
+   #print hidden sizes are Sizes,
+   `train_model X Y Sizes Epochs (Model LossFun),
+   `test_model Model LossFun X Y (Loss Acc),
+   `test_model Model LossFun Xt Yt (LossT AccT) .
+
+
+run with Op:
+   run 12 Op 0 5000 Loss Acc LossT AccT,
+   nl,
+   #print train loss = Loss,
+   #print train accuracy = Acc,
+   nl,
+   #print test loss = LossT,
+   #print test accuracy = AccT.
+
+
+go: run with xor.
+go1 : run with nand.
+go2 : run with impl.
+
+
+tt0: iter_op 2 xor () B C D, #print result B C D, fail.
+
+tt1: iter 2 xor E R, #print result E R, fail.
+
+tt2 : dataset 1 nand Xss Ys, #print Xss Ys, fail.
+
+tt: $xor F, #test_natjax 10 F 0,fail.
+
+test_alt_run N Epochs Loss Acc LossT AccT:
+   eq Seed 0,
+   `load_dataset N Seed  ((X Xt Y Yt) Layer_sizes),
+  `train_model X Y Layer_sizes Epochs (Model LossFun),
+   `test_model Model LossFun X Y (Loss Acc),
+   `test_model Model LossFun Xt Yt (LossT AccT) .
+
+alt:
+   test_alt_run 12 5000 Loss Acc LossT AccT,
+   nl,
+   #print train loss = Loss,
+   #print train accuracy = Acc,
+   nl,
+   #print test loss = LossT,
+   #print test accuracy = AccT.
