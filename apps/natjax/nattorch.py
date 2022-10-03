@@ -87,7 +87,7 @@ class LinearNet(nn.Module):
 
     def forward(self, x):
         f = nn.ReLU()
-        #f = nn.Tanh()
+        # f = nn.Tanh()
         for n in self.linears:
             x = n(x)
             x = f(x)

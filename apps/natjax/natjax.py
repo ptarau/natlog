@@ -14,7 +14,6 @@ jax.config.update("jax_enable_x64", True)
 
 DTYPE = jnp.float32
 
-
 shared = dict()
 
 
@@ -46,7 +45,7 @@ def matsum(x, y):
     return jnp.add(x, y)
 
 
-def init_weights(features, layer_sizes,seed):
+def init_weights(features, layer_sizes, seed):
     KEY = jax.random.PRNGKey(seed)
     weights = []
     keys = jax.random.split(KEY, len(layer_sizes) + 1)
@@ -72,7 +71,7 @@ def linear_layer(weights, input_data):
 
 @jit
 def mlp_forward_pass(weights, input_data):
-    layer_out=input_data
+    layer_out = input_data
     for i in range(len(weights) - 1):
         layer_out = relu(linear_layer(weights[i], layer_out))
     return sigmoid(linear_layer(weights[-1], layer_out))
@@ -150,8 +149,8 @@ def to_jnp(a):
     return jnp.array(a, dtype=DTYPE)
 
 
-def split(X, y,seed, test_size=0.1):
-    print('SHAPES:',X.shape,y.shape)
+def split(X, y, seed, test_size=0.1):
+    print('SHAPES:', X.shape, y.shape)
     X_train, X_test, y_train, y_test = \
         train_test_split(X, y, test_size=test_size, random_state=seed)
     return X_train, X_test, y_train, y_test
@@ -208,5 +207,5 @@ def test_natjax(features, op, seed):
 
 
 if __name__ == "__main__":
-    #test_natjax(features=12, op=xor)
+    # test_natjax(features=12, op=xor)
     run_natlog()

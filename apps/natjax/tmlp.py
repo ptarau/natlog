@@ -6,7 +6,8 @@ import torch.optim as optim
 
 DTYPE = np.float32
 
-def load_dataset(features,seed):
+
+def load_dataset(features, seed):
     """
      a ^ b ... ^ ... synthetic boolean
      truth table dataset - known to be hard to learn
@@ -34,7 +35,7 @@ def load_dataset(features,seed):
         ys = to_np(rs).reshape(m, 1)
         return ys
 
-    return split(data_x(), data_y(),seed), layer_sizes
+    return split(data_x(), data_y(), seed), layer_sizes
 
 
 def split(X, y, seed, test_size=0.1):
@@ -53,7 +54,7 @@ class LinearNet(nn.Module):
         for i in range(1, self.num_layers):
             s1 = sizes[i - 1]
             s2 = sizes[i]
-            print('SIZES:',s1, s2)
+            print('SIZES:', s1, s2)
             self.linears.append(nn.Linear(s1, s2))
 
         self.linears.append(nn.Linear(sizes[-1], output_size))
@@ -72,7 +73,7 @@ def accuracy(Y, Y_hat):
     return (Y == Y_hat).sum() / len(Y)
 
 
-def train(X_train, y_train, sizes,epochs):
+def train(X_train, y_train, sizes, epochs):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     net = LinearNet(X_train.shape[1], sizes, 1)
     lossfun = nn.MSELoss()
@@ -96,21 +97,21 @@ def train(X_train, y_train, sizes,epochs):
 
 def test(net, lossfun, X, y):
     with torch.inference_mode():
-      y_hat = net(X)
-      loss = np.sqrt(lossfun(y_hat, y).detach().numpy())
-      preds = y_hat > 0.5
-      y = y > 0.5
-      acc = accuracy(y, preds)
-      return loss.tolist(), acc.tolist()
+        y_hat = net(X)
+        loss = np.sqrt(lossfun(y_hat, y).detach().numpy())
+        preds = y_hat > 0.5
+        y = y > 0.5
+        acc = accuracy(y, preds)
+        return loss.tolist(), acc.tolist()
 
 
 def run():
     epochs = 600
-    features=12
-    seed=0
+    features = 12
+    seed = 0
     np.random.seed(seed)
     torch.random.manual_seed(seed)
-    dataset, sizes = load_dataset(features,seed)
+    dataset, sizes = load_dataset(features, seed)
     X_train, X_test, y_train, y_test = [torch.from_numpy(d) for d in dataset]
     net, lossfun = train(X_train, y_train, sizes, epochs)
     train_loss, train_acc = test(net, lossfun, X_train, y_train)

@@ -61,7 +61,7 @@ def load_dataset(features, op):
 
 def InitializeWeights(features, layer_sizes, seed):
     weights = []
-    keys = jax.random.split(seed, len(layer_sizes)+1)
+    keys = jax.random.split(seed, len(layer_sizes) + 1)
     for i, units in enumerate(layer_sizes):
         if i == 0:
             w = jax.random.uniform(key=keys[i], shape=(units, features), minval=-1.0, maxval=1.0, dtype=DTYPE)
@@ -95,10 +95,10 @@ def LinearLayer(weights, input_data):
 @jit
 def ForwardPass(weights, input_data):
     layer_out = input_data
-    for i in range(len(weights)-1):
+    for i in range(len(weights) - 1):
         layer_out = Relu(LinearLayer(weights[i], layer_out))
     last = LinearLayer(weights[-1], layer_out)
-    #print("LAST:",last)
+    # print("LAST:",last)
     return Sigmoid(last)
 
 
