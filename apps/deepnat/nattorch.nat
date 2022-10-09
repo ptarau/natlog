@@ -87,8 +87,6 @@ tt1: iter 2 xor E R, #print result E R, fail.
 
 tt2 : dataset 1 nand Xss Ys, #print Xss Ys, fail.
 
-tt: $xor F, #test_natjax 10 F 0,fail.
-
 test_alt_run N Epochs Loss Acc LossT AccT:
    eq Seed 0,
    `load_dataset N Seed  ((X Xt Y Yt) Layer_sizes),

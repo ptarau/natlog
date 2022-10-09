@@ -1,7 +1,8 @@
-metaint ().
-metaint (G Gs) :
-   cls (G Bs) Gs,
-   metaint Bs.
+metaint ().         % no more goals left, succeed
+metaint (G Gs) :    % unify the first goal with the head of a clause
+   cls (G Bs) Gs,   % build a new list of goals from the body of the
+                    % clause extended with the remaining goals as tail
+   metaint Bs.      % interpret the extended body
 
 
 cls

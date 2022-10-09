@@ -96,6 +96,7 @@ def train(X_train, y_train, sizes, epochs):
 
 
 def test(net, lossfun, X, y):
+    print('STATE DICT:',list(net.state_dict().keys()))
     with torch.inference_mode():
         y_hat = net(X)
         loss = np.sqrt(lossfun(y_hat, y).detach().numpy())

@@ -117,12 +117,13 @@ def train_model(X_train, y_train, sizes, epochs):
         loss.backward()
         optimizer.step()
 
-        if epoch % 50 == 0: print('LOSS AT ', epoch, '\t-->', round(loss.item(), 4))
+        if epoch % 50 == 0: print('LOSS AT ', epoch, '\t-->', round(loss.item(), 8))
 
     return net, lossfun
 
 
 def test_model(net, lossfun, X, y):
+    print('STATE DICT:', list(net.state_dict().keys()))
     with torch.inference_mode():
         y_hat = net(X)
         loss = np.sqrt(lossfun(y_hat, y).detach().numpy())
