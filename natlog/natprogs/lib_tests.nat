@@ -25,7 +25,7 @@ lib_t09: eq G (p X), eng G G E, ask E A, ask E B, #print A B, fail.
 lib_t10: eq G (p X), eng G G E, in E A, #print answer A, fail.
 
 
-lib_t11: if_ fail (eq X 0) (eq X 1), # print bug X, fail.
+lib_t11: if fail (eq X 0) (eq X 1), # print X, fail.
 
 lib_t12 :
   eng X (between 1 5 X) E, stop E, ask E A, #print here A, fail.
@@ -38,3 +38,8 @@ lib_t14: eng X (loop 0 X) E, take 5 E Xs, tuple Xs T,  #print T, fail.
 lib_t15: eq N 10, eng X (loop 0 X) E, take N E Xs, nth 5 Xs X, #print X,fail ?
 
 lib_t16 : first_sols 5 (loop 0 X) R, #print R, fail.
+
+
+fibo N Xs : eng X (slide_fibo 1 1) E,  take N E Xs.
+
+slide_fibo X Y :  with X+Y as Z,  ^X, slide_fibo Y Z.

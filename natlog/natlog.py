@@ -154,9 +154,12 @@ def interp(css, goals0, db=None, callables=dict()):
         def ask(ex):
             e, x = ex
             a = next(e, None)
+            #print('RAW ask next:',a)
             if a is None:
                 r = 'no'
                 e.stop()
+            elif len(a) == 1:  # a ^ operation
+                r = ('the', copy_term(a[0]))
             else:
                 ((the, r, g), ()) = a
                 r = (the, copy_term(r))
@@ -296,6 +299,7 @@ class Natlog:
         goals0 = activate(goals0, vs)
         ns = dict(zip(vs, ixs))
         for answer in interp(self.css, goals0, self.db, self.callables):
+            #print("RAW ANSWER:",answer)
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
             else:
@@ -311,11 +315,11 @@ class Natlog:
             c += 1
         return floor(c)
 
-    def query(self, quest):
+    def query(self, quest, in_repl=False):
         """
         show answers for given query
         """
-        print('QUERY:', quest)
+        if not in_repl: print('QUERY:', quest)
         success = False
         for answer in self.solve(quest):
             success = True
@@ -333,7 +337,7 @@ class Natlog:
             q = input('?- ')
             if not q: return
             try:
-                self.query(q)
+                self.query(q,in_repl=True)
             except Exception as e:
                 print('EXCEPTION:', type(e).__name__, e.args)
 
