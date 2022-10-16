@@ -76,6 +76,7 @@ stack S : `list S.
 push S X : #meth_call S append (X).
 pop S X : `meth_call S pop () X.
 
+copy_term X CX : `copy_term X CX.
 findall X G Xs: stack S, collect_ S X G Xs.
 
 collect_ S X G _ : call G, `copy_term X CX, push S CX, fail.
@@ -107,16 +108,18 @@ take_more (the X) K E (X Xs) : take K E Xs.
 loop N N.
 loop N X : with N + 1 as M, ^trust loop M X.
 
+repeat X : call X.
+repeat X : ^trust repeat X.
+
 % arithmetics
 
+% defs that have a var as 1-st arg will start with when or with
 
 with X + Y as Z  : `add X Y Z.
 with X - Y as Z  : `sub X Y Z.
 with X * Y as Z  : `mul X Y Z.
 with X / Y as Z  : `truediv X Y Z.
 with X // Y as Z : `floordiv X Y Z.
-
-% defs that have a var as 1-st arg should start with when  .
 
 when  X < Y  : `lt X Y R, `int R 1.
 when  X > Y  : `gt X Y R, `int R 1.
@@ -127,3 +130,33 @@ when  X == Y : `eq X Y R, `int R 1.
 
 writeln X : #print X.
 nl : #print.
+
+% exceptions with engines
+
+throw E : ^(exception E), fail.
+
+catch Goal Catcher Recovery:
+   eng (just Goal) Goal Engine,
+   in Engine Answer,
+   maybe_caught Answer Catcher Goal Recovery.
+
+maybe_caught (exception C) C _ Recovery : call Recovery, ^trust true.
+maybe_caught (exception C) Catcher _ _ : distinct C Catcher, throw C.
+maybe_caught (just G)  _ G _ .
+
+
+
+% quick exception throwing test
+
+exception_test Kind X:
+   catch (thrower X) (Kind X) (#print recovering from Kind X),
+   #print got Kind X.
+
+
+thrower X: #print X is fine so far.
+thrower X : throw (bad X), #print never here.
+thrower X : #print X missed.
+
+etest1 : exception_test bad ball.
+etest2 : exception_test other ball.
+etest3 : catch (eq X 1) fail fail, #print X.
