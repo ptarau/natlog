@@ -58,7 +58,7 @@ class Eng:
     def __repr__(self):
         mes = ""
         if self.stopped: mes = "stopped_"
-        return mes+'eng_' + str(id(self))
+        return mes + 'eng_' + str(id(self))
 
 
 def undo(trail):
@@ -76,6 +76,12 @@ def unfold1(g, gs, h, bs, trail):
         b = activate(b, d)
         gs = (b, gs)
     return gs  # SUCCESS
+
+
+nat_builtins = {
+    "call", "~", "`", "``", "^", "#", "$",
+    "if", "eng", "ask", "unify_with_occurs_check"
+}
 
 
 def interp(css, goals0, db=None, callables=dict()):
@@ -154,7 +160,7 @@ def interp(css, goals0, db=None, callables=dict()):
         def ask(ex):
             e, x = ex
             a = next(e, None)
-            #print('RAW ask next:',a)
+            # print('RAW ask next:',a)
             if a is None:
                 r = 'no'
                 e.stop()
@@ -193,14 +199,27 @@ def interp(css, goals0, db=None, callables=dict()):
             else:
                 yield from step((no, goals))
 
+        def unify_with_occurs_check_op(g):
+            t1, t2 = g
+            if not unify(t1, t2, trail, occ=True):
+                undo(trail)
+            else:
+                yield from step(goals)
+
         if op == 'eng':
             yield from eng(g)
+
         elif op == 'ask':
             yield from ask(g)
+
         elif op == 'call':
             yield from step((g[0] + g[1:], goals))
+
         elif op == 'if':
             yield from if_op(g)
+
+        elif op == 'unify_with_occurs_check':
+            yield from unify_with_occurs_check_op(g)
 
         elif op == '~':  # matches against database of facts
             yield from db_call(g)
@@ -211,11 +230,14 @@ def interp(css, goals0, db=None, callables=dict()):
 
         elif op == '`':  # function call, last arg unified
             yield from python_fun(g)
+
         elif op == "``":  # generator call, last arg unified
             yield from gen_call(g)
+
         elif op == '#':  # simple call, no return
             python_call(g)
             yield from step(goals)
+
         else:  # op == '$' find value of variable
             yield from python_var(g)
 
@@ -232,7 +254,7 @@ def interp(css, goals0, db=None, callables=dict()):
         else:
             g, goals = goals
             op = g[0] if g else None
-            if op in {"call", "~", "`", "``", "^", "#", "$", "if", "eng", "ask"}:
+            if op in nat_builtins:
                 g = extractTerm(g[1:])
                 yield from dispatch_call(op, g, goals, trail)
             else:
@@ -299,7 +321,7 @@ class Natlog:
         goals0 = activate(goals0, vs)
         ns = dict(zip(vs, ixs))
         for answer in interp(self.css, goals0, self.db, self.callables):
-            #print("RAW ANSWER:",answer)
+            # print("RAW ANSWER:",answer)
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
             else:
@@ -337,7 +359,7 @@ class Natlog:
             q = input('?- ')
             if not q: return
             try:
-                self.query(q,in_repl=True)
+                self.query(q, in_repl=True)
             except Exception as e:
                 print('EXCEPTION:', type(e).__name__, e.args)
 

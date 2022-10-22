@@ -28,7 +28,7 @@ def deref(v):
     return v
 
 
-def unify(x, y, trail):
+def unify(x, y, trail, occ=False):
     ustack = []
     ustack.append(y)
     ustack.append(x)
@@ -36,8 +36,12 @@ def unify(x, y, trail):
         x1 = deref(ustack.pop())
         x2 = deref(ustack.pop())
         if isinstance(x1, Var):
+            if occ and occurs(x1, x2):
+                return False
             x1.bind(x2, trail)
         elif isinstance(x2, Var):
+            if occ and occurs(x2, x1):
+                return False
             x2.bind(x1, trail)
         elif isinstance(x2, tuple) and isinstance(x1, tuple):
             arity = len(x1)
@@ -127,6 +131,7 @@ def occurs(x0, t0):
     x = deref(x0)
     return occ(t0)
 
+
 def path_of_(t):
     def path_of0(t):
         if isinstance(t, Var):
@@ -156,6 +161,7 @@ def path_of(t):
     qs = set((c, list2tuple(x)) for (c, x) in ps)
     return qs
 
+
 def list2tuple(ls):
     # print('!!! LS=',ls)
     def scan(xs):
@@ -169,8 +175,8 @@ def list2tuple(ls):
 
 
 def test_unify():
-    a, b, c, d, e, f, g, x, y = "abcdefgxy"
-    x, y = VarNum(0), VarNum(1)
+    a, b, c, d, e, f, g = "abcdefg"
+    x, y, z = VarNum(0), VarNum(1), VarNum(2)
     t = (f, a, (g, (b, x, (e, b, c, y)), d))
     for p in path_of(t): print('PATH:', p)
 
@@ -178,6 +184,15 @@ def test_unify():
 
     print('ORIG:', t)
     print('COPY:', c)
+
+    z = activate(z, dict())
+    print('Z:', z)
+
+    t1 = (f, z)
+    t2 = z
+
+    print('unif occ:', unify(t1, t2, [], occ=True))
+    print('unif nocc:', unify(t1, t2, [], occ=False))
 
 
 if __name__ == "__main__":

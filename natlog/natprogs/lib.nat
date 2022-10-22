@@ -2,6 +2,8 @@ true.
 
 eq X X.
 
+eq_ X Y : unify_with_occurs_check X Y.
+
 the X G : call G.
 
 member X (X _).
