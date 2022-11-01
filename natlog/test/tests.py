@@ -325,8 +325,8 @@ def meta_test():
 def ivtest():
     n = Natlog(file_name=NATPROGS + 'gcol.nat',with_lib=NATPROGS + "lib.nat")
     #print(n)
-    n.query("eq &C1 42, node X Y Z ?")
-    n.repl()
+    n.query("go Colors?")
+    #n.repl()
 
 
 def go():
@@ -345,7 +345,8 @@ def go():
           db_test, db_chem, py_test, py_test1,
           big_db,
           gramtest,
-          meta_test
+          meta_test,
+          ivtest
           ]
     for t in ts:
         print('\n\n', '*' * 20, t.__name__, '*' * 20, '\n')
@@ -353,8 +354,8 @@ def go():
 
 
 if __name__ == "__main__":
-    #go()
+    go()
     # libtest()
     # gramtest()
     # meta_test()
-    ivtest()
+    #ivtest()

@@ -48,8 +48,11 @@ def deref(v):
 
 class GVar(Var):
     def __repr__(self):
-        s = super().__repr__()
-        return '&' + s[1:]
+        v = deref(self)
+        if isinstance(v, GVar) and v.val is None:
+            return "&" + str(id(v))
+        else:
+            return repr(v)
 
 
 def qtrim(s):
