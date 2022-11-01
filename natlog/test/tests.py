@@ -353,8 +353,8 @@ def go():
 
 
 if __name__ == "__main__":
-    #go()
-    #libtest()
+    go()
+    # libtest()
     # gramtest()
     # meta_test()
-    ivtest()
+    # ivtest()

@@ -293,7 +293,7 @@ class Natlog:
             self.text = self.text + '\n' + lib
 
         self.callables = callables
-        self.gsyms=dict()
+        self.gsyms = dict()
         self.gixs = dict()
 
         css, ixss = zip(*parse(self.text, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=True))
@@ -301,7 +301,7 @@ class Natlog:
         self.css = tuple(css)
         self.ixss = tuple(ixss)
 
-        #print('GIXSS in natlog:', self.gixs)
+        # print('GIXSS in natlog:', self.gixs)
 
         if db_name is not None:
             self.db_init()
@@ -324,25 +324,12 @@ class Natlog:
 
         vs = dict()
         goals0 = activate(goals0, vs)
-        #print('GOAL0:', goals0, vs)
-        #print()
-        #print('GSYMS:--------->', self.gsyms)
-        #print('GIXS:--------->', self.gixs)
-        #vs=dict((k,deref(v)) for k,v in vs.items())
-        #print('IXS:',ixs)
         ns = dict(zip(vs, ixs))
+
         for k, v in self.gixs.items():
-            #print('KV:     -----:',type(k),v)
             ns[k] = v
 
         for answer in interp(self.css, goals0, self.db, self.callables):
-            #print()
-            #print("RAW ANSWER:", answer)
-            #print("RAW names:", ns)
-            #print("RAW vs:", vs)
-            #for v in vs.values():
-            #    v=deref(v)
-            #    print(v, type(v))
 
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
