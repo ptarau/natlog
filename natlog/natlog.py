@@ -325,8 +325,8 @@ class Natlog:
         vs = dict()
         goals0 = activate(goals0, vs)
         #print('GOALS:', goals0, vs)
-        print('GSYMS:--------->', self.gsyms)
-        print('GIXS:--------->', self.gixs)
+        #print('GSYMS:--------->', self.gsyms)
+        #print('GIXS:--------->', self.gixs)
         ns = dict(zip(vs, ixs))
         for k, v in self.gixs.items():
             #k = deref(k)
