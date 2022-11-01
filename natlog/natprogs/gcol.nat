@@ -1,0 +1,34 @@
+node 1 (2 3 5) &C1.
+node 2 (3 5) &C2.
+node 3 (4) &C3.
+node 4 (5) &C1.
+
+dir_edge X Y : node X Ys _, argx _ Ys Y.
+
+edge X Y : dir_edge X Y.
+edge X Y : dir_edge Y X.
+
+color C : argx _ (r g b) C.
+
+nodes Ns : findall N (node N _ _) Ns.
+
+gcol ().
+gcol (N Ns) :
+   node N Ms C,
+   color C,
+   #print try N C,
+   gcol Ns,
+   gcols Ms C.
+   
+   
+difs () _.
+difs (M Ms) C:
+   node M _ D,
+   distinct C D,
+   difs Ms C.
+   
+
+cols NCs: listof (N C) (node N _ C) NCs.
+
+go NCs : nodes Ns, gcol Ns, cols NCs.
+

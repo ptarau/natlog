@@ -79,10 +79,15 @@ push S X : #meth_call S append (X).
 pop S X : `meth_call S pop () X.
 
 copy_term X CX : `copy_term X CX.
-findall X G Xs: stack S, collect_ S X G Xs.
 
-collect_ S X G _ : call G, `copy_term X CX, push S CX, fail.
-collect_ S _X _G Xs : to_cons_list S Xs.
+
+findall X G Xs: listof X G S, to_cons_list S Xs.
+
+listof X G S: stack S, collect_ X G S.
+
+collect_ X G S : call G, `copy_term X CX, push S CX, fail.
+collect_ _X _G _S.
+
 
 stop E : getprop E stop S, #S.
 
@@ -162,3 +167,4 @@ thrower X : #print X missed.
 etest1 : exception_test bad ball.
 etest2 : exception_test other ball.
 etest3 : catch (eq X 1) fail fail, #print X.
+etest4 : findall X (eq X 1) R,#print R.

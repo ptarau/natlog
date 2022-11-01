@@ -1,31 +1,4 @@
-from .scanner import VarNum
-
-
-class Var:
-    def __init__(self):
-        self.val = None
-
-    def bind(self, val, trail):
-        self.val = val
-        trail.append(self)
-
-    def unbind(self):
-        self.val = None
-
-    def __repr__(self):
-        v = deref(self)
-        if isinstance(v, Var) and v.val is None:
-            return "_" + str(id(v))
-        else:
-            return repr(v)
-
-
-def deref(v):
-    while isinstance(v, Var):
-        if v.val is None:
-            return v
-        v = v.val
-    return v
+from .scanner import VarNum, Var, GVar, deref
 
 
 def unify(x, y, trail, occ=False):
@@ -35,7 +8,12 @@ def unify(x, y, trail, occ=False):
     while ustack:
         x1 = deref(ustack.pop())
         x2 = deref(ustack.pop())
-        if isinstance(x1, Var):
+
+        if isinstance(x1, GVar) and isinstance(x2, Var):
+            x2.bind(x1, trail)
+        elif isinstance(x2, GVar) and isinstance(x1, Var):
+            x1.bind(x2, trail)
+        elif isinstance(x1, Var):
             if occ and occurs(x1, x2):
                 return False
             x1.bind(x2, trail)
@@ -64,7 +42,6 @@ def new_var(t, d):
         d[t] = v
     return v
 
-
 def lazy_unify(x, y, trail, d):
     ustack = []
     ustack.append(y)
@@ -73,7 +50,11 @@ def lazy_unify(x, y, trail, d):
         x1 = deref(ustack.pop())
         x2 = deref(ustack.pop())
 
-        if isinstance(x1, Var):
+        if isinstance(x1, GVar) and isinstance(x2, Var):
+            x2.bind(x1, trail)
+        elif isinstance(x2, GVar) and isinstance(x1, Var):
+            x1.bind(x2, trail)
+        elif isinstance(x1, Var):
             x1.bind(x2, trail)
         elif isinstance(x2, Var):
             x1 = activate(x1, d)

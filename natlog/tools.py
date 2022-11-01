@@ -1,15 +1,16 @@
-from .unify import Var, deref
+from .unify import Var, GVar, deref
 
 
 def copy_term(t0):
     def ct(t):
         t = deref(t)
+        if isinstance(t, GVar):
+            return t
         if isinstance(t, Var):
             return d.setdefault(t, Var())
-        elif not isinstance(t, tuple):
+        if not isinstance(t, tuple):
             return t
-        else:
-            return tuple(map(ct, t))
+        return tuple(map(ct, t))
 
     d = dict()
     # print('CT <<<',t0)

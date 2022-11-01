@@ -2,7 +2,7 @@ from math import *
 from pathlib import Path
 
 from .parser import *
-from .unify import *  # unify, lazy_unify, activate, extractTerm
+from .unify import *  # unify, lazy_unify, activate, extractTerm, Var
 from .tools import *
 from .db import Db
 
@@ -293,11 +293,15 @@ class Natlog:
             self.text = self.text + '\n' + lib
 
         self.callables = callables
+        self.gsyms=dict()
+        self.gixs = dict()
 
-        css, ixss = zip(*parse(self.text, ground=False, rule=True))
+        css, ixss = zip(*parse(self.text, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=True))
 
         self.css = tuple(css)
         self.ixss = tuple(ixss)
+
+        print('GIXSS in natlog:', self.gixs)
 
         if db_name is not None:
             self.db_init()
@@ -316,12 +320,25 @@ class Natlog:
         """
          answer generator for given question
         """
-        goals0, ixs = next(parse(quest, ground=False, rule=False))
+        goals0, ixs = next(parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False))
+
         vs = dict()
         goals0 = activate(goals0, vs)
+        #print('GOALS:', goals0, vs)
+        print('GSYMS:--------->', self.gsyms)
+        print('GIXS:--------->', self.gixs)
         ns = dict(zip(vs, ixs))
+        for k, v in self.gixs.items():
+            #k = deref(k)
+            ns[k] = v
+
         for answer in interp(self.css, goals0, self.db, self.callables):
-            # print("RAW ANSWER:",answer)
+            print()
+            #print("RAW ANSWER:", answer)
+            #print("RAW names:", ns)
+            #print("RAW vs:", vs)
+            #for v in vs.values(): print(v, type(v))
+
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
             else:

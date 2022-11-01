@@ -322,6 +322,12 @@ def meta_test():
     n.query("metaint ((goal R) ()) ?")
     # n.repl()
 
+def ivtest():
+    n = Natlog(file_name=NATPROGS + 'gcol.nat',with_lib=NATPROGS + "lib.nat")
+    #print(n)
+    n.query("eq &C1 42, node X Y Z ?")
+    n.repl()
+
 
 def go():
     ts = [dtest1,
@@ -348,6 +354,7 @@ def go():
 
 if __name__ == "__main__":
     #go()
-    libtest()
+    #libtest()
     # gramtest()
     # meta_test()
+    ivtest()

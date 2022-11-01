@@ -134,9 +134,9 @@ def to_clause(xs):
 
 
 # main exported Parser + Scanner
-def parse(text, ground=False, rule=False):
+def parse(text, gsyms=dict(), gixs=dict(), ground=False, rule=False):
     text = clean_comments(text)
-    s = Scanner(text, ground=ground)
+    s = Scanner(text, gsyms=gsyms, gixs=gixs, ground=ground)
     for ws in s.run():
         if not rule: ws = ('head_', ':') + ws
         ws = ("(",) + ws + (")",)
@@ -145,6 +145,7 @@ def parse(text, ground=False, rule=False):
         r = to_clause(r)
         if not rule: r = to_cons_list(r[1])
         if not rule and ground: r = (r[0],)  # db fact
+
         yield r, s.names
 
 
