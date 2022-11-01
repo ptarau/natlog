@@ -301,7 +301,7 @@ class Natlog:
         self.css = tuple(css)
         self.ixss = tuple(ixss)
 
-        print('GIXSS in natlog:', self.gixs)
+        #print('GIXSS in natlog:', self.gixs)
 
         if db_name is not None:
             self.db_init()
@@ -324,7 +324,8 @@ class Natlog:
 
         vs = dict()
         goals0 = activate(goals0, vs)
-        #print('GOALS:', goals0, vs)
+        #print('GOAL0:', goals0, vs)
+        #print()
         #print('GSYMS:--------->', self.gsyms)
         #print('GIXS:--------->', self.gixs)
         ns = dict(zip(vs, ixs))
