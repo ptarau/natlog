@@ -336,7 +336,7 @@ class Natlog:
             ns[k] = v
 
         for answer in interp(self.css, goals0, self.db, self.callables):
-            print()
+            #print()
             #print("RAW ANSWER:", answer)
             #print("RAW names:", ns)
             #print("RAW vs:", vs)
