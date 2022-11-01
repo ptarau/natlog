@@ -328,9 +328,11 @@ class Natlog:
         #print()
         #print('GSYMS:--------->', self.gsyms)
         #print('GIXS:--------->', self.gixs)
+        #vs=dict((k,deref(v)) for k,v in vs.items())
+        #print('IXS:',ixs)
         ns = dict(zip(vs, ixs))
         for k, v in self.gixs.items():
-            #k = deref(k)
+            #print('KV:     -----:',type(k),v)
             ns[k] = v
 
         for answer in interp(self.css, goals0, self.db, self.callables):
@@ -338,12 +340,14 @@ class Natlog:
             #print("RAW ANSWER:", answer)
             #print("RAW names:", ns)
             #print("RAW vs:", vs)
-            #for v in vs.values(): print(v, type(v))
+            #for v in vs.values():
+            #    v=deref(v)
+            #    print(v, type(v))
 
             if answer and len(answer) == 1:
                 sols = {'_': answer[0]}
             else:
-                sols = dict((ns[v], r) for (v, r) in vs.items())
+                sols = dict((ns[v], deref(r)) for (v, r) in vs.items())
             yield sols
 
     def count(self, quest):
