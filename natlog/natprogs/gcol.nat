@@ -4,14 +4,13 @@ node 3 (4) &C3.
 node 4 (5) &C4.
 node 5 () &C5.
 
-edge_col CX CY : node X Ys _, argx _ Ys Y, node X _ CX, node Y _ CY.
+edge_col CX CY : node X Ys CX, argx _ Ys Y, node Y _ CY.
 
 color C : argx _ (r g b) C.
 
 nodes Ns : findall (N C) (node N _ C) Ns.
 
 edges Es : findall (CX CY) (edge_col CX CY) Es.
-
 
 
 color_graph NCs :
