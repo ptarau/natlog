@@ -436,3 +436,15 @@ def consult(fname):
     fname = natprogs() + fname + ".nat"
     n = Natlog(file_name=fname)
     n.repl()
+
+def dconsult(nname,dname):
+    nname = natprogs() + nname + ".nat"
+    dname = natprogs() + dname + ".nat"
+    n = Natlog(file_name=nname,db_name=dname)
+    n.repl()
+
+def tconsult(fname):
+    nname = natprogs() + fname + ".nat"
+    dname = natprogs() + fname + ".tsv"
+    n = Natlog(file_name=nname,db_name=dname)
+    n.repl()

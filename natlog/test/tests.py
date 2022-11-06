@@ -355,6 +355,7 @@ def go():
 
 if __name__ == "__main__":
     go()
+    #ndb_test()
     # libtest()
     # gramtest()
     # meta_test()

@@ -13,11 +13,11 @@ from .db import *
 # simple multi-layer percdeptron
 def neural_learner():
     return MLPClassifier(
-        hidden_layer_sizes=(16, 16),
+        hidden_layer_sizes=(16, 32, 16),
         random_state=1234,
         verbose=1,
         # activation='relu',
-        max_iter=300
+        max_iter=2000
     )
 
 
@@ -116,5 +116,5 @@ class Ndb(Db):
         qs = np.array([set2bits(db_const_count, query_consts_nums)])
         rs = self.learner.predict(qs)
         matches = bits2set(list(rs[0]))
-        # print('!!!!!!:',matches,self.css)
+        #print('!!!!!!:',matches,self.css)
         return matches
