@@ -34,6 +34,12 @@ once X : if X (true) (fail).
 
 distinct X Y : not (eq X Y).
 
+var X: `type _ T, `isinstance X T R, `int R 1.
+
+compound X : distinct X (), `type () T, `isinstance X T R, `int R 1.
+
+atomic X :  not (var X), not (compound X).
+
 maplist _ ().
 maplist F (X Xs) : call F X , maplist F Xs.
 

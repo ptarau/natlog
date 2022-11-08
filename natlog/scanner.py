@@ -24,6 +24,7 @@ class Var:
         self.val = None
 
     def bind(self, val, trail):
+        if self==val: return
         self.val = val
         trail.append(self)
 
