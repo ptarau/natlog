@@ -37,10 +37,7 @@ to_pairs ((Xs Y)  Zss) (Xs Xss) (Y Ys) :
     to_pairs Zss Xss Ys.
 
 split_dataset Xss Ys Xtr Xt Ytr Yt:
-   `array Xss X,
-   `array Ys Y0,
-   `transpose Y0 Y,
-   `split X Y 0 0.1 (Xtr Xt Ytr Yt),
+   `split Xss Ys 0 0.1 (Xtr Xt Ytr Yt),
    show_sizes (X Y Xtr Xt Ytr Yt).
 
 show_sizes Arrays:
@@ -58,6 +55,7 @@ hidden_sizes N (M MM M N 1):
 
 run N Op Seed Epochs Loss Acc LossT AccT:
    dataset N Op Xss Ys,
+
    split_dataset Xss Ys X Xt Y Yt,
    hidden_sizes N Sizes,
    #print hidden sizes are Sizes,
@@ -67,7 +65,7 @@ run N Op Seed Epochs Loss Acc LossT AccT:
 
 
 run with Op:
-   run 12 Op 0 5000 Loss Acc LossT AccT,
+   run 12 Op 0 3000 Loss Acc LossT AccT,
    nl,
    #print train loss = Loss,
    #print train accuracy = Acc,

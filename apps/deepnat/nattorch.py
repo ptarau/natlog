@@ -43,7 +43,8 @@ def load_dataset(features, seed):
         return np.array(a, dtype=DTYPE)
 
     def data_x():
-        return np.array(list(product([-1.0, 1.0], repeat=features)), dtype=DTYPE)
+        x=list(product([-1.0, 1.0], repeat=features))
+        return x
 
     def data_y():
         m = 2 ** features
@@ -54,13 +55,16 @@ def load_dataset(features, seed):
                 x = int((x + 1) / 2)
                 r = r ^ x
             rs.append(r)
-        ys = to_np(rs).reshape(m, 1)
-        return ys
+        rs=[rs]
+        return rs
 
     return split(data_x(), data_y(), seed), layer_sizes
 
 
-def split(X, y, seed, test_size=0.1):
+def split(Xss, ys, seed, test_size=0.1):
+    X=np.array(Xss)
+    y=np.array(ys)
+    y=y.T
     X_train, X_test, y_train, y_test = \
         train_test_split(X, y, test_size=test_size, random_state=seed)
     res = tuple(tensor(a, dtype=torch.float) for a in [X_train, X_test, y_train, y_test])
@@ -108,8 +112,6 @@ def train_model(X_train, y_train, sizes, epochs):
 
     inputs = X_train
 
-    outputs = inputs
-
     for epoch in range(epochs):
         optimizer.zero_grad()
         outputs = net(inputs)
@@ -137,7 +139,7 @@ def test_model(net, lossfun, X, y):
 
 def test_nattorch():
     epochs = 600
-    features = 12
+    features = 10
     seed = 42
     random.seed(seed)
     np.random.seed(seed)
@@ -163,7 +165,7 @@ def lin_test():
     n = LinearNet(4, [5, 10, 15, 6], 1)
     print(type(n))
 
-    for d in load_dataset(4):
+    for d in load_dataset(4,42):
         print(d)
         print()
 
