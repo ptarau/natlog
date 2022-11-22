@@ -93,7 +93,7 @@ test_alt_run N Epochs Loss Acc LossT AccT:
    `test_model Model LossFun Xt Yt (LossT AccT) .
 
 alt:
-   test_alt_run 12 5000 Loss Acc LossT AccT,
+   test_alt_run 12 3000 Loss Acc LossT AccT,
    nl,
    #print train loss = Loss,
    #print train accuracy = Acc,

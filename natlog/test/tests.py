@@ -319,15 +319,19 @@ def gramtest():
 
 def meta_test():
     n = Natlog(file_name=NATPROGS + 'meta.nat')
-    n.query("metaint ((goal R) ()) ?")
+    n.query("metaint ((go R) ()) ?")
     # n.repl()
 
-def ivtest():
+def ivtest1():
     n = Natlog(file_name=NATPROGS + 'gcol.nat',with_lib=NATPROGS + "lib.nat")
     #print(n)
     n.query("go Colors?")
     #n.repl()
 
+def ivtest():
+    n = Natlog(file_name=NATPROGS + 'interclausal.nat',with_lib=NATPROGS + "lib.nat")
+    n.query("go X?")
+    n.repl()
 
 def go():
     ts = [dtest1,
@@ -354,9 +358,9 @@ def go():
 
 
 if __name__ == "__main__":
-    go()
+    #go()
     #ndb_test()
     #libtest()
     # gramtest()
     # meta_test()
-    #ivtest()
+    ivtest()

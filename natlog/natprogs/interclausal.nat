@@ -1,0 +1,6 @@
+a X: &P X, b X.
+b 0.
+b 1.
+c : eq &P b.
+
+go X: c, a X.
