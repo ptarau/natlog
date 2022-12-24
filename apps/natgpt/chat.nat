@@ -1,0 +1,18 @@
+initialize:
+   #print 'Welcome' to 'Natlog' based gpt3 chat app !,
+   #print 'Please' obtain and set the environment variable 'OPENAI_API_KEY' !,
+   #print.
+
+step :
+   `question Q,
+   `len Q L,
+   when L > 0,
+   `ask Q R,
+
+   if (eq R no)
+      (eq A 'Sorry, I do not know the answer.')
+      (eq (_ A) R),
+
+   #answer A.
+
+chat : step, ^trust chat.
