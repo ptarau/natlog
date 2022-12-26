@@ -1,4 +1,5 @@
 import os
+import webbrowser
 import openai
 from natlog import Natlog, natprogs
 
@@ -12,11 +13,19 @@ def share(f):
     return f
 
 
+@share
 def question():
-    return input('Question: ')
+    quest = input('Question: ')
+    if quest:
+        return 'the', quest
+    else:
+        return 'no'
 
+
+@share
 def answer(a):
-    print('Answer:',a)
+    print('Answer:', a)
+
 
 @share
 def ask(quest, temp=0.4, toks=100):
@@ -38,7 +47,25 @@ def ask(quest, temp=0.4, toks=100):
     answer = answer[0]['text']
     if not answer: return 'no'
     answer = answer.strip(' ')
+
     return 'the', answer
+
+
+@share
+def paint(prompt):
+    response = openai.Image.create(
+        prompt=prompt,
+        n=1,
+        size="1024x1024"
+    )
+    image_url = response['data'][0]['url']
+    return image_url
+
+
+@share
+def browse(url):
+    print('BROWSING:', url)
+    return webbrowser.open(url)
 
 
 def share_syms():
