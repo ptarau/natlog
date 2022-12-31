@@ -28,15 +28,13 @@ def knn_pairs(encs, k=3):
     cos_scores = cos_sim(encs, encs)
     top_results = torch.topk(cos_scores, k=k + 1)
     m = top_results[1]  # indices
+    r = top_results[0]  # similarity rsnks
     s = m.size()
-
-    print('MSHAPE:', m.size())
 
     es = []
     for i in range(s[0]):
-
         for j in range(1, s[1] - 1):
-            e = i, int(m[i, j])
+            e = i, int(m[i, j]), r[i, j]
             es.append(e)
 
     return es
@@ -44,11 +42,15 @@ def knn_pairs(encs, k=3):
 
 def summarize(encs, sents, k=3, l=3):
     es = knn_pairs(encs, k=k)
-    g = nx.DiGraph(es)
-    print(g)
+    g = nx.DiGraph()
+    for f,t,r in es:
+        g.add_edge(f,t,weight=r)
+
+    #print(g)
+
     rs = nx.pagerank(g)  # TODO: add similarity weights
     rs = sorted(rs.items(), reverse=True, key=lambda x: x[1])
-    # print('EDGES:',rs)
+
     ns = [n for (n, r) in rs]
     ns = sorted(ns[0:l])
     return [sents[n] for n in ns]
