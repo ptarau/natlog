@@ -8,23 +8,38 @@ import networkx as nx
 
 
 def file2text(fname):
+    """
+      turns a text file into a string
+    """
     with open(fname, 'rt') as f:
         return f.read()
 
 
 class SentEncoder:
+    """
+    creates callable sentence encoder instance that
+    given a list of sentences returns a 2D tensor of embeddings
+    """
     def __init__(self, model_name='all-MiniLM-L6-v2'):
         self.device = 'gpu' if torch.cuda.is_available() else 'cpu'
 
         self.model = st.SentenceTransformer(model_name, device=self.device)
 
     def __call__(self, sents):
+        """
+        when called, given a list of sentences, returns a 2D tensor of embeddings
+        """
         x = self.model.encode(sents, show_progress_bar=True,
                               convert_to_tensor=True, device=self.device)
         return x
 
 
 def knn_pairs(encs, k=3):
+    """
+    extracts edges of the directed knn-graph
+    associating k closest neighbors to each node
+    representing a sentence via its embedding
+    """
     cos_scores = cos_sim(encs, encs)
     top_results = torch.topk(cos_scores, k=k + 1)
     m = top_results[1]  # indices
@@ -41,6 +56,10 @@ def knn_pairs(encs, k=3):
 
 
 def summarize(encs, sents, k=3, l=3):
+    """
+    summarizes a document given as a set of sentences
+    and teir embeddings
+    """
     es = knn_pairs(encs, k=k)
     g = nx.DiGraph()
     for f,t,r in es:
@@ -48,7 +67,7 @@ def summarize(encs, sents, k=3, l=3):
 
     #print(g)
 
-    rs = nx.pagerank(g)  # TODO: add similarity weights
+    rs = nx.pagerank(g)  # uses also similarity weights
     rs = sorted(rs.items(), reverse=True, key=lambda x: x[1])
 
     ns = [n for (n, r) in rs]
@@ -57,16 +76,24 @@ def summarize(encs, sents, k=3, l=3):
 
 
 def semsearch(ts, qs):
+    """
+    searches closest matches for a list (actualy a tensor) of
+    embeddings of queries qs in the similar embeddings of a document ts
+    """
     r = semantic_search(qs, ts, query_chunk_size=100, corpus_chunk_size=500000, top_k=2)
     return r
 
 
-def run_semsearch(fname, query):
+def run_semsearch(fname, queries):
+    """
+      given a text file fname and a text representing query sentences
+      it summarizes the file and answers each query
+    """
     text = file2text(fname)
     enc = SentEncoder()
 
     sents = sent_tokenize(text)
-    queries = sent_tokenize(query)
+    queries = sent_tokenize(queries)
 
     ts = enc(sents)
     qs = enc(queries)
@@ -88,17 +115,22 @@ def run_semsearch(fname, query):
     return sumsents, queries, answers
 
 
-def test_semsearch(fname='gpt.txt', query='Which AI company developed GPT3? What architecture it uses?'):
-    ss, qs, rs = run_semsearch(fname, query)
+def test_semsearch(fname='gpt.txt', queries='Which AI company developed GPT3? What architecture GPT3 uses?'):
+    """
+    tester showng summary and answers to each question about a given
+    text document
+    """
+    ss, qs, rs = run_semsearch(fname, queries)
 
     print('\nSUMMARY:')
     for s in ss:
         print(s)
     print()
 
-    for (q, a) in zip(qs, rs):
+    for (q, ans) in zip(qs, rs):
         print('Q:', q)
-        print('A:', a)
+        for a in ans:
+           print('A:', a)
         print()
 
 
