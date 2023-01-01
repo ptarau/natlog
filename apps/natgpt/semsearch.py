@@ -55,7 +55,7 @@ def knn_pairs(encs, k=3):
     return es
 
 
-def summarize(encs, sents, k=3, l=3):
+def summarize(encs, sents, k=3, length=3, reverse=True):
     """
     summarizes a document given as a set of sentences
     and teir embeddings
@@ -63,6 +63,8 @@ def summarize(encs, sents, k=3, l=3):
     es = knn_pairs(encs, k=k)
     g = nx.DiGraph()
     for f,t,r in es:
+        if reverse:
+            f,t=t,f
         g.add_edge(f,t,weight=r)
 
     #print(g)
@@ -71,16 +73,17 @@ def summarize(encs, sents, k=3, l=3):
     rs = sorted(rs.items(), reverse=True, key=lambda x: x[1])
 
     ns = [n for (n, r) in rs]
-    ns = sorted(ns[0:l])
+    # ensure natural order (as in the text)
+    ns = sorted(ns[0:length])
     return [sents[n] for n in ns]
 
 
-def semsearch(ts, qs):
+def semsearch(ts, qs, k=3):
     """
     searches closest matches for a list (actualy a tensor) of
     embeddings of queries qs in the similar embeddings of a document ts
     """
-    r = semantic_search(qs, ts, query_chunk_size=100, corpus_chunk_size=500000, top_k=2)
+    r = semantic_search(qs, ts, query_chunk_size=100, corpus_chunk_size=500000, top_k=k)
     return r
 
 
@@ -105,6 +108,8 @@ def run_semsearch(fname, queries):
     answers = []
     for q, rs in zip(qs, rss):
         answer = []
+        # ensure natural order of answer sentences (as in the text)
+        rs=sorted(rs,key=lambda x:x['corpus_id'])
         for r in rs:
             i = r['corpus_id']
             # print('R:', r)
@@ -136,3 +141,6 @@ def test_semsearch(fname='gpt.txt', queries='Which AI company developed GPT3? Wh
 
 if __name__ == "__main__":
     test_semsearch()
+    test_semsearch('sf.txt','Will Jake get back to the real world?')
+    test_semsearch('star.txt', 'Who would want to fly on a superluminal spaceship?')
+    test_semsearch('kafka.txt', 'What did the meeting with the priest mean? Did K. meet the Italian?')
