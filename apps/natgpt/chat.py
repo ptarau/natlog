@@ -1,7 +1,7 @@
 import os
 import webbrowser
 import openai
-from natlog import Natlog, natprogs
+from natlog import Natlog, natprogs, lconsult
 
 # openai.api_key = os.getenv("OPENAI_API_KEY")
 
