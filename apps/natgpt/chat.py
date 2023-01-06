@@ -3,7 +3,7 @@ import webbrowser
 import openai
 from natlog import Natlog, natprogs
 
-#openai.api_key = os.getenv("OPENAI_API_KEY")
+# openai.api_key = os.getenv("OPENAI_API_KEY")
 
 shared = dict()
 
@@ -31,6 +31,10 @@ def answer(a):
 def ask(quest, temp=0.4, toks=100):
     quest = quest.strip(' ')
     prompt = f'if you would ask me {quest} I would say that'
+    return 'the', query(prompt, temp=temp, toks=toks)
+
+
+def query(prompt, temp=0.4, toks=100):
     answer = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
@@ -48,7 +52,35 @@ def ask(quest, temp=0.4, toks=100):
     if not answer: return 'no'
     answer = answer.strip(' ')
 
-    return 'the', answer
+    return answer
+
+
+def to_rels(qs):
+    pref = 'If you would ask me what are the subject, verb and object in '
+    suf = ' I would say subject: '
+
+    def quote(qs):
+        return '"' + qs + '"'
+        #return qs
+
+    r = 'subject: ' + query(pref + quote(qs) + suf)
+    print('Sent:',qs)
+    print()
+
+    print('RElS:', r)
+    print()
+
+    r = r.replace(';', '')
+
+    r = r.split(', verb: ')
+
+    s = r[0][len('subject: '):]
+    v, o = r[1].split(', object: ')
+    if o[-1] == '.': o = o[0:-1]
+
+    print('SVO:', [s, v, o])
+    print()
+    return r
 
 
 @share
@@ -92,5 +124,4 @@ def test_chat(q='where is Dallas located'):
 
 
 if __name__ == "__main__":
-    test_chat()
-    run_natlog()
+   run_natlog()

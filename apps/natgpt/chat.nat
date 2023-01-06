@@ -1,6 +1,8 @@
 initialize:
    #print 'Welcome' to 'Natlog' based gpt3 chat app !,
    #print 'Please' obtain and set the environment variable 'OPENAI_API_KEY' !,
+   #print,
+   #print 'Type' chat to start interacting with 'GPT3' via 'Natlog',
    #print.
 
 step :
@@ -20,7 +22,7 @@ paint Prompt:
    #print URL,
    #browse URL.
 
-go:
+pic:
    paint 'shiny robot with high hills walking on Mars'.
 
 

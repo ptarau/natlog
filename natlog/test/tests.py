@@ -120,7 +120,7 @@ def t10():
 
 def fam_repl():
     n = Natlog(file_name=NATPROGS + "family.nat", with_lib=LIB)
-    print('Enter some queries!')
+    print('Enter some queries_text!')
     n.repl()
 
 

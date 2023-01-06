@@ -152,7 +152,7 @@ class Db:
             print('-->', r)
         print('')
 
-    # queries the Db directly with a text query
+    # queries_text the Db directly with a text query
     def ask(self, query):
         print('QUERY:', query)
         for r in self.search(query):

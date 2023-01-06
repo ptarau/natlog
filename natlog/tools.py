@@ -59,3 +59,7 @@ def nl():
 def writeln(args):
     write(args)
     nl()
+
+def has_type(x,tname):
+    t=eval(tname),
+    return int(isinstance(x,t))

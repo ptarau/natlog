@@ -157,7 +157,7 @@ maybe_caught (exception C) C _ Recovery : call Recovery, ^trust true.
 maybe_caught (exception C) Catcher _ _ : distinct C Catcher, throw C.
 maybe_caught (just G)  _ G _ .
 
-
+is  Term Type : `has_type Term Type 1.
 
 % quick exception throwing test
 
