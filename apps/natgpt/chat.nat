@@ -3,6 +3,7 @@ initialize:
    #print 'Please' obtain and set the environment variable 'OPENAI_API_KEY' !,
    #print,
    #print 'Type' chat to start interacting with 'GPT3' via 'Natlog',
+   #print 'Type' pic to have 'DALL_E 2' turn a sentence into a pic in your browser,
    #print.
 
 step :
@@ -23,7 +24,7 @@ paint Prompt:
    #browse URL.
 
 pic:
-   paint 'shiny robot with high hills walking on Mars'.
+   paint 'shiny robot with high hills and a blue purse walking on Mars'.
 
 
 
