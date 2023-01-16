@@ -79,7 +79,7 @@ def unfold1(g, gs, h, bs, trail):
 
 
 nat_builtins = {
-    "call", "~", "`", "``", "^", "#", "$",
+    "call", "~", "`", "``", "^", "#", "$","@",
     "if", "eng", "ask", "unify_with_occurs_check"
 }
 
@@ -143,6 +143,17 @@ def interp(css, goals0, db=None, callables=dict()):
             v = g[-1]
             r = from_python(r)
             if not unify(v, r, trail):
+                undo(trail)
+            else:
+                yield from step(goals)
+
+        def dcg_terminals(g):
+            assert len(g) >= 3
+            args = g[0:-2]
+            s1 = g[-2]
+            s2 = g[-1]
+            xs = to_dif_list(args, s2)
+            if not unify(xs, s1, trail):
                 undo(trail)
             else:
                 yield from step(goals)
@@ -237,6 +248,9 @@ def interp(css, goals0, db=None, callables=dict()):
         elif op == '#':  # simple call, no return
             python_call(g)
             yield from step(goals)
+
+        elif op == '@':  # DCG terminal(s)
+            yield from dcg_terminals(g)
 
         else:  # op == '$' find value of variable
             yield from python_var(g)
@@ -437,14 +451,16 @@ def consult(fname):
     n = Natlog(file_name=fname)
     n.repl()
 
-def dconsult(nname,dname):
+
+def dconsult(nname, dname):
     nname = natprogs() + nname + ".nat"
     dname = natprogs() + dname + ".nat"
-    n = Natlog(file_name=nname,db_name=dname)
+    n = Natlog(file_name=nname, db_name=dname)
     n.repl()
+
 
 def tconsult(fname):
     nname = natprogs() + fname + ".nat"
     dname = natprogs() + fname + ".tsv"
-    n = Natlog(file_name=nname,db_name=dname)
+    n = Natlog(file_name=nname, db_name=dname)
     n.repl()

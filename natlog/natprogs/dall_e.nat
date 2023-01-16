@@ -1,5 +1,3 @@
-@X (X Xs) Xs.
-
 dall_e => @photo, @of, subject, verb, object.
 
 subject => @a, @cat.
@@ -17,5 +15,5 @@ location => @moon.
 instrument => @violin.
 instrument => @trumpet.
 
-go: dall_e Words (), `from_cons_list Words Ws, #writeln Ws, fail.
+go: dall_e Words (), to_tuple Words Ws, #writeln Ws, fail.
 go.

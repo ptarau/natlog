@@ -1,4 +1,4 @@
-sent  => @a,noun,verb, @on, @a, place.
+sent End => @a smart,noun,verb, @on a nice, place, @End.
 
 noun => @cat.
 noun => @dog.
@@ -8,7 +8,9 @@ verb => @sits.
 place => @mat.
 place => @bed.
 
-@ X (X Xs) Xs.
+% @ X (X Xs) Xs.
 
-goal Xs : sent Xs ().
+goal Xs : $eos Dot, sent Dot Xs ().
+
+go : goal Xs, to_tuple Xs T, #writeln T, fail.
 

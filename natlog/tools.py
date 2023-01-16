@@ -60,6 +60,14 @@ def writeln(args):
     write(args)
     nl()
 
-def has_type(x,tname):
-    t=eval(tname),
-    return int(isinstance(x,t))
+
+def has_type(x, tname):
+    t = eval(tname),
+    return int(isinstance(x, t))
+
+
+# globals vars for "." and "?" escapes
+# refer to them as $eos Dot,$eoq Qest.
+
+eos = '.'
+eoq = '?'

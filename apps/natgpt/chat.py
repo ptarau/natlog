@@ -31,10 +31,11 @@ def answer(a):
 def ask(quest, temp=0.4, toks=100):
     quest = quest.strip(' ')
     prompt = f'if you would ask me {quest} I would say that'
-    return 'the', query(prompt, temp=temp, toks=toks)
+    answer = query(prompt, temp=temp, toks=toks)
+    return ('the', answer) if answer else 'no'
 
 
-def query(prompt, temp=0.4, toks=100):
+def query(prompt, temp=0.4, toks=200):
     answer = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
@@ -47,24 +48,25 @@ def query(prompt, temp=0.4, toks=100):
     )
 
     answer = answer['choices']
-    if not answer: return 'no'
+    if not answer: return None
     answer = answer[0]['text']
-    if not answer: return 'no'
+    if not answer: return None
     answer = answer.strip(' ')
 
     return answer
 
 
+@share
 def to_rels(qs):
     pref = 'If you would ask me what are the subject, verb and object in '
     suf = ' I would say subject: '
 
     def quote(qs):
         return '"' + qs + '"'
-        #return qs
+        # return qs
 
     r = 'subject: ' + query(pref + quote(qs) + suf)
-    print('Sent:',qs)
+    print('Sent:', qs)
     print()
 
     print('RElS:', r)
@@ -93,6 +95,36 @@ def paint(prompt):
     image_url = response['data'][0]['url']
     return image_url
 
+
+@share
+def embed(text):
+    response = openai.Embedding.create(
+        input=text,
+        model="text-embedding-ada-002"
+    )
+    embedding = response['data'][0]['embedding']
+    return embedding
+
+
+def edit(how,what):
+    r=openai.Edit.create(
+        model="text-davinci-edit-001",
+        input=what,
+        instruction=how,
+        n=1,
+        temperature=0.1
+    )
+    print('RES:\n',(r))
+    return r['choices'][0]['text']
+
+
+def edit_test():
+    instr= "Say in a simpler way"
+    r=edit(
+        instr,
+        "Red colored ethyl alcohol drinks originating from grapes can cause dangerous driving."
+    )
+    print(r)
 
 @share
 def browse(url):
@@ -124,4 +156,5 @@ def test_chat(q='where is Dallas located'):
 
 
 if __name__ == "__main__":
-   run_natlog()
+    #run_natlog()
+    edit_test()

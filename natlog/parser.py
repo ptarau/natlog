@@ -181,12 +181,14 @@ def from_cons_list(xs):
     return rs
 
 
-def to_cons_list(ts):
-    gs = ()
+def to_cons_list(ts,end=()):
+    gs = end
     for g in reversed(ts):
         gs = (g, gs)
     return gs
 
+def to_dif_list(ts,end):
+    return to_cons_list(ts,end=end)
 
 def q(xs):
     rs = []
