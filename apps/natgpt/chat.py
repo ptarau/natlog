@@ -156,5 +156,5 @@ def test_chat(q='where is Dallas located'):
 
 
 if __name__ == "__main__":
-    #run_natlog()
-    edit_test()
+    run_natlog()
+    #edit_test()
