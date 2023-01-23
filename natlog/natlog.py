@@ -466,8 +466,8 @@ def tconsult(fname):
     n.repl()
 
 
-def natrun(fname,natgoal):
+def natrun(fname,natgoal,callables=globals()):
     fname = fname + ".nat"
-    n = Natlog(file_name=fname, with_lib=natprogs() + 'lib.nat')
+    n = Natlog(file_name=fname, with_lib=natprogs() + 'lib.nat',callables=callables)
     #n.repl()
     return list(n.solve(natgoal))
