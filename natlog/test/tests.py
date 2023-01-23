@@ -356,12 +356,16 @@ def go():
         print('\n\n', '*' * 20, t.__name__, '*' * 20, '\n')
         t()
 
+def runtest():
+    xs=natrun(natprogs()+'family','brother of X Y.')
+    print(xs)
 
 if __name__ == "__main__":
     #go()
     #ndb_test()
-    libtest()
+    #libtest()
     # gramtest()
     # meta_test()
     #ivtest()
     #lconsult('gram')
+    runtest()

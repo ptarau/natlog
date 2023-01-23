@@ -464,3 +464,10 @@ def tconsult(fname):
     dname = natprogs() + fname + ".tsv"
     n = Natlog(file_name=nname, db_name=dname)
     n.repl()
+
+
+def natrun(fname,natgoal):
+    fname = fname + ".nat"
+    n = Natlog(file_name=fname, with_lib=natprogs() + 'lib.nat')
+    #n.repl()
+    return list(n.solve(natgoal))
