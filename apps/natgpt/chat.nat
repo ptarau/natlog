@@ -27,5 +27,19 @@ pic:
    paint 'shiny robot with high hills and a blue purse walking on Mars'.
 
 
+pref => @ 'If' you would ask me what are the subject and the verb and the object in .
+suf => @  'I' would say subject is = .
 
+prompt => pref, sent, suf .
+
+sent => @ 'I' saw a man with a telscope on the hill .
+sent => @ the cat sits on the  mouse pad .
+
+% aswer_to_rels => @ the subject is
+
+rels Rels :
+   prompt ConsList (),
+   to_list ConsList Quest,
+   `ask Quest Answer,
+   arg 1 Answer Rels.
 

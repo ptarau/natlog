@@ -29,10 +29,14 @@ def answer(a):
 
 @share
 def ask(quest, temp=0.4, toks=100):
+    if isinstance(quest, list):
+        quest=" ".join(quest)
     quest = quest.strip(' ')
+
     prompt = f'if you would ask me {quest} I would say that'
     answer = query(prompt, temp=temp, toks=toks)
     return ('the', answer) if answer else 'no'
+
 
 
 def query(prompt, temp=0.4, toks=200):
