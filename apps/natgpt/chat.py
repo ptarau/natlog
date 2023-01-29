@@ -14,7 +14,7 @@ def share(f):
 
 
 @share
-def question():
+def get_input():
     quest = input('Question: ')
     if quest:
         return 'the', quest
@@ -34,12 +34,17 @@ def ask(quest, temp=0.4, toks=100):
     quest = quest.strip(' ')
 
     prompt = f'if you would ask me {quest} I would say that'
-    answer = query(prompt, temp=temp, toks=toks)
+    answer = complete(prompt, temp=temp, toks=toks)
     return ('the', answer) if answer else 'no'
 
 
+def split(s):
+    return s.split()
 
-def query(prompt, temp=0.4, toks=200):
+def join(xs):
+    return ' '.join(xs)
+
+def complete(prompt, temp=0.4, toks=200, trace=0):
     answer = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
@@ -50,7 +55,7 @@ def query(prompt, temp=0.4, toks=200):
         presence_penalty=0.0,
         stop=["\n"]
     )
-
+    if trace: print('RAW ANSWER:\n',answer)
     answer = answer['choices']
     if not answer: return None
     answer = answer[0]['text']
@@ -69,7 +74,7 @@ def to_rels(qs):
         return '"' + qs + '"'
         # return qs
 
-    r = 'subject: ' + query(pref + quote(qs) + suf)
+    r = 'subject: ' + complete(pref + quote(qs) + suf)
     print('Sent:', qs)
     print()
 
