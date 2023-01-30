@@ -41,7 +41,9 @@ suffix relation =>
    @  'I' would say subject is.
 
 
-trigger X Y Z => @ given that X relates to Y by analogy 'I' would briefly say that Z relates to .
+trigger X Y Z => @ given that X relates to Y
+   by analogy
+  'I' would briefly say that Z relates to .
 
 analogy X Y Z A:
    trigger X Y Z Ps (),
@@ -58,20 +60,45 @@ paint Prompt:
 % tests
 
 rels:
-   query relation 'the cat sits on the mat' R,
+   query relation 'the quick brown fox jumps over the lazy dog' R,
    #print subject is R.
 
 quests:
-   query question 'what is GPT3' A,
+   query question 'how are transformers used in GPT' A,
    #print A.
 
 analogies:
  analogy car driver airplane A,
   #print A,
-  analogy pepsi advertizing hitler B,
+  analogy 'Pepsi' advertizing 'Goering' B,
   #print B,
   analogy 'Texas' tornado company C,
   #print C.
 
-pics:
+pic:
    paint 'shiny robot with high hills and a blue purse walking on Mars'.
+
+image => style, subject, verb, object.
+
+style => @photorealistic rendering.
+style => @a dreamy 'Mark' 'Chagall' style picture.
+style => @an action video game graphics style image.
+
+subject => @of, adjective,noun.
+
+noun => @robot.
+
+verb => @walking.
+
+adjective => @shiny.
+
+object => location, @with,  instrument.
+
+location => @on planet 'Mars'.
+
+instrument => @high hills and a blue purse.
+instrument => @a sombrero hat.
+
+pics: image Words (), `to_tuple Words Ws, #writeln Ws, fail.
+pics.
+
