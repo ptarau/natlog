@@ -18,3 +18,7 @@ cls  (
 
 cls ((goal R)  ((add (s (s 0)) (s (s 0)) R) Tail))
     Tail.
+
+
+% ?- metaint ((goal R) ())?
+% ANSWER: {'R': ('s', ('s', ('s', ('s', 0))))}
