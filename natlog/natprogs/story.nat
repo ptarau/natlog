@@ -1,0 +1,4 @@
+story about 'Alice' and 'Bob'.
+
+go Matches : ~txt ('Alice' 'Bob') Matches
+.

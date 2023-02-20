@@ -112,49 +112,6 @@ def occurs(x0, t0):
     x = deref(x0)
     return occ(t0)
 
-
-def path_of_(t):
-    def path_of0(t):
-        if isinstance(t, Var):
-            pass
-        elif isinstance(t, tuple):
-            for i, x in enumerate(t):
-                for ps in path_of0(x):
-                    yield i, ps
-        else:
-            yield t
-
-    return set(path_of0(t))
-
-
-def path_of(t):
-    def path_of0(t):
-        if isinstance(t, Var):
-            pass
-        elif isinstance(t, tuple):
-            for i, x in enumerate(t):
-                for c, ps in path_of0(x):
-                    yield c, (i, ps)
-        else:
-            yield t, ()
-
-    ps = set(path_of0(t))
-    qs = set((c, list2tuple(x)) for (c, x) in ps)
-    return qs
-
-
-def list2tuple(ls):
-    # print('!!! LS=',ls)
-    def scan(xs):
-        while xs != () and isinstance(xs, tuple):
-            x, xs = xs
-            yield x
-
-    if not isinstance(ls, tuple):
-        return ls
-    return tuple(scan(ls))
-
-
 def test_unify():
     a, b, c, d, e, f, g = "abcdefg"
     x, y, z = VarNum(0), VarNum(1), VarNum(2)

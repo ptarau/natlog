@@ -2,19 +2,41 @@ from collections import defaultdict
 import json
 import csv
 
-from .unify import unify, activate, path_of
+from .unify import unify, activate
 from .parser import mparse
+from .scanner import Var
+
+
+def path_of(t):
+    def path_of0(t):
+        if isinstance(t, Var):
+            pass
+        elif isinstance(t, tuple):
+            for i, x in enumerate(t):
+                for c, ps in path_of0(x):
+                    yield c, (i, ps)
+        else:
+            yield t, ()
+
+    ps = set(path_of0(t))
+    qs = set((c, list2tuple(x)) for (c, x) in ps)
+    return qs
+
+
+def list2tuple(ls):
+    # print('!!! LS=',ls)
+    def scan(xs):
+        while xs != () and isinstance(xs, tuple):
+            x, xs = xs
+            yield x
+
+    if not isinstance(ls, tuple):
+        return ls
+    return tuple(scan(ls))
 
 
 def make_index():
     return defaultdict(set)
-
-
-def add_clause(index, css, h):
-    i = len(css)
-    css.append(h)
-    for c in path_of(h):
-        index[c].add(i)
 
 
 def tuplify(t):
@@ -30,6 +52,7 @@ class Db:
     def __init__(self):
         self.index = make_index()  # content --> int index
         self.css = []  # content as ground tuples
+        self.index_source = path_of
 
     # parses text to list of ground tuples
     def digest(self, text):
@@ -54,6 +77,21 @@ class Db:
     def load_tsv(self, fname):
         self.load_csv(fname, delimiter='\t')
 
+    def load_txt(self, fname):
+        """ assuming text tokenized, one sentence per line,
+         single white space separated, ending with '.' or '?'
+        """
+        with open(fname) as f:
+            lines = f.read().split('\n')
+            for line in lines:
+                if len(line) < 2: continue
+                line = line.strip()
+                assert line[-1] in ".?"
+                line = line[0:-1]
+                line = line.strip()
+                ws = line.split(' ')
+                self.add_clause(('txt', tuple(ws),))
+
     def add_db_clause(self, t):
         # print('####', t)
         if t: self.add_clause(tuplify(t))
@@ -67,6 +105,8 @@ class Db:
             self.load_tsv(fname)
         elif len(fname) > 4 and fname[-4:] == '.csv':
             self.load_csv(fname)
+        elif len(fname) > 4 and fname[-4:] == '.txt':
+            self.load_txt(fname)
         else:
             self.load_json(fname)
 
@@ -79,8 +119,14 @@ class Db:
 
     # adds a clause and indexes it for all constants
     # recursively occurring in it, in any subtuple
+
     def add_clause(self, cs):
-        add_clause(self.index, self.css, cs)
+        # add_clause_by_content(self.index, self.css, cs)
+
+        i = len(self.css)
+        self.css.append(cs)
+        for c in self.index_source(cs):
+            self.index[c].add(i)
 
     def ground_match_of(self, query):
         """
@@ -90,7 +136,7 @@ class Db:
         has no variables that would match the constant
         """
         # find all paths in query
-        paths = path_of(query)
+        paths = self.index_source(query)
         if not paths:
             # match against all clauses css, no help from indexing
             return set(range(len(self.css)))
@@ -104,7 +150,7 @@ class Db:
         return matches
 
     # uses unification to match ground fact
-    # with bindining applied to vs and colelcted on trail
+    # with bindining applied to vs and collected on trail
     def unify_with_fact(self, h, trail):
         ms = self.ground_match_of(h)
         for i in ms:

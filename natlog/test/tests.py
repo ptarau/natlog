@@ -1,6 +1,7 @@
 from natlog.natlog import *
 from natlog.unify import *
 from natlog.neural_natlog import *
+from natlog.textual_natlog import *
 
 NATPROGS = natprogs()
 
@@ -146,6 +147,19 @@ def db_test():
     print('QUERY:')
     nd.query("tc Who is_a animal ?")
     # nd.repl()
+
+
+def tdb_test():
+    td = TextualNatlog(
+        file_name=NATPROGS + "story.nat",
+        db_name=NATPROGS + "story.txt")
+    print('RULES')
+    print(td)
+    print('DB FACTS')
+    print(td.db)
+    print('QUERY:')
+    td.query("go X ?")
+    #td.repl()
 
 
 def ndb_test():
@@ -322,16 +336,19 @@ def meta_test():
     n.query("metaint ((go R) ()) ?")
     # n.repl()
 
+
 def ivtest1():
-    n = Natlog(file_name=NATPROGS + 'gcol.nat',with_lib=NATPROGS + "lib.nat")
-    #print(n)
+    n = Natlog(file_name=NATPROGS + 'gcol.nat', with_lib=NATPROGS + "lib.nat")
+    # print(n)
     n.query("go Colors?")
-    #n.repl()
+    # n.repl()
+
 
 def ivtest():
-    n = Natlog(file_name=NATPROGS + 'interclausal.nat',with_lib=NATPROGS + "lib.nat")
+    n = Natlog(file_name=NATPROGS + 'interclausal.nat', with_lib=NATPROGS + "lib.nat")
     n.query("go X?")
-    n.repl()
+    #n.repl()
+
 
 def go():
     ts = [dtest1,
@@ -350,22 +367,29 @@ def go():
           big_db,
           gramtest,
           meta_test,
-          ivtest
+          ivtest,
+          tdb_test
+
+
           ]
     for t in ts:
         print('\n\n', '*' * 20, t.__name__, '*' * 20, '\n')
         t()
 
+
 def runtest():
-    xs=natrun(natprogs()+'family','brother of X Y.')
+    xs = natrun(natprogs() + 'family', 'brother of X Y.')
     print(xs)
 
+
 if __name__ == "__main__":
-    #go()
-    #ndb_test()
-    #libtest()
+    pass
+    go()
+    # ndb_test()
+    # libtest()
     # gramtest()
     # meta_test()
-    #ivtest()
-    #lconsult('gram')
-    runtest()
+    # ivtest()
+    # lconsult('gram')
+    # runtest()
+    #tdb_test()
