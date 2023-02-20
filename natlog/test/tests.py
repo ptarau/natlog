@@ -158,8 +158,8 @@ def tdb_test():
     print('DB FACTS')
     print(td.db)
     print('QUERY:')
-    td.query("go X ?")
-    #td.repl()
+    td.query("~txt ('Alice' 'Bob') X?")
+    # td.repl()
 
 
 def ndb_test():
@@ -347,7 +347,7 @@ def ivtest1():
 def ivtest():
     n = Natlog(file_name=NATPROGS + 'interclausal.nat', with_lib=NATPROGS + "lib.nat")
     n.query("go X?")
-    #n.repl()
+    # n.repl()
 
 
 def go():
@@ -369,8 +369,6 @@ def go():
           meta_test,
           ivtest,
           tdb_test
-
-
           ]
     for t in ts:
         print('\n\n', '*' * 20, t.__name__, '*' * 20, '\n')
@@ -392,4 +390,4 @@ if __name__ == "__main__":
     # ivtest()
     # lconsult('gram')
     # runtest()
-    #tdb_test()
+    # tdb_test()
