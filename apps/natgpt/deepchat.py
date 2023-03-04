@@ -11,10 +11,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class ChatMind:
-    def __init__(self, max_toks=MAX_TOKENS, avatar='me'):
+    def __init__(self, max_toks=MAX_TOKENS, avatar=None):
         self.model = "gpt-3.5-turbo"
 
-        self.sys_prompt = [dict(role='system', content='You are a helpful assistant.')]
+        self.sys_prompt = [dict(role='system',
+                                content='You are a helpful assistant. Your answers are as concise as possible.')]
         self.max_toks = max_toks
         self.avatar = avatar
 
@@ -65,12 +66,13 @@ class ChatMind:
     def ask(self, quest):
         if quest=='quit':
             self.persist()
+            return 'bye'
 
         self.trim_context(quest)
 
         # print(len(self.answers), len(self.short_mem), len(self.toks))
 
-        assert len(self.answers) == len(self.short_mem) == len(self.toks)
+        assert 2*len(self.answers) == len(self.short_mem) == 2*len(self.toks)
 
         self.add_content('user', quest)
 
@@ -83,6 +85,8 @@ class ChatMind:
         self.answers.append(result)
         t = r['usage']['total_tokens']
         self.toks.append(t)
+
+        self.add_content('assistant',result)
 
         return result
 
