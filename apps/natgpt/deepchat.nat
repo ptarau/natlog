@@ -1,1 +1,23 @@
-% todo
+initialize:
+   #print 'Welcome' to 'Natlog' based 'ChatGPT' chat app !,
+   #print 'Please' obtain and set the environment variable 'OPENAI_API_KEY' !,
+   #print 'Please' type quit to end the chat !,
+   #print.
+
+chat_mind M:  `'ChatMind' M.
+
+chat:
+   `'ChatMind' M,
+   chat_repl M.
+
+chat_repl M:
+   `input 'Qestion ' Q,
+    distinct Q quit,
+    step M Q.
+
+step M Q:
+   `meth_call M ask (Q) A,
+   #print A.
+step M Q:
+   ^trust chat_repl M.
+

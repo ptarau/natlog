@@ -8,12 +8,10 @@ MAX_TOKENS = 1 << 12  # make shorter if needed
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
 def count_toks(text):
     enc = tiktoken.get_encoding("gpt2")
-    toks = enc.encoding(text)
+    toks = enc.encode(text)
     return len(toks)
-
 
 class ChatMind:
     def __init__(self):
@@ -30,9 +28,12 @@ class ChatMind:
             self.short_mem.append(d)
 
     def __repr__(self):
-        return str(self.short_mem) + "\n\n" + str(self.answers) + "\n\n" + f'tokens: {self.toks}\n'
+        return 'LONG: ' + str(self.long_mem) + "\n\n" + 'SHORT: ' + str(self.short_mem) + "\n\n" \
+            + 'ANSWERS: ' + str(self.answers) + "\n\n" + f'TOKENS: {self.toks}\n'
 
     def ask(self, quest):
+        self.trim_context(quest)
+
         # print(len(self.answers), len(self.short_mem), len(self.toks))
 
         assert len(self.answers) == len(self.short_mem) == len(self.toks)
@@ -52,14 +53,28 @@ class ChatMind:
         return result
 
     def trim_context(self, quest):
-        tok_estimate = count_toks(quest) + 2 * count_toks(self.answers[-1])
-        if sum(self.toks) + tok_estimate > MAX_TOKENS:
-            if self.short_mem[0] is not None:
-                self.long_mem[self.short_mem[0]] = self.answers[0]
+        if len(self.toks) == 0: return
+
+        total_toks = sum(self.toks)
+        avg_toks = total_toks / len(self.toks)
+
+        quest_toks = count_toks(quest)
+        tok_estimate = total_toks + quest_toks + 2 * avg_toks  # conservative ...
+
+        if tok_estimate > MAX_TOKENS:
+            self.long_mem[self.short_mem[0]['content']] = self.answers[0]
 
             self.toks = self.toks[1:]
             self.short_mem = self.short_mem[1:]
             self.answers = self.answers[1:]
+
+def run_natlog(natprog="deepchat.nat"):
+    n = Natlog(file_name=natprog,
+               with_lib=natprogs() + "lib.nat",callables=globals())
+    next(n.solve('initialize.'))
+    #n.repl()
+    for x in n.solve('chat.'):
+        print()
 
 
 def test_deepchat():
@@ -74,4 +89,5 @@ def test_deepchat():
 
 
 if __name__ == "__main__":
-    test_deepchat()
+    #test_deepchat()
+    run_natlog()
