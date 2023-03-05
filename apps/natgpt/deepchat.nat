@@ -7,13 +7,15 @@ initialize:
 chat_mind M:  `'ChatMind' M.
 
 chat:
-   `'ChatMind' M,
+   `'ChatMind' 400 natchat M,
    chat_repl M.
 
 chat_repl M:
    `input 'Qestion ' Q,
     distinct Q quit,
     step M Q.
+chat_repl M:
+    #meth_call M persist ().
 
 step M Q:
    `meth_call M ask (Q) A,

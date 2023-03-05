@@ -187,5 +187,5 @@ def test_deepchat():
 
 
 if __name__ == "__main__":
-    test_deepchat()
-    # run_natlog()
+    #test_deepchat()
+    run_natlog()
