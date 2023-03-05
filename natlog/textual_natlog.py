@@ -12,7 +12,7 @@ class TextualNatlog(Natlog):
         self.db = Tdb()
 
 
-def tconsult(fname):
+def xconsult(fname):
     nname = natprogs() + fname + ".nat"
     dname = natprogs() + fname + ".txt"
     print('consulted:', nname, dname)
