@@ -11,7 +11,7 @@ chat:
    chat_repl M.
 
 chat_repl M:
-   `input 'Qestion ' Q,
+   `input 'Question ' Q,
     distinct Q quit,
     step M Q.
 chat_repl M:
