@@ -219,8 +219,8 @@ def nats():
     start()
     n = Natlog(file_name="vp.nat",
                with_lib=natprogs() + "lib.nat", callables=shared)
-    # n.query("go.")
-    n.query("bot dance.")
+    n.query("go.")
+    #n.query("bot dance.")
     n.repl()
 
 
