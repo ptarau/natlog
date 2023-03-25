@@ -4,9 +4,18 @@ We closely follow Einstein's *"Everything should be made as simple as possible, 
 
 At this point, we rely on Python's natural error checking, without doing much to warn about syntactic or semantic errors. This can be added, but this is meant as an *executable specification* of an otherwise simple and natural logic language that we hereby name **Natlog**.
 
-### NEWER: demo apps in folder ```apps/deepnat``` interfacing Natlog with JAX and TORCH based neural nets
 
-### NEW: a demo app in folder ```apps/nat3d``` combining Natlog and vpython to build (quite easily!) 3D objects and animations
+#### NEW: 
+at https://github.com/ptarau/natlog/tree/main/natlog/doc there are a few papers explaining Natlog and its applications (including Natlog chatting with GPT3)
+
+
+#### DEMOS:
+
+- demo apps in folder ```apps/natgpt``` showing Natlog's chats with GPT3 and DALL.E
+- demo apps in folder ```apps/deepnat``` interfacing Natlog with JAX and TORCH based neural nets
+- a demo app in folder ```apps/nat3d``` combining Natlog and vpython to build (quite easily!) 3D objects and animations
+
+
 
 ###  **Natlog** : a succinct overview
 
