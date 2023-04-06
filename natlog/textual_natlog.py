@@ -5,7 +5,7 @@ from .tdb import *
 class TextualNatlog(Natlog):
     """
     overrrides Natlog's database constructor
-    to use a neurally indexed nd instead of Db
+    to use an indexed text seen as a set of ground db facts
     """
 
     def db_init(self):
