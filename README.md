@@ -81,17 +81,17 @@ app (X Xs) Ys (X Zs) : app Xs Ys Zs.
 
 The interpreter supports a ```yield``` mechanism, similar to Python's own. Something like 
 ``` ^ my_answer X ```
-resulting in my_answer X to be yield as an answer.
+resulting in `my_answer X` to be yield as an answer.
 
 The interpreter has also been extended to handle simple function and generator calls to Python  using the same prefix operator syntax:
 
-- ``` `f A B .. Z  R```, resulting in Python function ```f(A,B,C)``` being called and R unified with its result
-- ``` ``f A B .. Z  R```, resulting in Python generator ```f(A,B,C)``` being called and R unified with its multiple yields, one a time
+- ``` `f A B .. Z  R```, resulting in Python function ```f(A,B,..,Z)``` being called and `R` unified with its result
+- ``` ``f A B .. Z  R```, resulting in Python generator ```f(A,B,..,Z)``` being called and `R` unified with its multiple yields, one a time
 - ``` ~R A B .. Z ``` for unifying  ``` ~ R A B .. Z ``` with matching facts in the term store
-- ``` # f A B .. Z```, resulting in ```f(A,B,C,..,Z)``` being called with no result returned
-- ``` $ V X```, resulting in value of variable named V being unified with X
-- ``` eng X G E```,resulting in first class natlog engine with answer pattern X and goal G being bound to E
-- ``` ask G A```, resulting in next answer of engine E being unified to A
+- ``` # f A B .. Z```, resulting in ```f(A,B,..,Z)``` being called with no result returned
+- ``` $ V X```, resulting in value of variable named `V` being unified with `X`
+- ``` eng X G E```,resulting in first class natlog engine with answer pattern `X` and goal `G` being bound to `E`
+- ``` ask G A```, resulting in next answer of engine `E` being unified to `A`
 
 Take a look at ```natprogs/lib.nat``` for examples of built-ins obtained by extending this interface, mostly at source level.
 
