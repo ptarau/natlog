@@ -3,7 +3,7 @@ import setuptools
 
 import natlog
 
-with open('requirements.txt') as f:
+with open('natlog/requirements.txt') as f:
     required = f.read().splitlines()
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -24,7 +24,7 @@ setup(name='natlog',
                                'natprogs/*.tsv',
                                'natprogs/*.pro',
                                'natprogs/*.json',
-                               'doc/*.pdf',
+                               #'doc/*.pdf',
                                ]
                     },
       include_package_data=True,
