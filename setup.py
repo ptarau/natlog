@@ -3,8 +3,9 @@ import setuptools
 
 import natlog
 
-with open('natlog/requirements.txt') as f:
-    required = f.read().splitlines()
+#with open('natlog/requirements.txt') as f:
+#    required = f.read().splitlines()
+required = []
 with open("README.md", "r") as f:
     long_description = f.read()
 
@@ -14,7 +15,7 @@ setup(name='natlog',
       description='Prolog-like interpreter and tuple store',
       long_description=long_description,
       long_description_content_type='text/markdown',
-      url='https://github.com/ptarau/minlog.git',
+      url='https://github.com/ptarau/natlog.git',
       author='Paul Tarau',
       author_email='paul.tarau@gmail.com',
       license='Apache',
