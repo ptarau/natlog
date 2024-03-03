@@ -6,12 +6,11 @@ At this point, we rely on Python's natural error checking, without doing much to
 
 
 #### NEW: 
-at https://github.com/ptarau/natlog/tree/main/natlog/doc there are a few papers explaining Natlog and its applications (including Natlog chatting with GPT3)
+at https://github.com/ptarau/natlog/tree/main/docs there are a few papers explaining Natlog and its applications (including Natlog chatting with GPT4)
 
 
 #### DEMOS:
 
-- demo apps in folder ```apps/natgpt``` showing Natlog's chats with GPT3 and DALL.E
 - demo apps in folder ```apps/deepnat``` interfacing Natlog with JAX and TORCH based neural nets
 - a demo app in folder ```apps/nat3d``` combining Natlog and vpython to build (quite easily!) 3D objects and animations
 
@@ -155,7 +154,7 @@ QUERY: Who is What?
 
 As an extension to the nested tuple store the neuro-symbolic tuple database uses a machine learning algorithm instead of its indexer.Thus it offers the same interface as the tuple store that it extends. The learner is trained upon loading the database file (from a .nat,  .csv or .tsv file) and its inference mechanism is triggered when facts from the database are queried. The stream of tuples returned from the query is then filtered via unification (and possibly, more general integrity constraints, expressed via logic programming constructs).
 
-#### Example of usage (see more at https://github.com/ptarau/minlog/blob/main/natlog/test/tests.py )
+#### Example of usage (see more at https://github.com/ptarau/natlog/blob/main/natlog/test/tests.py )
 ```
 def ndb_test() :
   nd = neural_natlog(file_name=natprogs()+"dbtc.nat",db_name=natprogs()+"db.nat")

@@ -25,12 +25,10 @@ setup(name='natlog',
                                'natprogs/*.nat',
                                'natprogs/*.tsv',
                                'natprogs/*.pro',
-                               'natprogs/*.json',
-                               #'doc/*.pdf',
+                               'natprogs/*.json'
                                ]
                     },
       include_package_data=True,
-      # scripts=['bin/*'],
       install_requires=required,
       zip_safe=False
       )
