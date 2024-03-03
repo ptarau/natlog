@@ -72,6 +72,18 @@ ANSWER: {'Who': 'mammal'}
 ANSWER: {'Who': 'reptile'}
 ```
 
+If you are in the folder where the file `tc.nat` is located you could also say
+
+```
+python3 -m natlog tc.nat
+```
+and then once the interactive REPL starts type:
+
+```
+?- tc Who is animal ?
+```
+resulting in the same output, with a chance to enter more queries.
+
 List processing is also supported as in:
 
 ```

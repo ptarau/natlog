@@ -183,3 +183,5 @@ bad/
 
 natlog/natprogs/*.pickle
 apps/natgpt/states
+
+bin/UPLOADS/

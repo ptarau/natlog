@@ -1,0 +1,18 @@
+pet : dog.
+pet : cat.
+pet : snake.
+
+dog : barks, walks, bites.
+
+cat : purrs, walks, hisses.
+
+snake: hisses, slither, bites.
+
+walks : true.
+purrs : true.
+bites : true.
+hisses : true.
+
+slither : false.
+bites : false.
+barks : false.

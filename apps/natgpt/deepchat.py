@@ -5,17 +5,42 @@ import tiktoken
 from natlog import Natlog, natprogs, lconsult
 import json
 
-MAX_TOKENS = 300 # 1 << 12  # make shorter if needed e.g. 300
+MAX_TOKENS = 1 << 14  # make shorter if needed e.g. 300
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+API_KEY = [os.getenv("OPENAI_API_KEY")]
+API_BASE = ["https://api.openai.com/v1"]
+
+
+def ask_llm(model=None, mes=None, temperature=None, n=None):
+    assert None not in (model, mes, temperature, n), (model, mes, temperature, n)
+
+    def llm_res(r, i):
+        return r.choices[i].message.content.strip()
+
+    client = openai.OpenAI(
+        api_key=API_KEY[0],
+        base_url=API_BASE[0]
+    )
+
+    r = client.chat.completions.create(
+        messages=mes,
+        model=model,
+        temperature=temperature,
+        n=n
+    )
+
+    pt = r.usage.prompt_tokens
+    ct = r.usage.completion_tokens
+
+    answers = [llm_res(r, i) for i in range(n)]
+
+    return answers, pt, ct
 
 
 class ChatMind:
     def __init__(self, max_toks=MAX_TOKENS, avatar=None):
-        self.model = "gpt-3.5-turbo"
+        self.model = "gpt-4-turbo-preview"
 
-        self.sys_prompt = dict(role='system',
-                               content='You are a helpful assistant. Your answers are as concise as possible.')
         self.max_toks = max_toks
         self.avatar = avatar
 
@@ -25,7 +50,7 @@ class ChatMind:
             self.toks = []
 
     def to_message(self, quest):
-        mes = [self.sys_prompt]
+        mes = []
         for (q, a) in self.short_mem.items():
             qd = dict(role='user', content=q)
             ad = dict(role='assistant', content=a)
@@ -51,7 +76,7 @@ class ChatMind:
         fname = self.store_name()
         if fname is not None and exists_file(fname):
             state = from_json(fname)
-            #print('!!!!',json.dumps(state,indent=4))
+            # print('!!!!',json.dumps(state,indent=4))
             self.set_state(state)
             return True
         return False
@@ -62,10 +87,10 @@ class ChatMind:
         state = self.get_state()
         to_json(state, fname)
 
-    def already_answered(self,quest):
-        answer = self.short_mem.get(quest,None)
+    def already_answered(self, quest):
+        answer = self.short_mem.get(quest, None)
         if answer is not None: return answer
-        answer = self.long_mem.get(quest,None)
+        answer = self.long_mem.get(quest, None)
         return answer
 
     def __repr__(self):
@@ -82,23 +107,18 @@ class ChatMind:
 
         self.trim_context(quest)
 
-        # print(len(self.answers), len(self.short_mem), len(self.toks))
-
         assert len(self.short_mem) == len(self.toks)
 
         mes = self.to_message(quest)
 
-        r = openai.ChatCompletion.create(
-            model=self.model,
-            messages=mes
-        )
-        result = r['choices'][0]['message']['content']
-        answer = result.split('\n')[-1]
+        answers, pt, ct = ask_llm(model=self.model, mes=mes, temperature=0.2, n=1)
+        answer = answers[0]
 
-        t = r['usage']['total_tokens']
-        self.toks.append(t)
+        self.toks.append(pt + ct)
 
         self.short_mem[quest] = answer
+
+        print('LEN SHORT TERM:',len(self.short_mem))
 
         return answer
 
@@ -157,10 +177,10 @@ def from_json(fname):
 
 
 def dict_trim(d):
-    for k, v in d.items():
-        break
-    d.pop(k)
+    k = next(iter(d))
+    v = d.pop(k)
     return k, v
+
 
 
 def run_natlog(natprog="deepchat.nat"):
@@ -181,11 +201,11 @@ def test_deepchat():
     answer = cm.ask('Is it much colder on Pluto?')
     print(f'ANSWER: {answer}\n')
     answer = cm.ask('quit')
-    print(answer,'\n')
+    print(answer, '\n')
 
-    print('STATE:\n',cm)
+    print('STATE:\n', cm)
 
 
 if __name__ == "__main__":
-    #test_deepchat()
+    # test_deepchat()
     run_natlog()

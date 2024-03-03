@@ -1,5 +1,6 @@
 from math import *
 from pathlib import Path
+import readline
 
 from .parser import *
 from .unify import *  # unify, lazy_unify, activate, extractTerm, Var
@@ -79,7 +80,7 @@ def unfold1(g, gs, h, bs, trail):
 
 
 nat_builtins = {
-    "call", "~", "`", "``", "^", "#", "$","@",
+    "call", "~", "`", "``", "^", "#", "$", "@",
     "if", "eng", "ask", "unify_with_occurs_check"
 }
 
@@ -446,12 +447,6 @@ def lconsult(fname):
     n.repl()
 
 
-def consult(fname):
-    fname = natprogs() + fname + ".nat"
-    n = Natlog(file_name=fname)
-    n.repl()
-
-
 def dconsult(nname, dname):
     nname = natprogs() + nname + ".nat"
     dname = natprogs() + dname + ".nat"
@@ -466,16 +461,15 @@ def tconsult(fname):
     n.repl()
 
 
-def natrun(fname,natgoal,callables=globals()):
+def natrun(fname, natgoal, callables=globals()):
     fname = fname + ".nat"
-    n = Natlog(file_name=fname, with_lib=natprogs() + 'lib.nat',callables=callables)
-    #n.repl()
+    n = Natlog(file_name=fname, with_lib=natprogs() + 'lib.nat', callables=callables)
+    # n.repl()
     return list(n.solve(natgoal))
 
-def natlog(text,goal=None):
-    n=Natlog(text=text, with_lib=natprogs() + 'lib.nat', callables=globals())
+
+def natlog(text, goal=None):
+    n = Natlog(text=text, with_lib=natprogs() + 'lib.nat', callables=globals())
     if goal is not None:
         n.query(goal)
     n.repl()
-
-
