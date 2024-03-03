@@ -20,6 +20,7 @@ setup(name='natlog',
       license='Apache',
       packages=setuptools.find_packages(),
       package_data={'natlog': [
+                               'natlog/requirements.txt',
                                'natprogs/*.nat',
                                'natprogs/*.tsv',
                                'natprogs/*.pro',
