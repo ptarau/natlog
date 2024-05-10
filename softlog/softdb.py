@@ -5,14 +5,6 @@ class SoftDB(Db):
     """
     specializes to db derived from text
     """
-    def __init__(self,
-                 min_knn_dist=0.6,
-                 max_knn_count=3
-                 ):
-        super().__init__()
-        self.min_knn_dist = min_knn_dist
-        self.max_knn_count = max_knn_count
-        self.abduced_clauses = dict()
 
     def __repr__(self):
         return 'SoftDB'
@@ -23,15 +15,16 @@ class SoftDB(Db):
         self.abduced_clauses=dict()
 
     def digest(self, text):
+
         self.initalize_store(cache_name="soft_db_cache")
-        self.emb.store_text(text)
+        self.emb.store_text(text, clean=False)
 
     def load_txt(self, doc_name, doc_type='txt'):
         # can be 'url', 'wikipage', 'txt', 'pdf'
         cache_name="".join(c for c in doc_name if c.isalpha())
         self.initalize_store(cache_name=cache_name)
 
-        self.emb.store_doc(doc_type, doc_name)
+        self.emb.store_doc(doc_type,doc_name,clean=True)
 
     def unify_with_fact(self, hs, trail):
         # pairs of the form i=sent index,r=confidence
@@ -43,7 +36,7 @@ class SoftDB(Db):
         v=hs[3]
         k=int(k)
         d=float(d)/100
-        _knn_pairs, answers = self.emb.knn_query(h, k) # self.max_knn_count)
+        _knn_pairs, answers = self.emb.knn_query(h, k)
         for sent, dist in answers:
             #print('>>>',sent,dist)
             if dist <= d: # self.min_knn_dist:
@@ -64,15 +57,15 @@ def test_softdb():
     v=Var()
     quest = ('Who barks out there', 3, 99, v)
     text = "\n".join(sents)
-    sdb = SoftDB(min_knn_dist=None,
-                 max_knn_count=None)
+    sdb = SoftDB()
     sdb.digest(text)
-    for a in sdb.unify_with_fact(quest, []):
+    for _ in sdb.unify_with_fact(quest, []):
         #print(a, '-->', v)
         pass
-    print('ABDUCED CLAUSES:')
-    for c,r in sdb.abduced_clauses.items():
-      print(c, '%',r)
+    print('THE ABDUCED CLAUSES aRE:')
+    for (h,b),r in sdb.abduced_clauses.items():
+      if b.endswith('.'):b=b[0:-1]
+      print(f"'{h}' : '{b}'. % {r}")
 
 
 if __name__ == "__main__":
