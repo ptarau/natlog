@@ -1,5 +1,6 @@
- The cat sits on the mat.
- The dog barks to the moon.
- The pirate travels the oceans.
- The phone rings with a musical tone.
- The man watches the bright moon.
+The cat sits on the mat.
+The dog barks to the moon.
+The pirate travels the oceans.
+The phone rings with a musical tone.
+The man watches the bright moon.
+The dog barks at a cat.

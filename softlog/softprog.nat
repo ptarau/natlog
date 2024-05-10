@@ -1,1 +1,11 @@
 init.
+
+knn 4.
+threshold 120.
+
+quest  Quest Answer:
+  knn K,
+  threshold T,
+  ~ Quest K T Answer.
+
+go : quest 'Who barks out there' X, #print 'A' close answer is  X , fail.

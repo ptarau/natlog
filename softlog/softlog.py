@@ -22,7 +22,7 @@ class SoftNatlog(Natlog):
             try:
                 self.query(q, in_repl=True)
                 print('ABDUCED CLAUSES')
-                for (h,b,r) in self.db.abduced_clauses:
+                for (h,b),r in self.db.abduced_clauses.items():
                     print(f"{h} : {b} % distance={r}")
                 print()
 

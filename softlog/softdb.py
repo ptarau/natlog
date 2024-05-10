@@ -12,7 +12,7 @@ class SoftDB(Db):
         super().__init__()
         self.min_knn_dist = min_knn_dist
         self.max_knn_count = max_knn_count
-        self.abduced_clauses = []
+        self.abduced_clauses = dict()
 
     def __repr__(self):
         return 'SoftDB'
@@ -20,7 +20,7 @@ class SoftDB(Db):
     def initalize_store(self,cache_name):
         self.emb = Embedder(cache_name)
         self.emb.clear()
-        self.abduced_clauses=[]
+        self.abduced_clauses=dict()
 
     def digest(self, text):
         self.initalize_store(cache_name="soft_db_cache")
@@ -33,37 +33,46 @@ class SoftDB(Db):
 
         self.emb.store_doc(doc_type, doc_name)
 
-    def unify_with_fact(self, h, trail):
+    def unify_with_fact(self, hs, trail):
         # pairs of the form i=sent index,r=confidence
-        print('<<<',h)
-        h=h[0]
-        _knn_pairs, answers = self.emb.knn_query(h, self.max_knn_count)
+        # print('<<<',hs)
+        assert len(hs)==4,hs
+        h=hs[0]
+        k=hs[1]
+        d=hs[2]
+        v=hs[3]
+        k=int(k)
+        d=float(d)/100
+        _knn_pairs, answers = self.emb.knn_query(h, k) # self.max_knn_count)
         for sent, dist in answers:
-            print('>>>',sent,dist)
-            if dist <= self.min_knn_dist:
-                print('PASSING!')
-                self.abduced_clauses.append((h,sent,dist))
-                yield sent
+            #print('>>>',sent,dist)
+            if dist <= d: # self.min_knn_dist:
+                self.abduced_clauses[(h,sent)]=dist
+                u = unify(v, sent, trail)
+                yield u
 
 
 def test_softdb():
     sents = [
         "The cat sits on the mat.",
-        "The dog barks to the moon.",
+        "The dog barks at a cat.",
+        "The dog barks at the moon.",
         "The pirate travels the oceans.",
         "The phone rings with a musical tone.",
         "The man watches the bright moon."
     ]
-    quest = "Who barks out there?"
+    v=Var()
+    quest = ('Who barks out there', 3, 99, v)
     text = "\n".join(sents)
-    sdb = SoftDB(min_knn_dist=0.99,
-                 max_knn_count=8)
+    sdb = SoftDB(min_knn_dist=None,
+                 max_knn_count=None)
     sdb.digest(text)
     for a in sdb.unify_with_fact(quest, []):
-        #print(a)
+        #print(a, '-->', v)
         pass
-    for c in sdb.abduced_clauses:
-      print(c)
+    print('ABDUCED CLAUSES:')
+    for c,r in sdb.abduced_clauses.items():
+      print(c, '%',r)
 
 
 if __name__ == "__main__":
