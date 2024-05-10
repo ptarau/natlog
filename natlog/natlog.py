@@ -386,6 +386,7 @@ class Natlog:
                 self.query(q, in_repl=True)
             except Exception as e:
                 print('EXCEPTION:', type(e).__name__, e.args)
+                #raise e
 
     # shows tuples of Natlog rule base
     def __repr__(self):

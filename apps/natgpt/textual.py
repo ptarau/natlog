@@ -26,7 +26,7 @@ def standardize_txt(fname,lang='en'):
 
 def start():
   nname ="textual.nat"
-  dname = natprogs()+'../doc/prolog50.txt'
+  dname = natprogs()+'../docs/prolog50.txt'
   standardize_txt(dname)
 
   n = TextualNatlog(file_name=nname, db_name=dname)

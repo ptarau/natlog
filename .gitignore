@@ -185,3 +185,5 @@ natlog/natprogs/*.pickle
 apps/natgpt/states
 
 run/UPLOADS/
+
+SENT_STORE_CACHE
