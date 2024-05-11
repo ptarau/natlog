@@ -4,7 +4,7 @@ from softlog import SoftNatlog
 
 def start():
     nname = "softprog.nat"
-    dname = '../docs/small.txt'
+    dname = '../docs/quotes.txt'
 
     n = SoftNatlog(file_name=nname, db_name=dname)
     n.repl()

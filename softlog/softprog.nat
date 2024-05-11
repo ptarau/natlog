@@ -1,10 +1,11 @@
-knn 4.
-threshold 66.
+knn 3.
+threshold 70.
 
 quest  Quest Answer:
   knn K,
-  threshold T,
-  ~ Quest K T Answer.
+  threshold D,
+  ~ Quest K D Answer.
 
-go : quest 'Who barks out there' X, #print 'A' close answer is  X , fail.
-go : print 'DONE!'.
+go X : quest 'What happens if you do not know where you go' X?
+tempt X : quest 'What did Wilde say about temptation' X?
+alice X :quest 'What did Alice say about following advice' X?
