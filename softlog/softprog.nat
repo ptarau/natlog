@@ -8,4 +8,4 @@ quest  Quest Answer:
 
 go X : quest 'What happens if you do not know where you go' X?
 tempt X : quest 'What did Wilde say about temptation' X?
-alice X :quest 'What did Alice say about following advice' X?
+alice X : quest 'What did Alice say about following advice' X?

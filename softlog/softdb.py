@@ -29,14 +29,17 @@ class SoftDB(Db):
 
     def unify_with_fact(self, goal, trail):
         assert len(goal) == 4, goal
-        h, k, d, v = goal
+        # q = query goal to be matched
+        # k = number of knns to be returned
+        # d = minimum knn distance
+        # v = variable to be unified withthe matches
+        q, k, d, v = goal
         d = float(d) / 100
         # _knn_pairs: pairs of the form i=sent index,r=distance
-        # k= number of knns to be returned
-        _knn_pairs, answers = self.emb.knn_query(h, k)
+        _knn_pairs, answers = self.emb.knn_query(q, k)
         for sent, dist in answers:
-            if dist <= d:  # d = minimum knn distance
-                self.abduced_clauses[(h, sent)] = dist
+            if dist <= d:
+                self.abduced_clauses[(q, sent)] = dist
                 yield unify(v, sent, trail)
 
 
