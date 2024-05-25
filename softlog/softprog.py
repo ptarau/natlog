@@ -13,4 +13,5 @@ def start():
 if __name__ == "__main__":
     start()
 
-# ?- ~'Who barks out there'?
+# ?- quest 'What happens if you do not know where you go' X?
+# see sofprog.nat for more
