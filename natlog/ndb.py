@@ -7,7 +7,7 @@ import numpy as np
 import os
 import pickle
 
-from .db import *
+from natlog.db import *
 
 
 # simple multi-layer percdeptron
@@ -17,7 +17,7 @@ def neural_learner():
         random_state=1234,
         verbose=1,
         # activation='relu',
-        max_iter=2000
+        max_iter=2000,
     )
 
 
@@ -78,11 +78,11 @@ class Ndb(Db):
 
     def __init__(self, learner=neural_learner):
         super().__init__()
-        self.learner_name=learner.__name__
+        self.learner_name = learner.__name__
         self.learner = learner()
 
     def to_model_name(self, fname):
-        return fname + "."+self.learner_name+".pickle"
+        return fname + "." + self.learner_name + ".pickle"
 
     def load(self, fname):
         """
@@ -99,8 +99,8 @@ class Ndb(Db):
         X = np.eye(len(db_const_dict), dtype=int)
         val_count = len(self.css)
         y = np.array([set2bits(val_count, xs) for xs in self.index.values()])
-        print('X:', X.shape, '\n', X)
-        print('\ny:', y.shape, '\n', y, '\n')
+        print("X:", X.shape, "\n", X)
+        print("\ny:", y.shape, "\n", y, "\n")
         self.learner.fit(X, y)
         self.db_const_dict = db_const_dict
         to_pickle((self.learner, db_const_dict, self.css), model_name)
@@ -110,11 +110,12 @@ class Ndb(Db):
         overrides database matching with learned predictions
         """
         query_consts = path_of(query_tuple)
-        query_consts_nums = \
-            [self.db_const_dict[c] for c in query_consts if c in self.db_const_dict]
+        query_consts_nums = [
+            self.db_const_dict[c] for c in query_consts if c in self.db_const_dict
+        ]
         db_const_count = len(self.db_const_dict)
         qs = np.array([set2bits(db_const_count, query_consts_nums)])
         rs = self.learner.predict(qs)
         matches = bits2set(list(rs[0]))
-        #print('!!!!!!:',matches,self.css)
+        # print('!!!!!!:',matches,self.css)
         return matches

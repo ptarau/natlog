@@ -1,4 +1,4 @@
-from .db import *
+from natlog.db import *
 
 
 def const_of(t):
@@ -28,28 +28,33 @@ class Tdb(Db):
         super().__init__()
         self.index_source = const_of
 
-
     def digest(self, text):
-        sents=text.split('\n')
+        sents = text.split("\n")
         for sent in sents:
-            ws=sent.split(' ')
-            if len(ws) < 2: continue
-            ws=[w for w in ws if w.isalpha()]
+            ws = sent.split(" ")
+            if len(ws) < 2:
+                continue
+            ws = [w for w in ws if w.isalpha()]
             self.add_clause(ws)
 
     def load_txt(self, fname):
-        """ assuming text tokenized, one sentence per line,
-         single white space separated
+        """assuming text tokenized, one sentence per line,
+        single white space separated
         """
         with open(fname) as f:
-            lines = f.read().split('\n')
+            lines = f.read().split("\n")
             for line in lines:
-                if len(line) < 2: continue
+                if len(line) < 2:
+                    continue
                 line = line.strip()
-                ws = line.split(' ')
+                ws = line.split(" ")
                 ws = [w for w in ws if w.isalpha()]
-                self.add_clause(('txt', tuple(ws),))
-
+                self.add_clause(
+                    (
+                        "txt",
+                        tuple(ws),
+                    )
+                )
 
     def unify_with_fact(self, h, trail):
         _txt, key, val = h

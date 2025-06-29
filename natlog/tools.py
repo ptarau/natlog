@@ -1,4 +1,4 @@
-from .unify import Var, GVar, deref
+from natlog.unify import Var, GVar, deref
 
 
 def copy_term(t0):
@@ -49,7 +49,7 @@ def meth_call(o, f, xs):
 
 
 def write(args):
-    print(*args, end=' ')
+    print(*args, end=" ")
 
 
 def nl():
@@ -62,12 +62,12 @@ def writeln(args):
 
 
 def has_type(x, tname):
-    t = eval(tname),
+    t = (eval(tname),)
     return int(isinstance(x, t))
 
 
 # globals vars for "." and "?" escapes
 # refer to them as $eos Dot,$eoq Qest.
 
-eos = '.'
-eoq = '?'
+eos = "."
+eoq = "?"

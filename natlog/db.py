@@ -2,9 +2,9 @@ from collections import defaultdict
 import json
 import csv
 
-from .unify import unify, activate
-from .parser import mparse
-from .scanner import Var
+from natlog.unify import unify, activate
+from natlog.parser import mparse
+from natlog.scanner import Var
 
 
 def path_of(t):
@@ -63,49 +63,56 @@ class Db:
 
     # loads from json list of lists
     def load_json(self, fname):
-        with open(fname, 'r') as f:
+        with open(fname, "r") as f:
             ts = json.load(f)
         for t in ts:
             self.add_db_clause(t)
 
-    def load_csv(self, fname, delimiter=','):
+    def load_csv(self, fname, delimiter=","):
         with open(fname) as f:
             wss = csv.reader(f, delimiter=delimiter)
             for ws in wss:
                 self.add_db_clause(ws)
 
     def load_tsv(self, fname):
-        self.load_csv(fname, delimiter='\t')
+        self.load_csv(fname, delimiter="\t")
 
     def load_txt(self, fname):
-        """ assuming text tokenized, one sentence per line,
-         single white space separated, ending with '.' or '?'
+        """assuming text tokenized, one sentence per line,
+        single white space separated, ending with '.' or '?'
         """
         with open(fname) as f:
-            lines = f.read().split('\n')
+            lines = f.read().split("\n")
             for line in lines:
-                if len(line) < 2: continue
+                if len(line) < 2:
+                    continue
                 line = line.strip()
                 assert line[-1] in ".?"
                 line = line[0:-1]
                 line = line.strip()
-                ws = line.split(' ')
-                self.add_clause(('txt', tuple(ws),))
+                ws = line.split(" ")
+                self.add_clause(
+                    (
+                        "txt",
+                        tuple(ws),
+                    )
+                )
 
     def add_db_clause(self, t):
         # print('####', t)
-        if t: self.add_clause(tuplify(t))
+        if t:
+            self.add_clause(tuplify(t))
 
     # loads ground facts .nat or .json files
     def load(self, fname):
-        if len(fname) > 4 and fname[-4:] == '.nat':
-            with open(fname, 'r') as f:
+        if len(fname) > 4 and fname[-4:] == ".nat":
+            with open(fname, "r") as f:
                 self.digest(f.read())
-        elif len(fname) > 4 and fname[-4:] == '.tsv':
+        elif len(fname) > 4 and fname[-4:] == ".tsv":
             self.load_tsv(fname)
-        elif len(fname) > 4 and fname[-4:] == '.csv':
+        elif len(fname) > 4 and fname[-4:] == ".csv":
             self.load_csv(fname)
-        elif len(fname) > 4 and fname[-4:] == '.txt':
+        elif len(fname) > 4 and fname[-4:] == ".txt":
             self.load_txt(fname)
         else:
             self.load_json(fname)
@@ -162,7 +169,8 @@ class Db:
     def match_of_(self, h):
         h = activate(h, dict())
         for ok in self.unify_with_fact(h, []):
-            if ok: yield h
+            if ok:
+                yield h
 
     def match_of(self, hx):
         h = activate(hx, dict())
@@ -172,7 +180,8 @@ class Db:
             trail = []
             if unify(h, h0, trail):
                 yield h0
-            for v in trail: v.unbind()
+            for v in trail:
+                v.unbind()
 
     def search(self, query):
         """
@@ -193,22 +202,22 @@ class Db:
                     yield self.css[i]
 
     def ask_about(self, query):
-        print('QUERY:', query)
+        print("QUERY:", query)
         for r in self.about(query):
-            print('-->', r)
-        print('')
+            print("-->", r)
+        print("")
 
     # queries_text the Db directly with a text query
     def ask(self, query):
-        print('QUERY:', query)
+        print("QUERY:", query)
         for r in self.search(query):
-            print('-->', r)
-        print('')
+            print("-->", r)
+        print("")
 
     # builds possibly very large string representation
     # of the facts contained in the Db
     def __repr__(self):
-        xs = [str(cs) + '\n' for cs in enumerate(self.css)]
+        xs = [str(cs) + "\n" for cs in enumerate(self.css)]
         return "".join(xs)
 
 
@@ -217,11 +226,11 @@ def about_facts():
        quest X Y : ~ (text_term (give X Y)) ?
     """
     db = Db()
-    db_name = 'natprogs/facts.nat'
+    db_name = "natprogs/facts.nat"
     db.load(db_name)
 
-    print('SIZE:', db.size(), 'LEN:', len(db.css[0]))
-    print(42, ':', db.css[42])
+    print("SIZE:", db.size(), "LEN:", len(db.css[0]))
+    print(42, ":", db.css[42])
     db.ask_about("subgraph")
 
 

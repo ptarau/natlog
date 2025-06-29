@@ -1,5 +1,5 @@
-from .natlog import Natlog,natprogs
-from .ndb import *
+from natlog.natlog import Natlog, natprogs
+from natlog.ndb import *
 
 
 class NeuralNatlog(Natlog):
@@ -15,7 +15,7 @@ class NeuralNatlog(Natlog):
 def nconsult(fname):
     nname = natprogs() + fname + ".nat"
     dname = natprogs() + fname + ".tsv"
-    print('consulted:',nname,dname)
-    n = NeuralNatlog(file_name=nname,db_name=dname)
+    print("consulted:", nname, dname)
+    n = NeuralNatlog(file_name=nname, db_name=dname)
 
     n.repl()

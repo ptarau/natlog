@@ -1,5 +1,5 @@
-from .natlog import Natlog, natprogs
-from .tdb import *
+from natlog.natlog import Natlog, natprogs
+from natlog.tdb import *
 
 
 class TextualNatlog(Natlog):
@@ -15,6 +15,6 @@ class TextualNatlog(Natlog):
 def xconsult(fname):
     nname = natprogs() + fname + ".nat"
     dname = natprogs() + fname + ".txt"
-    print('consulted:', nname, dname)
+    print("consulted:", nname, dname)
     n = TextualNatlog(file_name=nname, db_name=dname)
     n.repl()

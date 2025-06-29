@@ -50,9 +50,10 @@ def yield_test():
   """
     n = Natlog(text=prog)
     for i, answer in enumerate(n.solve("worm ?")):
-        print(answer[0], end='')
-        if i > 42: break
-    print('')
+        print(answer[0], end="")
+        if i > 42:
+            break
+    print("")
 
 
 # testing with string text
@@ -63,6 +64,7 @@ def t1():
 
 
 # testing with some .nat files
+
 
 def t2():
     n = Natlog(file_name=NATPROGS + "tc.nat")
@@ -103,7 +105,7 @@ def t7():
 
 def t8():
     n = Natlog(file_name=NATPROGS + "lib.nat")
-    n.query('`numlist 1 5 Xs, findall X (member X Xs) Ys.')
+    n.query("`numlist 1 5 Xs, findall X (member X Xs) Ys.")
     # n.repl()
 
 
@@ -113,15 +115,17 @@ def t9():
 
 
 def t10():
-    print('it takes a while to start')
+    print("it takes a while to start")
     n = Natlog(file_name=NATPROGS + "sudoku4.nat", with_lib=NATPROGS + "lib.nat")
+    for c in n.css:
+        print(c)
     # n.repl()
-    n.query("goal Xss, nl, member Xs Xss, tuple Xs T, writeln T, fail?")
+    n.query("goal Xss, nl, member Xs Xss, writeln Xs, fail?")
 
 
 def fam_repl():
     n = Natlog(file_name=NATPROGS + "family.nat", with_lib=LIB)
-    print('Enter some queries_text!')
+    print("Enter some queries_text!")
     n.repl()
 
 
@@ -137,106 +141,98 @@ def loop():
 
 
 def db_test():
-    nd = Natlog(
-        file_name=NATPROGS + "dbtc.nat",
-        db_name=NATPROGS + "db.nat")
-    print('RULES')
+    nd = Natlog(file_name=NATPROGS + "dbtc.nat", db_name=NATPROGS + "db.nat")
+    print("RULES")
     print(nd)
-    print('DB FACTS')
+    print("DB FACTS")
     print(nd.db)
-    print('QUERY:')
+    print("QUERY:")
     nd.query("tc Who is_a animal ?")
     # nd.repl()
 
 
 def tdb_test():
-    td = TextualNatlog(
-        file_name=NATPROGS + "story.nat",
-        db_name=NATPROGS + "story.txt")
-    print('RULES')
+    td = TextualNatlog(file_name=NATPROGS + "story.nat", db_name=NATPROGS + "story.txt")
+    print("RULES")
     print(td)
-    print('DB FACTS')
+    print("DB FACTS")
     print(td.db)
-    print('QUERY:')
+    print("QUERY:")
     td.query("~txt ('Alice' 'Bob') X?")
     # td.repl()
 
 
 def ndb_test():
     nd = NeuralNatlog(file_name=NATPROGS + "dbtc.nat", db_name=NATPROGS + "db.nat")
-    print('RULES')
+    print("RULES")
     print(nd)
-    print('DB FACTS')
+    print("DB FACTS")
     print(nd.db)
     nd.query("tc Who is_a animal ?")
 
 
 def db_chem():
-    nd = Natlog(
-        file_name=NATPROGS + "elements.nat",
-        db_name=NATPROGS + "elements.tsv"
-    )
-    print('RULES')
+    nd = Natlog(file_name=NATPROGS + "elements.nat", db_name=NATPROGS + "elements.tsv")
+    print("RULES")
     print(nd)
     # print('DB FACTS');print(nd.db)
-    print('SIZE:', nd.db.size(), 'LEN:', len(nd.db.css[0]))
+    print("SIZE:", nd.db.size(), "LEN:", len(nd.db.css[0]))
     nd.query("an_el Num Element ?")
     nd.query("gases Num Element ?")
 
 
 def ndb_chem():
     nd = NeuralNatlog(
-        file_name=NATPROGS + "elements.nat",
-        db_name=NATPROGS + "elements.tsv"
+        file_name=NATPROGS + "elements.nat", db_name=NATPROGS + "elements.tsv"
     )
-    print('RULES')
+    print("RULES")
     print(nd)
-    print('DB FACTS')
+    print("DB FACTS")
     print(nd.db)
     nd.query("gases Num Element ?")
 
 
 def py_test():
     nd = Natlog(file_name=NATPROGS + "py_call.nat")
-    print('RULES')
+    print("RULES")
     # print(nd)
     nd.query("goal X?")
 
 
 def py_test1():
     nd = Natlog(file_name=NATPROGS + "py_call1.nat")
-    print('RULES')
+    print("RULES")
     # print(nd)
     nd.query("goal X?")
 
 
 def dtest1():
-    c1 = ('a', 1, 'car', 'a')
-    c2 = ('a', 2, 'horse', 'aa')
-    c3 = ('b', 1, 'horse', 'b')
-    c4 = ('b', 2, 'car', 'bb')
+    c1 = ("a", 1, "car", "a")
+    c2 = ("a", 2, "horse", "aa")
+    c3 = ("b", 1, "horse", "b")
+    c4 = ("b", 2, "car", "bb")
 
-    g1 = ('a', Var(), Var(), Var())
-    g2 = (Var(), Var(), 'car', Var())
+    g1 = ("a", Var(), Var(), Var())
+    g2 = (Var(), Var(), "car", Var())
     g3 = (Var(), Var(), Var(), Var())
 
-    print(c1, '\n<-const:', list(path_of(c1)))
+    print(c1, "\n<-const:", list(path_of(c1)))
     d = Db()
     for cs in [c1, c2, c3, c4]:
         d.add_clause(cs)
-    print('\nindex')
+    print("\nindex")
     for xv in d.index.items():
         print(xv)
 
-    print('\ncss')
+    print("\ncss")
     for cs in d.css:
         print(cs)
-    print('Gmatch', g1, list(d.ground_match_of(g1)))
-    print('Vmatch', g1, list(d.match_of(g1)))
-    print('Gmatch', g2, list(d.ground_match_of(g2)))
-    print('Vmatch', g2, list(d.match_of(g2)))
-    print('Gmatch', g3, list(d.ground_match_of(g3)))
-    print('Vmatch', g3, list(d.match_of(g3)))
+    print("Gmatch", g1, list(d.ground_match_of(g1)))
+    print("Vmatch", g1, list(d.match_of(g1)))
+    print("Gmatch", g2, list(d.ground_match_of(g2)))
+    print("Vmatch", g2, list(d.match_of(g2)))
+    print("Gmatch", g3, list(d.ground_match_of(g3)))
+    print("Vmatch", g3, list(d.match_of(g3)))
 
 
 # Db built form text
@@ -251,7 +247,7 @@ def dtest():
     d = Db()
     d.digest(text)
     print(d)
-    print('')
+    print("")
     query = "Who has (a What)?"
     d.ask(query)
 
@@ -270,26 +266,26 @@ def dtest():
 
 # Db from a .nat file
 def dtestf():
-    fname = NATPROGS + 'db.tsv'
+    fname = NATPROGS + "db.tsv"
     d = Db()
     d.load(fname)
     print(d)
-    print('LOADED:', fname)
+    print("LOADED:", fname)
     d.ask("Who is mammal?")
 
 
 # Db from a json file
 def dtestj():
-    fname = NATPROGS + 'db'
-    jname = fname + '.json'
-    nname = fname + '.nat'
+    fname = NATPROGS + "db"
+    jname = fname + ".json"
+    nname = fname + ".nat"
     d = Db()
     d.load(nname)
     d.save(jname)
     d = Db()
     d.load(jname)
     # print(d)
-    print('LOADED:', jname)
+    print("LOADED:", jname)
     print("")
     query = "Who is What?"
     d.ask(query)
@@ -299,9 +295,9 @@ def big_db():
     prog = """
        quest X Y : ~ (text_term (give X Y)) ?
     """
-    n = Natlog(text=prog, db_name=NATPROGS + 'facts.nat')
+    n = Natlog(text=prog, db_name=NATPROGS + "facts.nat")
     # print(n)
-    print('SIZE:', n.db.size(), 'LEN:', len(n.db.css[0]))
+    print("SIZE:", n.db.size(), "LEN:", len(n.db.css[0]))
     # print(n.db.css[0])
     n.query("quest X Y?")
     # n.repl()
@@ -311,79 +307,94 @@ def big_ndb():
     prog = """
        quest X Y : ~ (text_term (give X Y)) ?
     """
-    n = NeuralNatlog(text=prog, db_name=NATPROGS + 'facts.nat')
+    n = NeuralNatlog(text=prog, db_name=NATPROGS + "facts.nat")
     # print(n)
-    print('SIZE:', n.db.size(), 'LEN:', len(n.db.css[0]))
+    print("SIZE:", n.db.size(), "LEN:", len(n.db.css[0]))
     # print(n.db.css[0])
     n.query("quest X Y?")
     # n.repl()
 
 
 def libtest():
-    n = Natlog(file_name=NATPROGS + 'emu.nat', with_lib=NATPROGS + "lib.nat")
+    n = Natlog(file_name=NATPROGS + "emu.nat", with_lib=NATPROGS + "lib.nat")
     n.repl()
 
 
 def gramtest():
-    n = Natlog(file_name=NATPROGS + 'dall_e.nat')
+    n = Natlog(file_name=NATPROGS + "dall_e.nat")
     print(n)
     n.query("go.")
     # n.repl()
 
 
 def meta_test():
-    n = Natlog(file_name=NATPROGS + 'meta.nat')
+    n = Natlog(file_name=NATPROGS + "meta.nat")
     n.query("metaint ((go R) ()) ?")
     # n.repl()
 
 
 def ivtest1():
-    n = Natlog(file_name=NATPROGS + 'gcol.nat', with_lib=NATPROGS + "lib.nat")
+    n = Natlog(file_name=NATPROGS + "gcol.nat", with_lib=NATPROGS + "lib.nat")
     # print(n)
     n.query("go Colors?")
     # n.repl()
 
 
 def ivtest():
-    n = Natlog(file_name=NATPROGS + 'interclausal.nat', with_lib=NATPROGS + "lib.nat")
+    n = Natlog(file_name=NATPROGS + "interclausal.nat", with_lib=NATPROGS + "lib.nat")
     n.query("go X?")
     # n.repl()
 
 
+def pro_test(fname="pro.pro", with_lib=None):
+    n = Natlog(file_name=NATPROGS + "prolog_progs/" + fname, with_lib=with_lib)
+    print("CLAUSES")
+    for c in n.css:
+        print(c)
+    n.query("goal X.")
+    # n.repl()
+
+
 def go():
-    ts = [dtest1,
-          dtest,
-          dtestf,
-          test_generators,
-          test_answer_stream,
-          t1,
-          t2,
-          t3,
-          t4,
-          t5,
-          t6,
-          t7,
-          db_test, db_chem, py_test, py_test1,
-          big_db,
-          gramtest,
-          meta_test,
-          ivtest,
-          tdb_test
-          ]
+    ts = [
+        dtest1,
+        dtest,
+        dtestf,
+        test_generators,
+        test_answer_stream,
+        t1,
+        t2,
+        t3,
+        t4,
+        t5,
+        t6,
+        t7,
+        db_test,
+        db_chem,
+        py_test,
+        py_test1,
+        big_db,
+        gramtest,
+        meta_test,
+        ivtest,
+        tdb_test,
+        pro_test,
+    ]
     for t in ts:
-        print('\n\n', '*' * 20, t.__name__, '*' * 20, '\n')
+        print("\n\n", "*" * 20, t.__name__, "*" * 20, "\n")
         t()
 
 
 def runtest():
-    xs = natrun(natprogs() + 'family', 'brother of X Y.')
+    xs = natrun(natprogs() + "family", "brother of X Y.")
     print(xs)
 
 
 if __name__ == "__main__":
     pass
     go()
-    # ndb_test()
+    # t10()
+    # pro_test(fname="sudoku4.pro", with_lib=NATPROGS + "lib.nat")
     # libtest()
     # gramtest()
     # meta_test()

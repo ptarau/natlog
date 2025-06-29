@@ -1,4 +1,4 @@
-from .scanner import VarNum, Var, GVar, deref
+from natlog.scanner import VarNum, Var, GVar, deref
 
 
 def unify(x, y, trail, occ=False):
@@ -41,6 +41,7 @@ def new_var(t, d):
         v = Var()
         d[t] = v
     return v
+
 
 def lazy_unify(x, y, trail, d):
     ustack = []
@@ -112,25 +113,27 @@ def occurs(x0, t0):
     x = deref(x0)
     return occ(t0)
 
+
 def test_unify():
     a, b, c, d, e, f, g = "abcdefg"
     x, y, z = VarNum(0), VarNum(1), VarNum(2)
     t = (f, a, (g, (b, x, (e, b, c, y)), d))
-    for p in path_of(t): print('PATH:', p)
+    for p in path_of(t):
+        print("PATH:", p)
 
     c = activate(t, dict())
 
-    print('ORIG:', t)
-    print('COPY:', c)
+    print("ORIG:", t)
+    print("COPY:", c)
 
     z = activate(z, dict())
-    print('Z:', z)
+    print("Z:", z)
 
     t1 = (f, z)
     t2 = z
 
-    print('unif occ:', unify(t1, t2, [], occ=True))
-    print('unif nocc:', unify(t1, t2, [], occ=False))
+    print("unif occ:", unify(t1, t2, [], occ=True))
+    print("unif nocc:", unify(t1, t2, [], occ=False))
 
 
 if __name__ == "__main__":

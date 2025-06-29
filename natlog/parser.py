@@ -1,18 +1,20 @@
 from operator import *
 
-from .scanner import Scanner, VarNum
+from natlog.scanner import Scanner, VarNum
 
 trace = 0
 
 
 def rp(LP):
-    return ')' if LP == '(' else ']'
+    return ")" if LP == "(" else "]"
 
 
 def from_none(LP, w):
     if w is None:
-        if LP == '(': return ()
-        if LP == '[': return []
+        if LP == "(":
+            return ()
+        if LP == "[":
+            return []
     return w
 
 
@@ -52,50 +54,52 @@ class Parser:
             t = self.par(LP, RP)
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
-            return (t, ts) if LP == '(' else [t] + ts
-        elif w == '(' or w == '[' and w != LP:
+            return (t, ts) if LP == "(" else [t] + ts
+        elif w == "(" or w == "[" and w != LP:
             t = self.par(w, rp(w))
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
-            return (t, ts) if LP == '(' else [t] + ts
+            return (t, ts) if LP == "(" else [t] + ts
         else:
             self.get()
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
-            return (w, ts) if LP == '(' else [w] + ts
+            return (w, ts) if LP == "(" else [w] + ts
 
     def run(self):
-        ls = sum(1 for x in self.words if x == '(')
-        rs = sum(1 for x in self.words if x == ')')
+        ls = sum(1 for x in self.words if x == "(")
+        rs = sum(1 for x in self.words if x == ")")
         assert ls == rs
-        ls = sum(1 for x in self.words if x == '[')
-        rs = sum(1 for x in self.words if x == ']')
+        ls = sum(1 for x in self.words if x == "[")
+        rs = sum(1 for x in self.words if x == "]")
         assert ls == rs
-        t = self.par('(', ')')
+        t = self.par("(", ")")
         t = to_tuple(t)
-        if trace: print("PARSED", t)
+        if trace:
+            print("PARSED", t)
         return t
 
 
 # extracts a Prolog-like clause made of tuples
 def to_clause(xs):
-    if not (':' in xs or '=>' in xs): return xs, ()
+    if not (":" in xs or "=>" in xs):
+        return xs, ()
     if "=>" in xs:
-        sep = '=>'
+        sep = "=>"
     else:
-        sep = ':'
+        sep = ":"
     neck = xs.index(sep)
     head = xs[:neck]
-    body = xs[neck + 1:]
+    body = xs[neck + 1 :]
 
-    if sep == ':':
-        if ',' not in xs:
+    if sep == ":":
+        if "," not in xs:
             res = head, (body,)
         else:
             bss = []
             bs = []
             for b in body:
-                if b == ',':
+                if b == ",":
                     bss.append(tuple(bs))
                     bs = []
                 else:
@@ -104,17 +108,17 @@ def to_clause(xs):
 
             res = head, tuple(bss)
         return res
-    if sep == '=>':
+    if sep == "=>":
         n0 = 100
         n = n0
-        if ',' not in xs:
+        if "," not in xs:
             vs = (VarNum(n), VarNum(n + 1))
             res = head + vs, (body + vs,)
         else:
             bss = []
             bs = []
             for b in body:
-                if b == ',':
+                if b == ",":
                     vs = VarNum(n), VarNum(n + 1)
                     n += 1
                     bs = tuple(bs) + vs
@@ -138,13 +142,16 @@ def parse(text, gsyms=dict(), gixs=dict(), ground=False, rule=False):
     text = clean_comments(text)
     s = Scanner(text, gsyms=gsyms, gixs=gixs, ground=ground)
     for ws in s.run():
-        if not rule: ws = ('head_', ':') + ws
+        if not rule:
+            ws = ("head_", ":") + ws
         ws = ("(",) + ws + (")",)
         p = Parser(ws)
         r = p.run()
         r = to_clause(r)
-        if not rule: r = to_cons_list(r[1])
-        if not rule and ground: r = (r[0],)  # db fact
+        if not rule:
+            r = to_cons_list(r[1])
+        if not rule and ground:
+            r = (r[0],)  # db fact
 
         yield r, s.names
 
@@ -169,6 +176,7 @@ def to_tuple(xy):
         ts = to_tuple(y)
         return (t,) + ts
 
+
 def from_cons_list_as_tuple(xs):
     return tuple(from_cons_list(xs))
 
@@ -181,14 +189,16 @@ def from_cons_list(xs):
     return rs
 
 
-def to_cons_list(ts,end=()):
+def to_cons_list(ts, end=()):
     gs = end
     for g in reversed(ts):
         gs = (g, gs)
     return gs
 
-def to_dif_list(ts,end):
-    return to_cons_list(ts,end=end)
+
+def to_dif_list(ts, end):
+    return to_cons_list(ts, end=end)
+
 
 def q(xs):
     rs = []
@@ -203,7 +213,7 @@ def numlist(n, m):
 
 
 def clean_comments(text):
-    lines = text.split('\n')
+    lines = text.split("\n")
     cleaned = []
     for line in lines:
         parts = line.split("%")
@@ -211,11 +221,12 @@ def clean_comments(text):
             line = parts[0]
         cleaned.append(line)
     text = "\n".join(cleaned)
-    #print('>>> ???',text)
+    # print('>>> ???',text)
     return text
 
 
 # tests
+
 
 def ptest():
     text = """
@@ -228,15 +239,15 @@ def ptest():
        """
     for c in mparse(text, ground=True):
         print(c)
-    print('')
+    print("")
     for c in mparse(text, ground=False, rule=True):
         print(c)
-    print('')
+    print("")
     ptest1()
 
 
 def ptest1():
-    xs = ('a', 0, 1, 2, ':', 'b', 0, ',', 'c', 0, 1, ',', 'd', 1, 2)
+    xs = ("a", 0, 1, 2, ":", "b", 0, ",", "c", 0, 1, ",", "d", 1, 2)
     print(to_clause(xs))
 
 
@@ -245,14 +256,14 @@ def ptest2():
     # ws = "( 1 [ 2 3 4 ] 5 6 )".split()
 
     p = Parser(ws)
-    print('WS:', ws)
-    r = p.par('(', ')')
-    print('R:', r)
+    print("WS:", ws)
+    r = p.par("(", ")")
+    print("R:", r)
     # return
     t = to_tuple(r)
-    print('T:', t)
-    print('WR:', p.words)
-    print('RES:', Parser(ws).run())
+    print("T:", t)
+    print("WR:", p.words)
+    print("RES:", Parser(ws).run())
 
 
 def ptest3():
@@ -278,7 +289,7 @@ goal Xs : sent Xs ().
 
 
 def ptest4():
-    r = parse('a [].')
+    r = parse("a [].")
     print(list(r))
 
 
@@ -297,10 +308,10 @@ boo.
 
     """
     print(text)
-    print('-----')
+    print("-----")
     print(clean_comments(text))
 
 
-if __name__ == '__main__':
-    ptest4()
+if __name__ == "__main__":
+    ptest3()
     clean_test()
