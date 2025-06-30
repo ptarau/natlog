@@ -1,12 +1,15 @@
 from math import *
 from pathlib import Path
 import readline
+import sys
 
 from natlog.parser import *
 from natlog.prolog_parser import parse_prolog_program
 from natlog.unify import *  # unify, lazy_unify, activate, extractTerm, Var
 from natlog.tools import *
 from natlog.db import Db
+
+sys.setrecursionlimit(1 << 24)
 
 
 def my_path():
@@ -315,13 +318,18 @@ class Natlog:
     def __init__(
         self, text=None, file_name=None, db_name=None, with_lib=None, callables=dict()
     ):
-        if file_name:
+        if file_name is not None:
             with open(file_name, "r") as f:
                 self.text = f.read()
             self.file_name = file_name
-        else:
+        elif text is not None:
             self.text = text
             self.file_name = None
+        elif with_lib is not None:
+            self.text = "hi : #print hi."
+            self.file_name = None
+        else:
+            raise ValueError("Natlog: text or file_name or with_lib must be provided")
 
         self.callables = callables
         self.gsyms = dict()
@@ -531,8 +539,10 @@ def natrun(fname, natgoal, callables=globals()):
     return list(n.solve(natgoal))
 
 
-def natlog(text, goal=None):
-    n = Natlog(text=text, with_lib=natprogs() + "lib.nat", callables=globals())
+def natlog(file_name=None, goal=None):
+    n = Natlog(
+        file_name=file_name, with_lib=natprogs() + "lib.nat", callables=globals()
+    )
     if goal is not None:
         n.query(goal)
     n.repl()

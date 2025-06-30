@@ -1,9 +1,19 @@
 import sys
-from natlog.natlog import *
-print('usage: python3 -m natlog <file_name>.nat\n')
-if len(sys.argv)>1:
-    file_name=sys.argv[1]
-    n = Natlog(file_name=file_name, with_lib=natprogs() + 'lib.nat', callables=globals())
+from natlog.natlog import natlog
+
+print(
+    """usage: python3 -m <file_name> <goal>
+    <file_name> if present, is ending with .nat, .pro or .pl
+    <goal> if present, is a string representing a Natlog goal to query <file_name>
+    if both absent, the REPL starts, with the only the library loaded.
+    """
+)
+k = len(sys.argv)
+file_name, goal = None, None
+if k > 1:
+    file_name = sys.argv[1]
+    if k > 2:
+        goal = sys.argv[2]
 else:
-    n= Natlog(text='',with_lib=natprogs() + 'lib.nat', callables=globals())
-n.repl()
+    file_name = None
+natlog(file_name=file_name, goal=goal)

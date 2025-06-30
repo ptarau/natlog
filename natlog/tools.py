@@ -19,6 +19,10 @@ def copy_term(t0):
     return r
 
 
+def var_tuple(n):
+    return tuple(Var() for i in range(n))
+
+
 def arg(x, i):
     return x[i]
 

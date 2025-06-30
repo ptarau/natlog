@@ -1,6 +1,8 @@
 import re
 from natlog.scanner import VarNum
 
+trace = 1
+
 # --- VarNum and symbol table ---
 
 """
@@ -189,6 +191,10 @@ def parse_prolog_program(text):
         clause = parser.parse_clause()
         clauses.append(clause)  # , syms.copy(), nums[:]))
         pos += parser.pos
+    if trace:
+        print("Parsed clauses:")
+        for c in clauses:
+            print(c)
     return tuple(clauses)
 
 

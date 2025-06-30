@@ -63,6 +63,11 @@ setarg I T X : #setarg T I X.
 
 argx I T X: `len T L, ``range 0 L I, `arg T I X.
 
+functor T F N : if (var T) (to_functor T F N) (from_functor T F N).
+
+to_functor T F N : `var_tuple N T, `arg T 0 F.
+
+from_functor T F N : `arg T 0 F, `len T N.
 
 to_tuple Xs T : `from_cons_list_as_tuple Xs T.
 
@@ -71,6 +76,7 @@ to_list Xs T : `from_cons_list Xs T.
 
 to_cons_list T Xs : `to_cons_list T Xs.
 
+length Xs L : to_list Xs LXs, `len LXs L.
 
 to_dict Xs D : `dict Xs D.
 from_dict D Xs : `from_dict D Xs.
@@ -134,6 +140,9 @@ with X * Y as Z  : `mul X Y Z.
 with X / Y as Z  : `truediv X Y Z.
 with X // Y as Z : `floordiv X Y Z.
 
+succ X S: `add X 1 S.
+pred X P: `sub X 1 P.
+
 when  X < Y  : `lt X Y R, `int R 1.
 when  X > Y  : `gt X Y R, `int R 1.
 when  X <= Y : `le X Y R, `int R 1.
@@ -142,6 +151,7 @@ when  X <> Y : `ne X Y R, `int R 1.
 when  X == Y : `eq X Y R, `int R 1.
 
 writeln X : #print X.
+write X : #write X.
 nl : #print.
 
 % exceptions with engines
@@ -174,3 +184,5 @@ etest1 : exception_test bad ball.
 etest2 : exception_test other ball.
 etest3 : catch (eq X 1) fail fail, #print X.
 etest4 : findall X (eq X 1) R,#print R.
+
+bug : #print X X.
