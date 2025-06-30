@@ -316,7 +316,13 @@ LIB = "../natprogs/lib.nat"
 
 class Natlog:
     def __init__(
-        self, text=None, file_name=None, db_name=None, with_lib=None, callables=dict()
+        self,
+        text=None,
+        file_name=None,
+        syntax="natlog",
+        db_name=None,
+        with_lib=None,
+        callables=dict(),
     ):
         if file_name is not None:
             with open(file_name, "r") as f:
@@ -331,6 +337,7 @@ class Natlog:
         else:
             raise ValueError("Natlog: text or file_name or with_lib must be provided")
 
+        self.syntax = syntax
         self.callables = callables
         self.gsyms = dict()
         self.gixs = dict()
@@ -363,13 +370,20 @@ class Natlog:
 
         if (
             self.file_name is None
+            and self.syntax == "natlog"
             or self.file_name is not None
             and self.file_name.endswith(".nat")
         ):
             css, ixss = self.parse_program(self.text)
-        else:
-            assert self.file_name.endswith(".pl") or self.file_name.endswith(".pro")
+        elif (
+            self.file_name is None
+            and self.syntax == "prolog"
+            or self.file_name.endswith(".pl")
+            or self.file_name.endswith(".pro")
+        ):
             css, ixss = parse_prolog_program(self.text), ()
+        else:
+            raise
 
         # from pprint import pprint
 
