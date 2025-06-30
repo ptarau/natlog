@@ -73,10 +73,10 @@ to_tuple Xs T : `from_cons_list_as_tuple Xs T.
 
 to_list Xs T : `from_cons_list Xs T.
 
-
 to_cons_list T Xs : `to_cons_list T Xs.
 
-length Xs L : to_list Xs LXs, `len LXs L.
+
+length Xs L : `from_cons_list Xs LXs, `len LXs L.
 
 to_dict Xs D : `dict Xs D.
 from_dict D Xs : `from_dict D Xs.

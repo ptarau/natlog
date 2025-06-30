@@ -155,6 +155,8 @@ class Parser:
 
     def parse_clause(self):
         head = self.parse_term()
+        if not isinstance(head, tuple):
+            head = (head,)
         if self.current()[0] == "COLONMINUS":
             self.match("COLONMINUS")
             body = self.parse_body()
@@ -168,7 +170,10 @@ class Parser:
         goals = [self.parse_term()]
         while self.current()[0] == "COMMA":
             self.match("COMMA")
-            goals.append(self.parse_term())
+            g = self.parse_term()
+            goals.append(g)
+
+        goals = [(g if isinstance(g, tuple) else (g,)) for g in goals]
         return tuple(goals)  # if len(goals) > 1 else goals[0]
 
 

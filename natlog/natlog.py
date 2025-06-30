@@ -543,6 +543,8 @@ def natlog(file_name=None, goal=None):
     n = Natlog(
         file_name=file_name, with_lib=natprogs() + "lib.nat", callables=globals()
     )
-    if goal is not None:
+    if goal:
+        if goal[-1] not in "?.":
+            goal = goal + "."
         n.query(goal)
     n.repl()

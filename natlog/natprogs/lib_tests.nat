@@ -39,7 +39,14 @@ lib_t15: eq N 10, eng X (loop 0 X) E, take N E Xs, nth 5 Xs X, #print X,fail ?
 
 lib_t16 : first_sols 5 (loop 0 X) R, #print R, fail.
 
+lib_t17: 
+  to_dict ((a 10) (b 20)) D, 
+  setarg c D 30,
+  #print D,
+  arg b D B, 
+  #print B, 
+  in_dict D X, #print a contains X, fail.
 
-fibo N Xs : eng X (slide_fibo 1 1) E,  take N E Xs.
+fibo N Xs : eng _ (slide_fibo 1 1) E,  take N E Xs.
 
 slide_fibo X Y :  with X+Y as Z,  ^X, slide_fibo Y Z.

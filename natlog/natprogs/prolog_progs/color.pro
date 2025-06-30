@@ -1,5 +1,6 @@
 /* Originally written by Neng-Fa Zhou, zhou@orchid.mse.kyutech.ac.jp  */
 /* Optimized (made about 100 times faster :-)) for BinProlog by Paul Tarau */
+/* Natlog port June 2025 */
 
 go :- writeln(starting), goal(D), writeln(D).
 
