@@ -1,4 +1,5 @@
 from natlog.scanner import VarNum, Var, GVar, deref
+from db import path_of
 
 
 def unify(x, y, trail, occ=False):
