@@ -8,6 +8,11 @@ print("Running Natlog as a streamlit app!")
 
 st.set_page_config(layout="wide")
 
+st.set_page_config(
+    page_title="Natlog",
+    page_icon=":lips:",  # Optional: set a page icon
+    layout="wide",  # Optional: set page layout
+)
 st.sidebar.title("Streamlit-based [NatLog](https://github.com/ptarau/natlog) Client")
 
 
