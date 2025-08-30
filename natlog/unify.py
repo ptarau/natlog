@@ -1,7 +1,5 @@
 from natlog.scanner import VarNum, Var, GVar, deref
 
-# from db import path_of
-
 
 def unify(x, y, trail, occ=False):
     ustack = []
@@ -120,8 +118,6 @@ def test_unify():
     a, b, c, d, e, f, g = "abcdefg"
     x, y, z = VarNum(0), VarNum(1), VarNum(2)
     t = (f, a, (g, (b, x, (e, b, c, y)), d))
-    # for p in path_of(t):
-    #    print("PATH:", p)
 
     c = activate(t, dict())
 
