@@ -59,12 +59,12 @@ class Parser:
             t = self.par(w, rp(w))
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
-            return (t, ts) if LP == "(" else [t] + ts
+            return (t, ts) if LP == "(" else [t] + ts  # type: ignore
         else:
             self.get()
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
-            return (w, ts) if LP == "(" else [w] + ts
+            return (w, ts) if LP == "(" else [w] + ts  # type: ignore
 
     def run(self):
         ls = sum(1 for x in self.words if x == "(")
@@ -149,9 +149,9 @@ def parse(text, gsyms=dict(), gixs=dict(), ground=False, rule=False):
         r = p.run()
         r = to_clause(r)
         if not rule:
-            r = to_cons_list(r[1])
+            r = to_cons_list(r[1])  # type: ignore
         if not rule and ground:
-            r = (r[0],)  # db fact
+            r = (r[0],)  # type: ignore # db fact
 
         yield r, s.names
 

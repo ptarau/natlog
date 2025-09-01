@@ -92,6 +92,7 @@ pop S X : `meth_call S pop () X.
 
 copy_term X CX : `copy_term X CX.
 
+numbervars X : `numbervars X NX, eq X NX.
 
 findall X G Xs: listof X G S, to_cons_list S Xs.
 

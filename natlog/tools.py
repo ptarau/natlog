@@ -1,4 +1,4 @@
-from natlog.unify import Var, GVar, deref
+from natlog.unify import VarNum, Var, GVar, deref
 
 
 def copy_term(t0):
@@ -17,6 +17,28 @@ def copy_term(t0):
     r = ct(t0)
     # print('CT >>>', r)
     return r
+
+
+def numbervars(t0):
+
+    def nv(t):
+        t = deref(t)
+        if isinstance(t, GVar):
+            return t
+        if isinstance(t, Var):
+            if t in d:
+                return d[t]
+            else:
+                n = VarNum(len(d) + 1)
+                d[t] = n
+                return n
+        if not isinstance(t, tuple):
+            return t
+        return tuple(map(nv, t))
+
+    d = dict()
+
+    return nv(t0)
 
 
 def var_tuple(n):
