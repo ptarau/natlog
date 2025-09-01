@@ -58,8 +58,8 @@ class Db:
     def digest(self, text):
         for cs in mparse(text, ground=True):
             # print('DIGEST:', cs)
-            assert len(cs) == 1
-            self.add_clause(cs[0])
+            assert len(cs) == 1 # type: ignore
+            self.add_clause(cs[0]) # type: ignore
 
     # loads from json list of lists
     def load_json(self, fname):
@@ -189,7 +189,7 @@ class Db:
         """
         qss = mparse(query, ground=False)
         for qs in qss:
-            qs = qs[0]
+            qs = qs[0] # type: ignore
             # print('SEARCHING:', qs)
             for rs in self.match_of(qs):
                 yield rs

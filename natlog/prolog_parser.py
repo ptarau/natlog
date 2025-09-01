@@ -1,5 +1,5 @@
 import re
-from natlog.scanner import VarNum
+from natlog.scanner import VarNum, Var
 
 trace = 1
 
@@ -212,19 +212,21 @@ def parse_prolog_file(filename):
 
 
 def test_prolog_parser():
+    X = VarNum(0)
+    Y = VarNum(1)
     assert parse_prolog_clause("f(a,b,c).") == (("f", "a", "b", "c"), ())
     assert parse_prolog_clause("p(X):- q(X), r(X).") == (
-        ("p", Var("X")),
-        ("and", ("q", Var("X")), ("r", Var("X"))),
+        ("p", X),
+        (("q", X), ("r", X)),
     )
     assert parse_prolog_clause("'>='(X, 3.14).") == (
-        (">=", Var("X"), 3.14),
+        (">=", X, 3.14),
         (),
     )
     assert parse_prolog_clause("'op'.") == (("op",), ())
     assert parse_prolog_clause("q(X,Y) :- p(X),p(Y).") == (
-        ("q", Var("X"), Var("Y")),
-        ("and", ("p", Var("X")), ("p", Var("Y"))),
+        ("q", X, Y),
+        (("p", X), ("p", Y)),
     )
     print(parse_prolog_clause("distance('New York 42', 12.34)."))
     # →   (('distance', 'New York 42', 12.34), ())

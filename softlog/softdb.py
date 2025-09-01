@@ -1,5 +1,5 @@
 from natlog.db import *
-from sentence_store.main import Embedder
+from sentence_store.main import Embedder # type: ignore
 
 
 class SoftDB(Db):
@@ -20,14 +20,14 @@ class SoftDB(Db):
         self.initalize_store(cache_name="soft_db_cache")
         self.emb.store_text(text, clean=False)
 
-    def load_txt(self, doc_name, doc_type='txt'):
+    def load_txt(self, doc_name, doc_type='txt'): # type: ignore
         # can be 'url', 'wikipage', 'txt', 'pdf'
         cache_name = "".join(c for c in doc_name if c.isalpha())
         self.initalize_store(cache_name=cache_name)
 
         self.emb.store_doc(doc_type, doc_name, clean=True)
 
-    def unify_with_fact(self, goal, trail):
+    def unify_with_fact(self, goal, trail): # pyright: ignore[reportIncompatibleMethodOverride]
         assert len(goal) == 4, goal
         # q = query goal to be matched
         # k = number of knns to be returned

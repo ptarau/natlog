@@ -94,8 +94,8 @@ if uploaded is not None:
             st.session_state.uploaded_path = saved_path
             st.session_state.program_text = text
             st.sidebar.success(f"Saved to {saved_path}")
-        except Exception as e:
-            st.sidebar.error(f"Saving failed: {e}")
+        except Exception as ex:
+            st.sidebar.error(f"Saving failed: {ex}")
 
 # Convenience: show current file info
 if st.session_state.uploaded_path:
@@ -119,8 +119,8 @@ with col_save:
                 )
                 st.success("Edits saved.")
                 st.session_state.program_text = editor
-            except Exception as e:
-                st.error(f"Could not save edits: {e}")
+            except Exception as ex:
+                st.error(f"Could not save edits: {ex}")
         else:
             st.warning("No uploaded file yet. Upload a file first.")
 with col_clear:

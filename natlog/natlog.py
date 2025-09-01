@@ -1,4 +1,4 @@
-from math import *
+from math import * # type: ignore
 from pathlib import Path
 import readline
 import sys
@@ -56,12 +56,12 @@ class Eng:
         if self.stopped:
             return None
         self.start()
-        return next(self.runner)
+        return next(self.runner)  # type: ignore
 
     def __call__(self):
         self.start()
         if not self.stopped:
-            yield from self.runner
+            yield from self.runner  # type: ignore
 
     def __repr__(self):
         mes = ""
@@ -126,7 +126,9 @@ def interp(css, goals0, db=None, callables=dict()):
 
         # yields facts matching g in Db
         def db_call(g):
-            for ok in db.unify_with_fact(g, trail):
+            for ok in db.unify_with_fact( # type: ignore
+                g, trail
+            ):  # pyright: ignore[reportOptionalMemberAccess]
                 if not ok:  # FAILURE
                     undo(trail)
                     continue
@@ -181,7 +183,7 @@ def interp(css, goals0, db=None, callables=dict()):
 
         def eng(xge):
             x, g, e = xge
-            (x, g) = copy_term((x, g))
+            (x, g) = copy_term((x, g)) # type: ignore
             g = (("the", x, g), ())
             assert isinstance(e, Var)
             r = Eng(interp, css, g, db, callables)
@@ -215,7 +217,7 @@ def interp(css, goals0, db=None, callables=dict()):
             g = g[1:]
             v = g[-1]
             args = to_python(g[:-1])
-            for r in gen(*args):
+            for r in gen(*args):  # type: ignore
                 r = from_python(r)
 
                 if unify(v, r, trail):
@@ -303,6 +305,7 @@ def interp(css, goals0, db=None, callables=dict()):
     while not done:
         done = True
         for a in step(goals0):
+            assert not isinstance(a, Var)
             if a is not None and len(a) >= 2 and a[0] == "trust":
                 newg = a[1:], ()
                 goals0 = newg
@@ -319,6 +322,7 @@ class Natlog:
         self,
         text=None,
         file_name=None,
+        clauses=None,
         syntax="natlog",
         db_name=None,
         with_lib=None,
@@ -334,6 +338,9 @@ class Natlog:
         elif with_lib is not None:
             self.text = "hi : #print hi."
             self.file_name = None
+        elif clauses is not None:
+            self.file_name = None
+            self.text = "hi : #print hi."
         else:
             raise ValueError("Natlog: text or file_name or with_lib must be provided")
 
@@ -342,21 +349,18 @@ class Natlog:
         self.gsyms = dict()
         self.gixs = dict()
 
-        self.css, self.ixss = self.add_lib(self.text, with_lib)
-
-        # self.css = tuple(css)
-        # self.ixss = tuple(ixss)
+        self.css, self.ixss = self.add_lib(self.text, clauses, with_lib)
 
         # print('GIXSS in natlog:', self.gixs)
 
         if db_name is not None:
             self.db_init()
-            self.db.load(db_name)
+            self.db.load(db_name) # type: ignore
         else:
             self.db = None
 
     # overridable
-    def add_lib(self, text, with_lib):
+    def add_lib(self, text, clauses, with_lib):
         """
         add library to program
         """
@@ -378,19 +382,25 @@ class Natlog:
         elif (
             self.file_name is None
             and self.syntax == "prolog"
-            or self.file_name.endswith(".pl")
-            or self.file_name.endswith(".pro")
+            or self.file_name.endswith(".pl") # type: ignore
+            or self.file_name.endswith(".pro") # type: ignore
         ):
             css, ixss = parse_prolog_program(self.text), ()
+        elif clauses is not None:
+            css, ixss = (), ()
         else:
-            raise
+            raise ValueError("*** No source for program clauses found")
 
         # from pprint import pprint
 
         # print("CSS from Natlog or Prolog:", len(css))
         # pprint(css)
 
-        return tuple(css) + tuple(lib_css), ixss
+        css = tuple(css)
+        if clauses is not None:
+            css = tuple(clauses) + css
+
+        return css + tuple(lib_css), ixss
 
     # overridable
     def parse_program(self, text):
