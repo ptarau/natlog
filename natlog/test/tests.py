@@ -50,7 +50,7 @@ def yield_test():
   """
     n = Natlog(text=prog)
     for i, answer in enumerate(n.solve("worm ?")):
-        print(answer[0], end="")
+        print(answer[0], end="") # type: ignore
         if i > 42:
             break
     print("")
@@ -176,7 +176,7 @@ def db_chem():
     print("RULES")
     print(nd)
     # print('DB FACTS');print(nd.db)
-    print("SIZE:", nd.db.size(), "LEN:", len(nd.db.css[0]))
+    print("SIZE:", nd.db.size(), "LEN:", len(nd.db.css[0])) # type: ignore
     nd.query("an_el Num Element ?")
     nd.query("gases Num Element ?")
 
@@ -297,7 +297,7 @@ def big_db():
     """
     n = Natlog(text=prog, db_name=NATPROGS + "facts.nat")
     # print(n)
-    print("SIZE:", n.db.size(), "LEN:", len(n.db.css[0]))
+    print("SIZE:", n.db.size(), "LEN:", len(n.db.css[0])) # type: ignore
     # print(n.db.css[0])
     n.query("quest X Y?")
     # n.repl()

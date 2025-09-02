@@ -23,16 +23,16 @@ def ask_llm(model=None, mes=None, temperature=None, n=None):
     )
 
     r = client.chat.completions.create(
-        messages=mes,
-        model=model,
+        messages=mes, # pyright: ignore[reportArgumentType]
+        model=model, # pyright: ignore[reportArgumentType]
         temperature=temperature,
         n=n
     )
 
-    pt = r.usage.prompt_tokens
-    ct = r.usage.completion_tokens
+    pt = r.usage.prompt_tokens # pyright: ignore[reportOptionalMemberAccess]
+    ct = r.usage.completion_tokens # pyright: ignore[reportOptionalMemberAccess]
 
-    answers = [llm_res(r, i) for i in range(n)]
+    answers = [llm_res(r, i) for i in range(n)] # pyright: ignore[reportArgumentType]
 
     return answers, pt, ct
 
