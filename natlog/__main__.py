@@ -1,10 +1,15 @@
 import sys
+from natlog import get_version
 from natlog.natlog import natlog
 
+print("Natlog: ", get_version())
 print(
-    """usage: python3 -m <file_name> <goal>
-    <file_name> if present, is ending with .nat, .pro or .pl
+    """Usage: python3 -m <file_name> <goal>
+
+    <file_name>, if present, must end with .nat, .pro or .pl
+
     <goal> if present, is a string representing a Natlog goal to query <file_name>
+
     if both absent, the REPL starts, with the only the library loaded.
     """
 )
@@ -16,4 +21,5 @@ if k > 1:
         goal = sys.argv[2]
 else:
     file_name = None
+
 natlog(file_name=file_name, goal=goal)

@@ -1,4 +1,4 @@
-from math import * # type: ignore
+from math import *  # type: ignore
 from pathlib import Path
 import readline
 import sys
@@ -126,7 +126,7 @@ def interp(css, goals0, db=None, callables=dict()):
 
         # yields facts matching g in Db
         def db_call(g):
-            for ok in db.unify_with_fact( # type: ignore
+            for ok in db.unify_with_fact(  # type: ignore
                 g, trail
             ):  # pyright: ignore[reportOptionalMemberAccess]
                 if not ok:  # FAILURE
@@ -183,7 +183,7 @@ def interp(css, goals0, db=None, callables=dict()):
 
         def eng(xge):
             x, g, e = xge
-            (x, g) = copy_term((x, g)) # type: ignore
+            (x, g) = copy_term((x, g))  # type: ignore
             g = (("the", x, g), ())
             assert isinstance(e, Var)
             r = Eng(interp, css, g, db, callables)
@@ -336,11 +336,11 @@ class Natlog:
             self.text = text
             self.file_name = None
         elif with_lib is not None:
-            self.text = "hi : #print hi."
+            self.text = "ok."
             self.file_name = None
         elif clauses is not None:
             self.file_name = None
-            self.text = "hi : #print hi."
+            self.text = "ok."
         else:
             raise ValueError("Natlog: text or file_name or with_lib must be provided")
 
@@ -355,9 +355,27 @@ class Natlog:
 
         if db_name is not None:
             self.db_init()
-            self.db.load(db_name) # type: ignore
+            self.db.load(db_name)  # type: ignore
         else:
             self.db = None
+
+    def parse_prog(self, syntax):
+
+        if syntax == "prolog":
+            css = parse_prolog_program(self.text)
+            ixss = ()
+        else:
+            css, ixss = self.parse_natlog_program(self.text)
+        return css, ixss
+
+    def guess_syntax(self):
+        if self.file_name is not None:
+            if self.file_name.endswith(".pl") or self.file_name.endswith(".pro"):
+                self.syntax = "prolog"
+            elif self.file_name.endswith(".nat"):
+                self.syntax = "natlog"
+            else:
+                raise ValueError("Unknown file type:" + self.file_name)
 
     # overridable
     def add_lib(self, text, clauses, with_lib):
@@ -367,43 +385,22 @@ class Natlog:
         if with_lib:
             with open(with_lib, "r") as f:
                 lib = f.read()
-                # self.text = self.text + "\n" + lib
-                lib_css, _ = self.parse_program(lib)
+
+                lib_css, _ = self.parse_natlog_program(lib)
         else:
             lib_css = []
 
-        if (
-            self.file_name is None
-            and self.syntax == "natlog"
-            or self.file_name is not None
-            and self.file_name.endswith(".nat")
-        ):
-            css, ixss = self.parse_program(self.text)
-        elif (
-            self.file_name is None
-            and self.syntax == "prolog"
-            or self.file_name.endswith(".pl") # type: ignore
-            or self.file_name.endswith(".pro") # type: ignore
-        ):
-            css, ixss = parse_prolog_program(self.text), ()
-        elif clauses is not None:
-            css, ixss = (), ()
-        else:
-            raise ValueError("*** No source for program clauses found")
+        self.guess_syntax()
 
-        # from pprint import pprint
+        css, ixss = self.parse_prog(self.syntax)
 
-        # print("CSS from Natlog or Prolog:", len(css))
-        # pprint(css)
-
-        css = tuple(css)
         if clauses is not None:
-            css = tuple(clauses) + css
+            css = tuple(clauses) + tuple(css)
 
         return css + tuple(lib_css), ixss
 
     # overridable
-    def parse_program(self, text):
+    def parse_natlog_program(self, text):
         """
         parse text and return css and ixss
         """
@@ -419,21 +416,40 @@ class Natlog:
         """
         self.db = Db()
 
+    def parse_query(self, quest, syntax):
+        if syntax == "natlog":
+            goals0, ixs = next(
+                parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
+            )
+        else:
+            cls = "answer :-" + quest
+            css = parse_prolog_program(cls)[0]
+            goals0 = css[1] + ((),)
+            ixs = None
+        return goals0, ixs
+
     def solve(self, quest):
         """
         answer generator for given question
         """
-        goals0, ixs = next(
-            parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
-        )
+        # goals0, ixs = next(
+        #    parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
+        # )
+
+        goals0, ixs = self.parse_query(quest, self.syntax)
 
         vs = dict()
         goals0 = activate(goals0, vs)
-        ns = dict(zip(vs, ixs))
 
-        for k, v in self.gixs.items():
-            ns[k] = v
+        if ixs is not None:
+            ns = dict(zip(vs, ixs))
 
+            for k, v in self.gixs.items():
+                ns[k] = v
+        else:
+            ns = vs
+
+        print("GOALS0:", goals0)
         for answer in interp(self.css, goals0, self.db, self.callables):
 
             if answer and len(answer) == 1:
@@ -469,6 +485,7 @@ class Natlog:
         """
         read-eval-print-loop
         """
+
         print("Type ENTER to quit.")
         while True:
             q = input("?- ")
@@ -478,7 +495,7 @@ class Natlog:
                 self.query(q, in_repl=True)
             except Exception as e:
                 print("EXCEPTION:", type(e).__name__, e.args)
-                # raise e
+                raise e
 
     # shows tuples of Natlog rule base
     def __repr__(self):
@@ -569,6 +586,22 @@ def natlog(file_name=None, goal=None):
     )
     if goal:
         if goal[-1] not in "?.":
+            goal = goal + "."
+        n.query(goal)
+    n.repl()
+
+
+def natpro(file_name=None, goal=None):
+    n = Natlog(
+        file_name=file_name,
+        with_lib=natprogs() + "lib.nat",
+        syntax="prolog",
+        callables=globals(),
+    )
+    print("syntax:", n.syntax)
+
+    if goal:
+        if goal[-1] not in ".":
             goal = goal + "."
         n.query(goal)
     n.repl()
