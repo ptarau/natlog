@@ -51,6 +51,7 @@ def pytest2():
         (b(3), ()),
         (b(4), ()),
         (c(X), (a(X), b(X))),
+        (c(b(X), Y), (a(X), b(a(X), Y))),
     ]
     for cs in css:
         print(cs)
