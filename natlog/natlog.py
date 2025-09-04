@@ -422,7 +422,6 @@ class Natlog:
                 parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
             )
         else:
-
             body = parse_prolog_program(quest, rule=False)
             goals0 = body
             ixs = None
@@ -436,7 +435,9 @@ class Natlog:
         #    parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
         # )
 
-        goals0, ixs = self.parse_query(quest, self.syntax)
+        goals0, ixs = self.parse_query(
+            quest, "natlog"
+        )  # self.syntax) # no var names so far
 
         vs = dict()
         goals0 = activate(goals0, vs)
