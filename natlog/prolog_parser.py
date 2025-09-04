@@ -1,5 +1,6 @@
 import re
 from natlog.scanner import VarNum, Var
+from natlog.parser import to_cons_list
 
 trace = 0
 
@@ -186,7 +187,9 @@ def parse_prolog_clause(text, syms=None, nums=None):
     return parser.parse_clause()
 
 
-def parse_prolog_program(text):
+def parse_prolog_program(text, rule=True):
+    if not rule:
+        text = "answer :- " + text.strip()
     tokens = list(tokenize(text))
     pos = 0
     clauses = []
@@ -200,7 +203,12 @@ def parse_prolog_program(text):
         print("Parsed clauses:")
         for c in clauses:
             print(c)
-    return tuple(clauses)
+    if rule:
+        return tuple(clauses)
+    query = clauses[0]
+    body = query[1]
+    body = to_cons_list(body)
+    return body
 
 
 def parse_prolog_file(filename):

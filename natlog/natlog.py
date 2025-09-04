@@ -422,9 +422,9 @@ class Natlog:
                 parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
             )
         else:
-            cls = "answer :-" + quest
-            css = parse_prolog_program(cls)[0]
-            goals0 = css[1] + ((),)
+
+            body = parse_prolog_program(quest, rule=False)
+            goals0 = body
             ixs = None
         return goals0, ixs
 
@@ -447,7 +447,7 @@ class Natlog:
             for k, v in self.gixs.items():
                 ns[k] = v
         else:
-            # print("VS:", vs)
+            # print("!!! VS:", vs)
             ns = dict(zip(vs.keys(), vs.keys()))
 
         # print("GOALS0:", goals0)
