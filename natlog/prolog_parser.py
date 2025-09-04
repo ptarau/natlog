@@ -1,7 +1,7 @@
 import re
 from natlog.scanner import VarNum, Var
 
-trace = 1
+trace = 0
 
 # --- VarNum and symbol table ---
 

@@ -441,15 +441,16 @@ class Natlog:
         vs = dict()
         goals0 = activate(goals0, vs)
 
-        if ixs is not None:
+        if ixs is not None:  # we have var names
             ns = dict(zip(vs, ixs))
 
             for k, v in self.gixs.items():
                 ns[k] = v
         else:
-            ns = vs
+            # print("VS:", vs)
+            ns = dict(zip(vs.keys(), vs.keys()))
 
-        print("GOALS0:", goals0)
+        # print("GOALS0:", goals0)
         for answer in interp(self.css, goals0, self.db, self.callables):
 
             if answer and len(answer) == 1:
@@ -491,11 +492,15 @@ class Natlog:
             q = input("?- ")
             if not q:
                 return
+            if q == "listing.":
+                for cs in self.css:
+                    print(cs, "\n")
+
             try:
                 self.query(q, in_repl=True)
             except Exception as e:
                 print("EXCEPTION:", type(e).__name__, e.args)
-                raise e
+                # raise e
 
     # shows tuples of Natlog rule base
     def __repr__(self):

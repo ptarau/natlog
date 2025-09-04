@@ -1,1 +1,1 @@
-python -m natlog
+python natpro.py
