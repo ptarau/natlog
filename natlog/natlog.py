@@ -4,7 +4,7 @@ import readline
 import sys
 
 from natlog.parser import *
-from natlog.prolog_parser import parse_prolog_program
+from natlog.prolog_parser import parse_program_with_varnames, parse_goal
 from natlog.unify import *  # unify, lazy_unify, activate, extractTerm, Var
 from natlog.tools import *
 from natlog.db import Db
@@ -362,10 +362,14 @@ class Natlog:
     def parse_prog(self, syntax):
 
         if syntax == "prolog":
-            css = parse_prolog_program(self.text)
-            ixss = ()
+            css_ixss = parse_program_with_varnames(self.text)
+            css, ixss = zip(*css_ixss)
+            css = tuple((h[0], tuple(b)) for (h, b) in css)
         else:
             css, ixss = self.parse_natlog_program(self.text)
+        print(f"\nCLAUSES in {self.syntax}")
+        for cs in css:
+            print(cs)
         return css, ixss
 
     def guess_syntax(self):
@@ -422,9 +426,11 @@ class Natlog:
                 parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
             )
         else:
-            body = parse_prolog_program(quest, rule=False)
-            goals0 = body
-            ixs = None
+
+            body, ixs = parse_goal(quest)
+
+            goals0 = to_cons_list(body)
+        print(f"#PARSED GOAL with {self.syntax}:", goals0, ixs)
         return goals0, ixs
 
     def solve(self, quest):
@@ -435,9 +441,7 @@ class Natlog:
         #    parse(quest, gsyms=self.gsyms, gixs=self.gixs, ground=False, rule=False)
         # )
 
-        goals0, ixs = self.parse_query(
-            quest, "natlog"
-        )  # self.syntax) # no var names so far
+        goals0, ixs = self.parse_query(quest, self.syntax)
 
         vs = dict()
         goals0 = activate(goals0, vs)
