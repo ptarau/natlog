@@ -1,5 +1,6 @@
 from operator import *
 
+# Import locally
 from natlog.scanner import Scanner, VarNum
 
 trace = 0
@@ -19,7 +20,7 @@ def from_none(LP, w):
 
 
 # simple LL(1) recursive descent Parser
-# supporting parenthesized tuples
+# supporting parenthesized tuples and bracket lists
 # scanned from whitespace separated tokens
 class Parser:
     def __init__(self, words):
@@ -55,7 +56,7 @@ class Parser:
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
             return (t, ts) if LP == "(" else [t] + ts
-        elif w == "(" or w == "[" and w != LP:
+        elif (w == "(") or (w == "[" and w != LP):
             t = self.par(w, rp(w))
             ts = self.pars(LP, RP)
             ts = from_none(LP, ts)
@@ -74,7 +75,8 @@ class Parser:
         rs = sum(1 for x in self.words if x == "]")
         assert ls == rs
         t = self.par("(", ")")
-        t = to_tuple(t)
+        t = to_tuple(t)  # flatten (...) chains
+        t = lists_to_cons(t)  # convert [...] to cons-pairs
         if trace:
             print("PARSED", t)
         return t
@@ -221,97 +223,38 @@ def clean_comments(text):
             line = parts[0]
         cleaned.append(line)
     text = "\n".join(cleaned)
-    # print('>>> ???',text)
     return text
 
 
-# tests
+# -------- NEW: list-to-cons transformation --------
 
 
-def ptest():
-    text = """
-       app () Ys Ys. 
-       app (X Xs) Ys (X Zs) : 
-           app Xs Ys Zs.
-
-       nrev () ().
-       nrev (X Xs) Zs : nrev Xs Ys, app Ys (X) Zs.
-       """
-    for c in mparse(text, ground=True):
-        print(c)
-    print("")
-    for c in mparse(text, ground=False, rule=True):
-        print(c)
-    print("")
-    ptest1()
-
-
-def ptest1():
-    xs = ("a", 0, 1, 2, ":", "b", 0, ",", "c", 0, 1, ",", "d", 1, 2)
-    print(to_clause(xs))
-
-
-def ptest2():
-    ws = "( x y [ a ( b [ c 1 2 ] ) d ] ( xx yy ) )".split()
-    # ws = "( 1 [ 2 3 4 ] 5 6 )".split()
-
-    p = Parser(ws)
-    print("WS:", ws)
-    r = p.par("(", ")")
-    print("R:", r)
-    # return
-    t = to_tuple(r)
-    print("T:", t)
-    print("WR:", p.words)
-    print("RES:", Parser(ws).run())
-
-
-def ptest3():
-    text = """
-sent  => a,noun,verb, @on, @a, place.
-
-noun => @cat.
-noun => @dog.
-
-verb => @sits.
-
-place => @mat.
-place => @bed.
-    
-@ X (X Xs) Xs.
-
-goal Xs : sent Xs ().
-
-"""
-
-    r = parse(text, ground=False, rule=True)
-    print(list(r))
-
-
-def ptest4():
-    r = parse("a [].")
-    print(list(r))
-
-
-def clean_test():
-    text = """   
-    a b c % d e
-        mmm nn pp
-    xx yyyy % a % b
-    
-    % zzz zz z   
-    more
-   
-% aaa
-
-boo.
-
+def lists_to_cons(x):
     """
-    print(text)
-    print("-----")
-    print(clean_comments(text))
+    Recursively convert every Python list produced by [...] into cons-pairs:
+      [a, b, c]     -> (a,(b,(c,())))
+      [X, Y, '|', T] -> (X,(Y,T))   ; tail notation
+    Works inside arbitrary nested structures.
+    """
+    if isinstance(x, list):
+        if "|" in x:
+            bar_idx = x.index("|")
+            head_elems = [lists_to_cons(e) for e in x[:bar_idx]]
+            tail_part = x[bar_idx + 1 :]
+            if len(tail_part) != 1:
+                raise SyntaxError("List tail '|' must be followed by exactly one term")
+            tail = lists_to_cons(tail_part[0])
+            return to_cons_list(tuple(head_elems), end=tail)
+        else:
+            head_elems = [lists_to_cons(e) for e in x]
+            return to_cons_list(tuple(head_elems), end=())
+    elif isinstance(x, tuple):
+        return tuple(lists_to_cons(e) for e in x)
+    else:
+        return x
 
 
+# -------- tests (optional dev) --------
 if __name__ == "__main__":
-    ptest3()
-    clean_test()
+    sample = "foo [a b | Xs]. bar [x y z]. baz []."
+    print(list(parse(sample, ground=False, rule=True)))

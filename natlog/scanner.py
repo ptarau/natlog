@@ -1,3 +1,4 @@
+
 import re
 
 
@@ -70,23 +71,23 @@ class Scanner:
         self.gixs = gixs
         self.Scanner = re.Scanner([
             (r"[-+]?\d+\.\d+", lambda sc, tok: ("FLOAT", float(tok))),
-            (r"[-+]?\d+", lambda sc, tok: ("INT", int(tok))),
-            (r"[a-z]+[\w]*", lambda sc, tok: ("ID", tok)),
-            (r"'[\w\s\-\.\/,%=!\+\(\)]+'", lambda sc, tok: ("ID", qtrim(tok))),
-            (r"[_]+[\w]*", lambda sc, tok: ("VAR", self.sym(tok + self.ctr()))),
-            (r"[A-Z_]+[\w]*", lambda sc, tok: ("VAR", self.sym(tok))),
-            (r"[\&]+[\w]*", lambda sc, tok: ("GVAR", self.gsym(tok))),
-            (r"[(]", lambda sc, tok: ("LPAR", tok)),
-            (r"[)]", lambda sc, tok: ("RPAR", tok)),
-            (r"[\[]", lambda sc, tok: ("LPAR_", tok)),
-            (r"[\]]", lambda sc, tok: ("RPAR_", tok)),
-            (r"[.?]", lambda sc, tok: ("END", self.newsyms())),
-            (r":", lambda sc, tok: ("IF", tok)),
-            (r"=>", lambda sc, tok: ("REW", tok)),
-            (r"[,]", lambda sc, tok: ("AND", tok)),
+            (r"[-+]?\d+",      lambda sc, tok: ("INT", int(tok))),
+            (r"[a-z]+[\w]*",   lambda sc, tok: ("ID", tok)),
+            (r"'[\w\s\-\.\/,%=!\+\(\)\[\]\|]+'", lambda sc, tok: ("ID", qtrim(tok))),
+            (r"[_]+[\w]*",     lambda sc, tok: ("VAR", self.sym(tok + self.ctr()))),
+            (r"[A-Z_]+[\w]*",  lambda sc, tok: ("VAR", self.sym(tok))),
+            (r"[\&]+[\w]*",    lambda sc, tok: ("GVAR", self.gsym(tok))),
+            (r"[(]",           lambda sc, tok: ("LPAR", tok)),
+            (r"[)]",           lambda sc, tok: ("RPAR", tok)),
+            (r"[\[]",          lambda sc, tok: ("LPAR_", tok)),
+            (r"[\]]",          lambda sc, tok: ("RPAR_", tok)),
+            (r"[|]",           lambda sc, tok: ("BAR", tok)),  # list-tail bar
+            (r"[.?]",          lambda sc, tok: ("END", self.newsyms())),
+            (r":",             lambda sc, tok: ("IF", tok)),
+            (r"=>",            lambda sc, tok: ("REW", tok)),
+            (r"[,]",           lambda sc, tok: ("AND", tok)),
             (r"~|``|`|\^|\$|#|@|%|;|<=|>=|//|==|\->|\+|\-|\*|/|=|<|>|!", lambda sc, tok: ("OP", tok)),
-            #     (r"[;]", lambda sc, tok: ("OR", tok)),
-            (r"\s+", None),  # None == skip tok.
+            (r"\s+",           None),  # None == skip tok.
         ])
 
     def ctr(self):
@@ -119,7 +120,6 @@ class Scanner:
             v = GVar()
             self.gsyms[w] = v
             self.gixs[v] = w
-
         return v
 
     def run(self):
@@ -130,47 +130,16 @@ class Scanner:
                 yield tuple(ts)
                 ts = []
             else:
-                ts.append(x)
-
-
-# tests
-
-def stest():
-    sent = \
-        "(The ~ cat -42) (~ 'sits on' [the mat 0.42]). \n the ` Dog _barks . (` a `` b) and (`b `a) ."
-    s = Scanner(sent, ground=False)
-    print(list(s.run()))
-
-
-def gtest():
-    sent = """
-sent  => a,noun,verb, @ on a,place.
-
-noun => @ cat.
-noun => @ dog.
-
-verb => @sits.
-
-place => @ mat.
-place => @ bed.
-"""
-    s = Scanner(sent, ground=False)
-    print(list(s.run()))
-
-
-def ivtest():
-    sent = """
-node 1 &C1.
-node 2 &C2.
-
-edge &C1 &C2.
-"""
-    s = Scanner(sent, ground=False)
-    print(list(s.run()))
-    print('GVAR names:', s.gixs)
-
-
-if __name__ == '__main__':
-    # stest()
-    # gtest()
-    ivtest()
+                # convert structural tokens back to simple symbols for the parser
+                if x == '(':
+                    ts.append('(')
+                elif x == ')':
+                    ts.append(')')
+                elif x == '[':
+                    ts.append('[')
+                elif x == ']':
+                    ts.append(']')
+                elif x == '|':
+                    ts.append('|')
+                else:
+                    ts.append(x)
