@@ -26,7 +26,7 @@ TOKEN_SPEC = [
     ("FLOAT", r"\d+\.\d+"),
     ("NUMBER", r"\d+"),
     ("SQUOTEATOM", r"'([^'\\]|\\.)*'"),
-    # Multi-char operators before single-char ones; includes \=, backticks, &, etc.
+    # Multi-char operators before single-char ones; includes \=, backticks, &, @, ^
     ("SYMBOLATOM", r"<=|>=|//|==|\\=|->|``|~|`|\\\^|\$|#|@|&|%|;|\+|\-|\*|/|=|<|>|!"),
     ("ATOM", r"[a-z][a-zA-Z0-9_]*"),
     ("VAR", r"[A-Z_][a-zA-Z0-9_]*"),
@@ -72,8 +72,8 @@ def tokenize(code: str):
 # Minimal infix support (left-associative chaining at a single precedence)
 infix_operators = {">=", "<=", "==", ">", "<", "=", "\\=", "+", "-", "*", "/", "//"}
 
-# New prefix (fx) operators: #, `, ``, &, @
-prefix_operators = {"#", "`", "``", "&", "@"}
+# Prefix (fx) operators (apply to the following term): #, `, ``, &, @, ^
+prefix_operators = {"#", "`", "``", "&", "@", "^"}
 
 # --- Parser ---
 
@@ -121,7 +121,10 @@ class Parser:
     def parse_term(self):
         """
         term := (prefix_op)* atomic_term (infix_op (prefix_op)* atomic_term)*
-        Prefix operators (#, `, ``, &, @) are applied as wrappers, e.g. #f(X) -> ('#', ('f', X))
+        Prefix operators (#, `, ``, &, @, ^) are applied as fx:
+          - If operand is a tuple ('f', a, b) => ('#', 'f', a, b)
+          - Else => ('#', operand)
+        Multiple prefixes stack: "# @ f(X)" => ('#', '@', 'f', X)
         """
         left = self._parse_prefix_then_atomic()
         # minimal infix: A OP B -> (OP, A, B)
@@ -140,7 +143,10 @@ class Parser:
         node = self._parse_atomic_term()
         # apply prefixes inside-out: last prefix read applies outermost
         for op in reversed(ops):
-            node = (op, node)
+            if isinstance(node, tuple):
+                node = tuple([op] + list(node))
+            else:
+                node = (op, node)
         return node
 
     def _parse_atomic_term(self):
@@ -284,7 +290,7 @@ def parse_program_with_varnames(text):
 
 def parse_goal(text):
     """
-    Parse a goal-only body (e.g., 'q(X), r(_), #f(X)') with or without trailing '.'
+    Parse a goal-only body (e.g., 'q(X), r(_), # f(X)') with or without trailing '.'
     Reuses Parser.parse_body().
     Returns: (body_as_list_of_1_tuples, nums)
       - nums is the allocation-order list of variable names (each '_' occurrence included)
@@ -308,7 +314,6 @@ def parse_goal(text):
     if p.current()[0] != "EOF":
         raise SyntaxError(f"Unexpected token after goal: {p.current()}")
 
-    print("?PROLOG:", body)
     return body, nums
 
 
