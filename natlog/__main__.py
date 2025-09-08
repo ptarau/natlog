@@ -18,7 +18,8 @@ file_name, goal = None, None
 if k > 1:
     file_name = sys.argv[1]
     if k > 2:
-        goal = sys.argv[2]
+        goal = sys.argv[2:]
+        print("CML GOAL:", len(sys.argv), goal)
 else:
     file_name = None
 

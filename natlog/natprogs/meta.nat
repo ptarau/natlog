@@ -6,10 +6,15 @@ metaint (G Gs) :    % unify the first goal with the head of a clause
 
 
 cls
-   ((add 0 X X) Tail)
-   Tail.
+   (
+        (
+            add 0 X X) Tail
+        )
+        Tail.
 cls  (
-         (add (s X) Y (s Z))
+        (   
+            add (s X) Y (s Z)
+        )
             (
                (add X Y Z) Tail
             )

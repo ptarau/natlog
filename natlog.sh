@@ -1,1 +1,1 @@
-python -m natlog
+exec python -m natlog "$@"

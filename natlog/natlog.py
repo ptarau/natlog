@@ -367,9 +367,9 @@ class Natlog:
             css = tuple((h[0], tuple(b)) for (h, b) in css)
         else:
             css, ixss = self.parse_natlog_program(self.text)
-        print(f"\nCLAUSES in {self.syntax}")
-        for cs in css:
-            print(cs)
+        # print(f"\nCLAUSES in {self.syntax}")
+        # for cs in css:
+        #    print(cs)
         return css, ixss
 
     def guess_syntax(self):
@@ -430,7 +430,7 @@ class Natlog:
             body, ixs = parse_goal(quest)
 
             goals0 = to_cons_list(body)
-        print(f"#PARSED GOAL with {self.syntax}:", goals0, ixs)
+        # print(f"#PARSED GOAL with {self.syntax}:", goals0, ixs)
         return goals0, ixs
 
     def solve(self, quest):
@@ -455,7 +455,7 @@ class Natlog:
             # print("!!! VS:", vs)
             ns = dict(zip(vs.keys(), vs.keys()))
 
-        # print("GOALS0:", goals0)
+        print("!!! SOLVE GOALS0:", goals0)
         for answer in interp(self.css, goals0, self.db, self.callables):
 
             if answer and len(answer) == 1:
@@ -590,11 +590,15 @@ def natrun(fname, natgoal, callables=globals()):
     return list(n.solve(natgoal))
 
 
-def natlog(file_name=None, goal=None):
+def natlog(file_name=None, goal=None, syntax="natlog"):
     n = Natlog(
-        file_name=file_name, with_lib=natprogs() + "lib.nat", callables=globals()
+        file_name=file_name,
+        syntax=syntax,
+        with_lib=natprogs() + "lib.nat",
+        callables=globals(),
     )
     if goal:
+        goal = " ".join(goal)
         if goal[-1] not in "?.":
             goal = goal + "."
         n.query(goal)
@@ -608,7 +612,7 @@ def natpro(file_name=None, goal=None):
         syntax="prolog",
         callables=globals(),
     )
-    print("syntax:", n.syntax)
+    # print("syntax:", n.syntax)
 
     if goal:
         if goal[-1] not in ".":

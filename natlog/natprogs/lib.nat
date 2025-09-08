@@ -101,6 +101,7 @@ listof X G S: stack S, collect_ X G S.
 collect_ X G S : call G, `copy_term X CX, push S CX, fail.
 collect_ _X _G _S.
 
+numlist From To Xs : `numlist From To Xs.
 
 stop E : getprop E stop S, #S.
 
@@ -185,5 +186,3 @@ etest1 : exception_test bad ball.
 etest2 : exception_test other ball.
 etest3 : catch (eq X 1) fail fail, #print X.
 etest4 : findall X (eq X 1) R,#print R.
-
-bug : #print X X.
