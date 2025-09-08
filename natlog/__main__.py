@@ -15,12 +15,16 @@ print(
 )
 k = len(sys.argv)
 file_name, goal = None, None
+syntax = "natlog"
 if k > 1:
     file_name = sys.argv[1]
+    if file_name.endswith(".pl") or file_name.endswith(".pl"):
+        syntax = "prolog"
+
     if k > 2:
         goal = sys.argv[2:]
         print("CML GOAL:", len(sys.argv), goal)
 else:
     file_name = None
 
-natlog(file_name=file_name, goal=goal)
+natlog(file_name=file_name, goal=goal, syntax=syntax)
