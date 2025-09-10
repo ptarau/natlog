@@ -3,7 +3,7 @@ __all__ = ("Natlog", "interp", "natlog")
 from natlog.natlog import *
 from natlog.db import Db
 
-__version__ = "2.1.3"
+__version__ = "2.1.6"
 
 
 def get_version():
