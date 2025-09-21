@@ -563,16 +563,15 @@ def test_natlog():
     n.repl()
 
 
-def lconsult(fname):
-    fname = natprogs() + fname + ".nat"
-    n = Natlog(file_name=fname, with_lib=natprogs() + "lib.nat")
-    n.repl()
-
-
-def dconsult(nname, dname):
-    nname = natprogs() + nname + ".nat"
-    dname = natprogs() + dname + ".nat"
-    n = Natlog(file_name=nname, db_name=dname)
+def pconsult(prolog_code_file, prolog_ground_db_file=None):
+    # consults a prolog_code_file and optionally a prolog_ground_db_file
+    n = Natlog(
+        file_name=prolog_code_file,
+        db_name=prolog_ground_db_file,
+        with_lib=natprogs() + "lib.nat",
+        syntax="prolog",
+        callables=globals(),
+    )
     n.repl()
 
 
@@ -590,9 +589,10 @@ def natrun(fname, natgoal, callables=globals()):
     return list(n.solve(natgoal))
 
 
-def natlog(file_name=None, goal=None, syntax="natlog"):
+def natlog(file_name=None, db_name=None, goal=None, syntax="natlog"):
     n = Natlog(
         file_name=file_name,
+        db_name=db_name,
         syntax=syntax,
         with_lib=natprogs() + "lib.nat",
         callables=globals(),

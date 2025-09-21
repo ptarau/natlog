@@ -26,8 +26,8 @@ TOKEN_SPEC = [
     ("FLOAT", r"\d+\.\d+"),
     ("NUMBER", r"\d+"),
     ("SQUOTEATOM", r"'([^'\\]|\\.)*'"),
-    # Multi-char operators before single-char ones; includes \=, backticks, &, @, ^
-    ("SYMBOLATOM", r"<=|>=|//|==|\\=|->|``|~|`|\\\^|\$|#|@|&|%|;|\+|\-|\*|/|=|<|>|!"),
+    # Multi-char operators before single-char ones; includes \=, backticks, &, @, ^ ~
+    ("SYMBOLATOM", r"<=|>=|//|==|\\=|->|``|~|`|\\\^|\$|#|@|&|%|;|\+|\-|\*|/|=|<|>|!|~"),
     ("ATOM", r"[a-z][a-zA-Z0-9_]*"),
     ("VAR", r"[A-Z_][a-zA-Z0-9_]*"),
     ("LPAREN", r"\("),
@@ -73,7 +73,7 @@ def tokenize(code: str):
 infix_operators = {">=", "<=", "==", ">", "<", "=", "\\=", "+", "-", "*", "/", "//"}
 
 # Prefix (fx) operators (apply to the following term): #, `, ``, &, @, ^
-prefix_operators = {"#", "`", "``", "&", "@", "^"}
+prefix_operators = {"#", "`", "``", "&", "@", "^", "~"}
 
 # --- Parser ---
 
@@ -121,7 +121,7 @@ class Parser:
     def parse_term(self):
         """
         term := (prefix_op)* atomic_term (infix_op (prefix_op)* atomic_term)*
-        Prefix operators (#, `, ``, &, @, ^) are applied as fx:
+        Prefix operators (#, `, ``, &, @, ^, ~) are applied as fx:
           - If operand is a tuple ('f', a, b) => ('#', 'f', a, b)
           - Else => ('#', operand)
         Multiple prefixes stack: "# @ f(X)" => ('#', '@', 'f', X)

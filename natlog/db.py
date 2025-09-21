@@ -4,6 +4,7 @@ import csv
 
 from natlog.unify import unify, activate
 from natlog.parser import mparse
+from natlog.prolog_parser import parse_prolog_file
 from natlog.scanner import Var
 
 
@@ -58,8 +59,25 @@ class Db:
     def digest(self, text):
         for cs in mparse(text, ground=True):
             # print('DIGEST:', cs)
-            assert len(cs) == 1 # type: ignore
-            self.add_clause(cs[0]) # type: ignore
+            assert len(cs) == 1  # type: ignore
+            self.add_clause(cs[0])  # type: ignore
+
+    def load_prolog(self, fname):
+        # loads ground facts from pure Prolog .pl or .pro file
+        css = parse_prolog_file(fname)
+        for cs, syms, nums in css:
+            if syms or nums:
+                print("WARNING: skipping non-ground fact:", cs)
+                continue
+            if len(cs) != 2:
+                print("WARNING: skipping unexpected clause:", cs)
+            head = cs[0]
+            if not isinstance(head, list) or cs[1]:
+                print("WARNING: list expected in head + body of clause:", cs)
+                continue
+
+            fact = head[0]
+            self.add_clause(fact)
 
     # loads from json list of lists
     def load_json(self, fname):
@@ -103,11 +121,15 @@ class Db:
         if t:
             self.add_clause(tuplify(t))
 
-    # loads ground facts .nat or .json files
+    # loads ground facts .nat, .pro, ,pl, .csv, .tsv or .json files
     def load(self, fname):
         if len(fname) > 4 and fname[-4:] == ".nat":
             with open(fname, "r") as f:
                 self.digest(f.read())
+        elif len(fname) > 4 and fname[-4:] == ".pro":
+            self.load_prolog(fname)
+        elif len(fname) > 3 and fname[-3:] == ".pl":
+            self.load_prolog(fname)
         elif len(fname) > 4 and fname[-4:] == ".tsv":
             self.load_tsv(fname)
         elif len(fname) > 4 and fname[-4:] == ".csv":
@@ -189,7 +211,7 @@ class Db:
         """
         qss = mparse(query, ground=False)
         for qs in qss:
-            qs = qs[0] # type: ignore
+            qs = qs[0]  # type: ignore
             # print('SEARCHING:', qs)
             for rs in self.match_of(qs):
                 yield rs
