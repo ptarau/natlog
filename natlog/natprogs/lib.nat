@@ -78,6 +78,10 @@ to_cons_list T Xs : `to_cons_list T Xs.
 
 length Xs L : `from_cons_list Xs LXs, `len LXs L.
 
+sort Xs Sorted: `from_cons_list Xs LXs, `sorted LXs Ys, `to_cons_list Ys Sorted.
+
+reverse Xs Rs : `from_cons_list Xs LXs, `reversed LXs Ys, `list Ys Zs, `to_cons_list Zs Rs.
+
 to_dict Xs D : `dict Xs D.
 from_dict D Xs : `from_dict D Xs.
 in_dict D K_V : ``in_dict D K_V.
